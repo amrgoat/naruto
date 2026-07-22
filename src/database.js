@@ -10,16 +10,6 @@ const db = new Database(path.join(__dirname, '..', 'data.db'));
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
-// ── Safe migrations ───────────────────────────
-// Add new columns if they don't exist yet (safe to re-run).
-for (const col of [
-  'chakra_essence INTEGER NOT NULL DEFAULT 0',
-  'daily_reset_at  INTEGER NOT NULL DEFAULT 0',
-  'exp_scrolls     INTEGER NOT NULL DEFAULT 0',
-]) {
-  try { db.exec(`ALTER TABLE users ADD COLUMN ${col}`); } catch { /* already exists */ }
-}
-
 // ── Schema ────────────────────────────────────
 
 db.exec(`
@@ -58,6 +48,16 @@ db.exec(`
 
   CREATE INDEX IF NOT EXISTS idx_teams_user ON teams(user_id);
 `);
+
+// ── Safe migrations ───────────────────────────
+// Add new columns if they don't exist yet (safe to re-run).
+for (const col of [
+  'chakra_essence INTEGER NOT NULL DEFAULT 0',
+  'daily_reset_at  INTEGER NOT NULL DEFAULT 0',
+  'exp_scrolls     INTEGER NOT NULL DEFAULT 0',
+]) {
+  try { db.exec(`ALTER TABLE users ADD COLUMN ${col}`); } catch { /* already exists */ }
+}
 
 // ── Prepared Statements ───────────────────────
 
