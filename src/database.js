@@ -2,13 +2,12 @@
 //  database.js  —  SQLite schema & prepared statements
 // ─────────────────────────────────────────────
 
-const Database = require('better-sqlite3');
-const path     = require('path');
+const { Database } = require('node-sqlite3-wasm');
+const path         = require('path');
 const { PULLS_PER_PERIOD, ARENA_ATTEMPTS_PER_DAY, STARTING_RYO, STARTING_RAMEN } = require('./config');
 
 const db = new Database(path.join(__dirname, '..', 'data.db'));
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
+db.exec('PRAGMA foreign_keys = ON');
 
 // ── Schema ────────────────────────────────────
 
