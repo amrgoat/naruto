@@ -1,13 +1,11 @@
 // ─────────────────────────────────────────────
-//  lab.js  —  N lab  /  N orochimaru
+//  craft.js  —  N craft
 //  Orochimaru's Laboratory: craft fragments using
 //  Chakra Essence. Requires owning Orochimaru.
 //
 //  M1: Craft D–A rank fragments
 //  M2: + S rank fragments
 //  M3: + 20% discount on all crafting costs
-//
-//  Duplicates always give Chakra Essence (universal).
 // ─────────────────────────────────────────────
 
 const {
@@ -26,7 +24,7 @@ const { resolvePassiveBonuses }  = require('../utils/passives');
 const { errorEmbed, successEmbed } = require('../utils/embeds');
 
 // ── Crafting Costs ─────────────────────────────
-const LAB_COSTS = { D: 30, C: 50, B: 90, A: 150, S: 250 };
+const CRAFT_COSTS = { D: 30, C: 50, B: 90, A: 150, S: 250 };
 
 // Derive Orochimaru mastery tier from passive bonuses
 function oroMasteryLabel(pb) {
@@ -36,8 +34,8 @@ function oroMasteryLabel(pb) {
 }
 
 module.exports = {
-  name: 'lab',
-  description: "Orochimaru's Laboratory — craft fragments · N lab  /  N orochimaru",
+  name: 'craft',
+  description: "Orochimaru's Laboratory — craft fragments · N craft",
 
   async execute(message) {
     const userId = message.author.id;
@@ -54,19 +52,17 @@ module.exports = {
       });
     }
 
-    const discount      = pb.labDiscount;   // 0 or 0.20
-    const canCraftS     = pb.labSRank;
-    const masteryLabel  = oroMasteryLabel(pb);
+    const discount     = pb.labDiscount;
+    const canCraftS    = pb.labSRank;
+    const masteryLabel = oroMasteryLabel(pb);
 
-    // Ranks available for crafting
     const availableRanks = canCraftS
       ? ['D', 'C', 'B', 'A', 'S']
       : ['D', 'C', 'B', 'A'];
 
-    // ── Step 1: Lab overview embed ─────────────
+    // ── Overview embed ─────────────────────────
     const divider = '━━━━━━━━━━━━━━━━━━';
 
-    // Mastery bonus line
     let masteryLine;
     if (masteryLabel === 'M3') {
       masteryLine = `🔮 Orochimaru **M3** — **-20% discount** on all crafting`;
@@ -76,18 +72,14 @@ module.exports = {
       masteryLine = `🔮 Orochimaru **M1** — D through A-rank crafting available`;
     }
 
-    // Cost table
     const costLines = availableRanks.map(r => {
-      const base = LAB_COSTS[r];
+      const base = CRAFT_COSTS[r];
       const cost = Math.floor(base * (1 - discount));
       const rarityEmoji = RARITIES[r]?.emoji ?? r;
-      if (discount > 0) {
-        return `${rarityEmoji} **${r} Fragment** — ~~${base}~~ **${cost}** Essence`;
-      }
-      return `${rarityEmoji} **${r} Fragment** — **${cost}** Essence`;
+      return discount > 0
+        ? `${rarityEmoji} **${r} Fragment** — ~~${base}~~ **${cost}** Essence`
+        : `${rarityEmoji} **${r} Fragment** — **${cost}** Essence`;
     });
-
-    const unlockedList = availableRanks.join(' · ');
 
     const descLines = [
       masteryLine,
@@ -99,20 +91,20 @@ module.exports = {
       ...costLines,
       ``,
       divider,
-      `**Unlocked Rarities:** ${unlockedList}`,
+      `**Unlocked Rarities:** ${availableRanks.join(' · ')}`,
     ];
 
-    const labEmbed = new EmbedBuilder()
+    const craftEmbed = new EmbedBuilder()
       .setColor(COLORS.mastery)
       .setTitle('🧪 Orochimaru\'s Laboratory')
       .setDescription(descLines.join('\n'));
 
     const rankMenu = new StringSelectMenuBuilder()
-      .setCustomId('lab_rank')
+      .setCustomId('craft_rank')
       .setPlaceholder('Select rank to craft...')
       .addOptions(
         availableRanks.map(r => {
-          const cost = Math.floor(LAB_COSTS[r] * (1 - discount));
+          const cost = Math.floor(CRAFT_COSTS[r] * (1 - discount));
           return new StringSelectMenuOptionBuilder()
             .setLabel(`${r} Rank  —  ${cost} Essence`)
             .setValue(r);
@@ -120,22 +112,21 @@ module.exports = {
       );
 
     const reply = await message.reply({
-      embeds:     [labEmbed],
+      embeds:     [craftEmbed],
       components: [new ActionRowBuilder().addComponents(rankMenu)],
     });
 
     // ── Rank collector ─────────────────────────
     const rankCollector = reply.createMessageComponentCollector({
-      filter: i => i.user.id === userId && i.customId === 'lab_rank',
+      filter: i => i.user.id === userId && i.customId === 'craft_rank',
       time:   60_000,
       max:    1,
     });
 
     rankCollector.on('collect', async rankInteraction => {
       const rank = rankInteraction.values[0];
-      const cost = Math.floor(LAB_COSTS[rank] * (1 - discount));
+      const cost = Math.floor(CRAFT_COSTS[rank] * (1 - discount));
 
-      // Get user's owned characters of this rank
       const ownedCards = q.getUserCards.all(userId).filter(c => {
         const ch = CHARACTERS[c.character_id];
         return ch?.rarity === rank;
@@ -151,7 +142,7 @@ module.exports = {
         });
       }
 
-      // ── Step 2: Character select ─────────────
+      // ── Character select ──────────────────────
       const charOptions = ownedCards.slice(0, 25).map(c => {
         const ch = CHARACTERS[c.character_id];
         return new StringSelectMenuOptionBuilder()
@@ -161,7 +152,7 @@ module.exports = {
       });
 
       const charMenu = new StringSelectMenuBuilder()
-        .setCustomId('lab_char')
+        .setCustomId('craft_char')
         .setPlaceholder(`Select a ${rank} Rank card...`)
         .addOptions(charOptions);
 
@@ -177,9 +168,9 @@ module.exports = {
         components: [new ActionRowBuilder().addComponents(charMenu)],
       });
 
-      // ── Char collector ───────────────────────
+      // ── Char collector ────────────────────────
       const charCollector = reply.createMessageComponentCollector({
-        filter: i => i.user.id === userId && i.customId === 'lab_char',
+        filter: i => i.user.id === userId && i.customId === 'craft_char',
         time:   60_000,
         max:    1,
       });
@@ -206,14 +197,14 @@ module.exports = {
           });
         }
 
-        // ── Confirm button ───────────────────────
+        // ── Confirm ───────────────────────────
         const confirmRow = new ActionRowBuilder().addComponents(
           new ButtonBuilder()
-            .setCustomId('lab_confirm')
+            .setCustomId('craft_confirm')
             .setLabel(`Craft — ${cost} Essence`)
             .setStyle(ButtonStyle.Success),
           new ButtonBuilder()
-            .setCustomId('lab_cancel')
+            .setCustomId('craft_cancel')
             .setLabel('Cancel')
             .setStyle(ButtonStyle.Secondary),
         );
@@ -230,22 +221,22 @@ module.exports = {
           components: [confirmRow],
         });
 
-        // ── Confirm collector ────────────────────
+        // ── Confirm collector ──────────────────
         const confirmCollector = reply.createMessageComponentCollector({
-          filter: i => i.user.id === userId && (i.customId === 'lab_confirm' || i.customId === 'lab_cancel'),
-          time:   30_000,
-          max:    1,
+          filter: i => i.user.id === userId &&
+            (i.customId === 'craft_confirm' || i.customId === 'craft_cancel'),
+          time: 30_000,
+          max:  1,
         });
 
         confirmCollector.on('collect', async confirmInteraction => {
-          if (confirmInteraction.customId === 'lab_cancel') {
+          if (confirmInteraction.customId === 'craft_cancel') {
             return confirmInteraction.update({
               embeds: [new EmbedBuilder().setColor(COLORS.info).setDescription('Crafting cancelled.')],
               components: [],
             });
           }
 
-          // Re-check essence
           const latestUser = q.getUser.get(userId);
           if (latestUser.chakra_essence < cost) {
             return confirmInteraction.update({
@@ -254,7 +245,6 @@ module.exports = {
             });
           }
 
-          // Deduct and give fragment
           q.addChakraEssence.run(-cost, userId);
           q.addFragment.run(cardId);
 
@@ -287,4 +277,4 @@ module.exports = {
   },
 };
 
-module.exports.LAB_COSTS = LAB_COSTS;
+module.exports.CRAFT_COSTS = CRAFT_COSTS;
