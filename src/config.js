@@ -32,6 +32,18 @@ const E = {
   leaf:     '🍃',
 };
 
+// ── Combat Emojis ─────────────────────────────
+// Custom Discord emoji references for use ONLY in combat embeds
+// (Arena, PvP Battle, Raid, Damage Logs, Combat Result Embeds).
+// Do NOT use inside N ci, N mci, collection, shop, lab, or daily.
+const COMBAT_EMOJIS = {
+  attack:  '<:attack:1529384616513765456>',
+  health:  '<:health:1529384650781229140>',
+  speed:   '<:speed:1529384678270963773>',
+  ryo:     '<:ryo:1529384564001214484>',
+  essence: '<:essence:1529384777394688100>',
+};
+
 // ── Rarity Definitions ────────────────────────
 // SS and UR exist in the system but are locked from pulls
 // thumb: provided rarity badge image URL shown as embed thumbnail
@@ -73,9 +85,9 @@ const MASTERY_UPGRADE_COST = {
 // ── Daily Rewards ─────────────────────────────
 //  Base rewards from N daily (before passive bonuses).
 const DAILY_REWARDS = {
-  ryo:           500,
+  ryo:           1000,
   ramen:         1,
-  chakraEssence: 10,
+  chakraEssence: 30,
   expScrolls:    1,
 };
 
@@ -173,7 +185,7 @@ const COLORS = {
 
 module.exports = {
   PREFIXES, PULL_PREFIXES,
-  E, RARITIES, PULL_POOL_RARITIES,
+  E, COMBAT_EMOJIS, RARITIES, PULL_POOL_RARITIES,
   MASTERY, MASTERY_UPGRADE_COST,
   MAX_STARS, PRESTIGE_COSTS, PRESTIGE_STAT_BONUS,
   PULLS_PER_PERIOD, PULL_COOLDOWN_MS,

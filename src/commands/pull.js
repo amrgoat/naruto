@@ -3,7 +3,7 @@
 //  Summon one ninja card from the scroll.
 //  · 12 pulls per period (resets 12 AM & 12 PM IST)
 //  · 3-second cooldown between pulls
-//  · Duplicates → +1 Fragment  OR  Chakra Essence (Orochimaru M3)
+//  · Duplicates → Chakra Essence (universal, based on rarity)
 //  · SS and UR are locked and never appear
 // ─────────────────────────────────────────────
 
@@ -14,7 +14,6 @@ const {
 } = require('../config');
 const { checkRegistered }       = require('../utils/guards');
 const { buildPullEmbed, errorEmbed } = require('../utils/embeds');
-const { resolvePassiveBonuses } = require('../utils/passives');
 const { currentPullPeriodStartUTC, nextPullResetUTC, formatCountdown } = require('../utils/timeUtils');
 
 // ── Weighted random rarity roll ────────────────
@@ -83,26 +82,18 @@ module.exports = {
     // ── Consume pull ────────────────────────────
     q.consumePull.run(now, userId);
 
-    // ── Passive bonuses (for Orochimaru M3) ─────
-    const pb = resolvePassiveBonuses(userId);
-
     // ── Duplicate check ─────────────────────────
     const existing    = q.getCardByCharacter.get(userId, characterId);
     let card;
     let isDuplicate   = false;
-    let dupEssence    = 0;   // > 0 when Orochimaru M3 converts dup
+    let dupEssence    = 0;
 
     if (existing) {
       isDuplicate = true;
-      if (pb.dupToEssence) {
-        // Orochimaru M3 — convert duplicate into Chakra Essence
-        dupEssence = ESSENCE_PER_DUP[char.rarity] ?? 20;
-        q.addChakraEssence.run(dupEssence, userId);
-        card = existing; // card unchanged (no fragment)
-      } else {
-        q.addFragment.run(existing.id);
-        card = q.getCard.get(existing.id);
-      }
+      // Duplicates always convert to Chakra Essence (universal)
+      dupEssence = ESSENCE_PER_DUP[char.rarity] ?? 20;
+      q.addChakraEssence.run(dupEssence, userId);
+      card = existing;
     } else {
       // New card
       const result = q.insertCard.run(userId, characterId);

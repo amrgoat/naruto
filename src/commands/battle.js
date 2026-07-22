@@ -4,6 +4,8 @@
 //  No EXP, Ryo, or ranking changes. For fun only.
 //  Passive bonuses (Choji HP, Rock Lee SPD) apply
 //  for each player's own cards.
+//
+//  Uses custom combat emojis in result embeds.
 // ─────────────────────────────────────────────
 
 const {
@@ -11,7 +13,7 @@ const {
 } = require('discord.js');
 const { q }                    = require('../database');
 const { CHARACTERS }           = require('../data/characters');
-const { COLORS, E }            = require('../config');
+const { COLORS, E, COMBAT_EMOJIS } = require('../config');
 const { checkRegistered }      = require('../utils/guards');
 const { getEffectiveStats }    = require('../utils/cardUtils');
 const { simulateBattle, makeCombatant } = require('../utils/battleEngine');
@@ -132,12 +134,12 @@ module.exports = {
 
       const resultEmbed = new EmbedBuilder()
         .setColor(COLORS.arena)
-        .setTitle(`${E.battle} Battle Result`)
+        .setTitle(`${COMBAT_EMOJIS.attack} Battle Result`)
         .setDescription(logDisplay.join('\n') || '*No rounds recorded.*')
         .addFields(
-          { name: `${E.win} Winner`,  value: `**${winnerName}**`, inline: true },
-          { name: `${E.loss} Defeated`, value: `**${loserName}**`, inline: true },
-          { name: 'Rounds',            value: `${roundCount}`,     inline: true },
+          { name: `${E.win} Winner`,    value: `**${winnerName}**`, inline: true },
+          { name: `${E.loss} Defeated`, value: `**${loserName}**`,  inline: true },
+          { name: 'Rounds',             value: `${roundCount}`,      inline: true },
         )
         .setFooter({ text: 'Friendly battle — no rewards' });
 

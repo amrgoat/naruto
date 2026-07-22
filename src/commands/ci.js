@@ -1,10 +1,9 @@
 // ─────────────────────────────────────────────
 //  ci.js  —  N ci <name>  (Card Info)
-//  Layout matches the reference design:
 //  · Description = lore line
-//  · Inline bold stats
+//  · Plain text stat labels (ATK HP SPD — no custom emojis)
 //  · Effect = passive at current mastery
-//  · Previous Mastery / Next Mastery buttons
+//  · [M1] [M2] [M3] buttons — highlights active, edits same embed
 //  · Footer: "CharName Card Mastery m/3"
 // ─────────────────────────────────────────────
 
@@ -32,22 +31,20 @@ function buildCiEmbed(char, m) {
     ? passive.describe(m)
     : 'None';
 
-  // Stats block: each field on its own line
+  // Stats block — plain text only, no custom emojis
   const statsLines = [];
 
-  // Support cards don't have combat stats
   if (char.type !== 'Support') {
-    statsLines.push(`**Power:** ${formatAtk(stats.atkMin, stats.atkMax)}`);
-    statsLines.push(`**Health:** ${stats.hp.toLocaleString()}`);
-    statsLines.push(`**Speed:** ${stats.spd}`);
+    statsLines.push(`**ATK:** ${formatAtk(stats.atkMin, stats.atkMax)}`);
+    statsLines.push(`**HP:** ${stats.hp.toLocaleString()}`);
+    statsLines.push(`**SPD:** ${stats.spd}`);
     statsLines.push(`**Level Cap:** ${levelCap}`);
   }
 
   statsLines.push(`**Type:** ${char.type}`);
-  statsLines.push(`**Effect:** ${effectText}`);
+  statsLines.push(`**Passive:** ${effectText}`);
   statsLines.push(`**Source:** ${sourceText}`);
 
-  // Description = lore line, then blank line, then stats
   const desc = `${char.description}\n\n${statsLines.join('\n')}`;
 
   return new EmbedBuilder()
@@ -57,25 +54,27 @@ function buildCiEmbed(char, m) {
     .setDescription(desc)
     .setImage(char.image)
     .setFooter({
-      text:    `${char.name} Card Mastery ${m}/3`,
+      text:    `${char.name} Card  ·  Mastery ${m}/3`,
       iconURL: rarityThumb(char.rarity),
     });
 }
 
-// ── Button row ────────────────────────────────
+// ── Button row — [M1] [M2] [M3] ──────────────
 
 function buildMasteryRow(m) {
   return new ActionRowBuilder().addComponents(
     new ButtonBuilder()
-      .setCustomId('ci_prev')
-      .setLabel('Previous Mastery')
-      .setStyle(ButtonStyle.Secondary)
-      .setDisabled(m <= 1),
+      .setCustomId('ci_m1')
+      .setLabel('M1')
+      .setStyle(m === 1 ? ButtonStyle.Primary : ButtonStyle.Secondary),
     new ButtonBuilder()
-      .setCustomId('ci_next')
-      .setLabel('Next Mastery')
-      .setStyle(ButtonStyle.Primary)
-      .setDisabled(m >= 3),
+      .setCustomId('ci_m2')
+      .setLabel('M2')
+      .setStyle(m === 2 ? ButtonStyle.Primary : ButtonStyle.Secondary),
+    new ButtonBuilder()
+      .setCustomId('ci_m3')
+      .setLabel('M3')
+      .setStyle(m === 3 ? ButtonStyle.Primary : ButtonStyle.Secondary),
   );
 }
 
@@ -112,12 +111,17 @@ module.exports = {
     });
 
     const collector = reply.createMessageComponentCollector({
-      filter: i => i.user.id === message.author.id && (i.customId === 'ci_prev' || i.customId === 'ci_next'),
-      time:   300_000,
+      filter: i =>
+        i.user.id === message.author.id &&
+        ['ci_m1', 'ci_m2', 'ci_m3'].includes(i.customId),
+      time: 300_000,
     });
 
     collector.on('collect', async i => {
-      m = i.customId === 'ci_next' ? Math.min(m + 1, 3) : Math.max(m - 1, 1);
+      if (i.customId === 'ci_m1') m = 1;
+      else if (i.customId === 'ci_m2') m = 2;
+      else if (i.customId === 'ci_m3') m = 3;
+
       await i.update({
         embeds:     [buildCiEmbed(char, m)],
         components: [buildMasteryRow(m)],

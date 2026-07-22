@@ -51,20 +51,19 @@ const PASSIVES = {
   orochimaru: {
     label:    'Laboratory Access',
     describe: m => {
-      if (m >= 3) return 'Unlock Lab (D–S crafting) · 20% discount · Duplicates → Chakra Essence';
+      if (m >= 3) return 'Unlock Lab (D–S crafting) · 20% crafting discount';
       if (m >= 2) return 'Unlock Lab (D–S crafting)';
       return 'Unlock Lab (D–A crafting)';
     },
     describeAll: [
       'M1 — Unlock Laboratory · Craft D–A rank fragments',
       'M2 — Unlock S rank fragment crafting',
-      'M3 — 20% crafting discount · Duplicates → Chakra Essence',
+      'M3 — 20% discount on all crafting costs',
     ],
     effect: m => ({
-      unlockLab:    true,
-      labSRank:     m >= 2,
-      labDiscount:  m >= 3 ? 0.20 : 0,
-      dupToEssence: m >= 3,
+      unlockLab:   true,
+      labSRank:    m >= 2,
+      labDiscount: m >= 3 ? 0.20 : 0,
     }),
   },
 
@@ -143,7 +142,6 @@ function resolvePassiveBonuses(userId) {
     unlockLab:      false,
     labSRank:       false,
     labDiscount:    0,
-    dupToEssence:   false,
     unlockArena:    false,
   };
 

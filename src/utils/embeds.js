@@ -39,9 +39,9 @@ function buildPullEmbed(card, isDuplicate, pullerName, fragCount) {
   if (card.stars > 0) lines.push(stars);
   lines.push(
     '',
-    `**Power:** ${formatAtk(stats.atkMin, stats.atkMax)}`,
-    `**Health:** ${stats.hp.toLocaleString()}`,
-    `**Speed:** ${stats.spd}`,
+    `**ATK:** ${formatAtk(stats.atkMin, stats.atkMax)}`,
+    `**HP:** ${stats.hp.toLocaleString()}`,
+    `**SPD:** ${stats.spd}`,
     `**Type:** ${char.type}`,
     `**Source:** Card Pulls`,
   );
@@ -74,9 +74,9 @@ function buildCardEmbed(card) {
     `Level **${card.level}** / ${cap}  ·  Mastery **${card.mastery}**`,
     atCap ? '*Level cap reached*' : expBar(card),
     '',
-    `**Power:** ${formatAtk(stats.atkMin, stats.atkMax)}`,
-    `**Health:** ${stats.hp.toLocaleString()}`,
-    `**Speed:** ${stats.spd}`,
+    `**ATK:** ${formatAtk(stats.atkMin, stats.atkMax)}`,
+    `**HP:** ${stats.hp.toLocaleString()}`,
+    `**SPD:** ${stats.spd}`,
     `**Type:** ${char.type}`,
     `**Fragments:** ${card.fragments}`,
   );
@@ -98,6 +98,7 @@ function buildCardEmbed(card) {
 /**
  * N mci — owned card with fully resolved passive bonuses.
  * passiveBonuses = { hpPct, flatSpd } from resolvePassiveBonuses().
+ * Uses plain text labels (ATK / HP / SPD) — no custom emojis.
  */
 function buildMyCardInfoEmbed(card, passiveBonuses = {}) {
   const char  = CHARACTERS[card.character_id];
@@ -114,9 +115,9 @@ function buildMyCardInfoEmbed(card, passiveBonuses = {}) {
     `Level **${card.level}** / ${cap}  ·  Mastery **${card.mastery}**`,
     atCap ? '*Level cap reached*' : expBar(card),
     '',
-    `**Power:** ${formatAtk(stats.atkMin, stats.atkMax)}`,
-    `**Health:** ${stats.hp.toLocaleString()}`,
-    `**Speed:** ${stats.spd}`,
+    `**ATK:** ${formatAtk(stats.atkMin, stats.atkMax)}`,
+    `**HP:** ${stats.hp.toLocaleString()}`,
+    `**SPD:** ${stats.spd}`,
     `**Type:** ${char.type}`,
     `**Fragments:** ${card.fragments}`,
   );
@@ -152,9 +153,9 @@ function buildRosterEmbed(char, footerText) {
   if (locked) lines.push(`${E.locked} *Cannot be pulled*`);
   lines.push(
     '',
-    `**Power:** ${formatAtk(stats.atkMin, stats.atkMax)}`,
-    `**Health:** ${stats.hp.toLocaleString()}`,
-    `**Speed:** ${stats.spd}`,
+    `**ATK:** ${formatAtk(stats.atkMin, stats.atkMax)}`,
+    `**HP:** ${stats.hp.toLocaleString()}`,
+    `**SPD:** ${stats.spd}`,
     `**Type:** ${char.type}`,
     `**Source:** ${locked ? 'Locked' : 'Card Pulls'}`,
   );

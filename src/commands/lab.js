@@ -1,11 +1,13 @@
 // ─────────────────────────────────────────────
-//  lab.js  —  N lab
+//  lab.js  —  N lab  /  N orochimaru
 //  Orochimaru's Laboratory: craft fragments using
 //  Chakra Essence. Requires owning Orochimaru.
 //
 //  M1: Craft D–A rank fragments
 //  M2: + S rank fragments
-//  M3: + 20% discount  · duplicates → essence
+//  M3: + 20% discount on all crafting costs
+//
+//  Duplicates always give Chakra Essence (universal).
 // ─────────────────────────────────────────────
 
 const {
@@ -23,13 +25,19 @@ const { checkRegistered }        = require('../utils/guards');
 const { resolvePassiveBonuses }  = require('../utils/passives');
 const { errorEmbed, successEmbed } = require('../utils/embeds');
 
-// ── Costs & Essence per duplicate ─────────────
-const LAB_COSTS      = { D: 30, C: 50, B: 90, A: 150, S: 250 };
-const ESSENCE_PER_DUP = { D: 20, C: 30, B: 50, A: 90, S: 150 };
+// ── Crafting Costs ─────────────────────────────
+const LAB_COSTS = { D: 30, C: 50, B: 90, A: 150, S: 250 };
+
+// Derive Orochimaru mastery tier from passive bonuses
+function oroMasteryLabel(pb) {
+  if (pb.labDiscount > 0) return 'M3';
+  if (pb.labSRank)        return 'M2';
+  return 'M1';
+}
 
 module.exports = {
   name: 'lab',
-  description: "Orochimaru's Laboratory — craft fragments · N lab",
+  description: "Orochimaru's Laboratory — craft fragments · N lab  /  N orochimaru",
 
   async execute(message) {
     const userId = message.author.id;
@@ -46,28 +54,58 @@ module.exports = {
       });
     }
 
-    const discount  = pb.labDiscount;   // 0 or 0.20
-    const canCraftS = pb.labSRank;
+    const discount      = pb.labDiscount;   // 0 or 0.20
+    const canCraftS     = pb.labSRank;
+    const masteryLabel  = oroMasteryLabel(pb);
 
     // Ranks available for crafting
     const availableRanks = canCraftS
       ? ['D', 'C', 'B', 'A', 'S']
       : ['D', 'C', 'B', 'A'];
 
-    // ── Step 1: Rank select ────────────────────
+    // ── Step 1: Lab overview embed ─────────────
+    const divider = '━━━━━━━━━━━━━━━━━━';
+
+    // Mastery bonus line
+    let masteryLine;
+    if (masteryLabel === 'M3') {
+      masteryLine = `🔮 Orochimaru **M3** — **-20% discount** on all crafting`;
+    } else if (masteryLabel === 'M2') {
+      masteryLine = `🔮 Orochimaru **M2** — S-rank crafting unlocked`;
+    } else {
+      masteryLine = `🔮 Orochimaru **M1** — D through A-rank crafting available`;
+    }
+
+    // Cost table
+    const costLines = availableRanks.map(r => {
+      const base = LAB_COSTS[r];
+      const cost = Math.floor(base * (1 - discount));
+      const rarityEmoji = RARITIES[r]?.emoji ?? r;
+      if (discount > 0) {
+        return `${rarityEmoji} **${r} Fragment** — ~~${base}~~ **${cost}** Essence`;
+      }
+      return `${rarityEmoji} **${r} Fragment** — **${cost}** Essence`;
+    });
+
+    const unlockedList = availableRanks.join(' · ');
+
+    const descLines = [
+      masteryLine,
+      `⚡ Chakra Essence: **${user.chakra_essence.toLocaleString()}**`,
+      ``,
+      divider,
+      `**Crafting Costs**`,
+      divider,
+      ...costLines,
+      ``,
+      divider,
+      `**Unlocked Rarities:** ${unlockedList}`,
+    ];
+
     const labEmbed = new EmbedBuilder()
       .setColor(COLORS.mastery)
-      .setTitle('\u{1F9EA} Orochimaru\'s Laboratory')
-      .setDescription(
-        `Choose a rank to craft a **Fragment**.\n\n` +
-        availableRanks.map(r => {
-          const base = LAB_COSTS[r];
-          const cost = Math.floor(base * (1 - discount));
-          return `**${r} Rank** — ${cost} Chakra Essence${discount > 0 ? ` ~~${base}~~` : ''}`;
-        }).join('\n') +
-        `\n\n> Your Essence: **${user.chakra_essence.toLocaleString()}**` +
-        (discount > 0 ? `\n> M3 discount: **-20%**` : '')
-      );
+      .setTitle('🧪 Orochimaru\'s Laboratory')
+      .setDescription(descLines.join('\n'));
 
     const rankMenu = new StringSelectMenuBuilder()
       .setCustomId('lab_rank')
@@ -130,7 +168,7 @@ module.exports = {
       await rankInteraction.update({
         embeds: [new EmbedBuilder()
           .setColor(COLORS.mastery)
-          .setTitle(`\u{1F9EA} Craft ${rank} Rank Fragment`)
+          .setTitle(`🧪 Craft ${rank} Rank Fragment`)
           .setDescription(
             `Cost: **${cost} Chakra Essence**\n` +
             `Your Essence: **${q.getUser.get(userId).chakra_essence.toLocaleString()}**\n\n` +
@@ -147,16 +185,15 @@ module.exports = {
       });
 
       charCollector.on('collect', async charInteraction => {
-        const cardId   = parseInt(charInteraction.values[0], 10);
-        const freshUser = q.getUser.get(userId);
+        const cardId     = parseInt(charInteraction.values[0], 10);
+        const freshUser  = q.getUser.get(userId);
         const targetCard = q.getCard.get(cardId);
 
         if (!targetCard) {
           return charInteraction.update({ embeds: [errorEmbed('Card not found.')], components: [] });
         }
 
-        // ── Confirm button ───────────────────────
-        const char = CHARACTERS[targetCard.character_id];
+        const char           = CHARACTERS[targetCard.character_id];
         const currentEssence = freshUser.chakra_essence;
 
         if (currentEssence < cost) {
@@ -169,6 +206,7 @@ module.exports = {
           });
         }
 
+        // ── Confirm button ───────────────────────
         const confirmRow = new ActionRowBuilder().addComponents(
           new ButtonBuilder()
             .setCustomId('lab_confirm')
@@ -183,7 +221,7 @@ module.exports = {
         await charInteraction.update({
           embeds: [new EmbedBuilder()
             .setColor(COLORS.mastery)
-            .setTitle('\u{1F9EA} Confirm Crafting')
+            .setTitle('🧪 Confirm Crafting')
             .setDescription(
               `Craft **1x ${char.name} Fragment** for **${cost} Chakra Essence**?\n\n` +
               `Your Essence: **${currentEssence.toLocaleString()}**\n` +
@@ -225,7 +263,7 @@ module.exports = {
 
           return confirmInteraction.update({
             embeds: [successEmbed(
-              `\u{1F9EA} Crafted **1x ${char.name} Fragment**!\n\n` +
+              `🧪 Crafted **1x ${char.name} Fragment**!\n\n` +
               `${char.name} Fragments: **${updatedCard.fragments}**\n` +
               `Chakra Essence remaining: **${updatedUser.chakra_essence.toLocaleString()}**`
             )],
@@ -249,5 +287,4 @@ module.exports = {
   },
 };
 
-module.exports.LAB_COSTS       = LAB_COSTS;
-module.exports.ESSENCE_PER_DUP = ESSENCE_PER_DUP;
+module.exports.LAB_COSTS = LAB_COSTS;

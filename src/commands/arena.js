@@ -11,6 +11,8 @@
 //   · Iruka     — +10/20/40% Arena EXP
 //   · Choji     — +HP% to your cards
 //   · Rock Lee  — +flat SPD to your cards
+//
+//  Uses custom combat emojis in result embeds.
 // ─────────────────────────────────────────────
 
 const {
@@ -21,7 +23,10 @@ const {
 } = require('discord.js');
 const { q, giveExpToCard }   = require('../database');
 const { CHARACTERS }         = require('../data/characters');
-const { COLORS, E, ARENA_DIFFICULTIES, ARENA_ATTEMPTS_PER_DAY, MASTERY } = require('../config');
+const {
+  COLORS, E, COMBAT_EMOJIS,
+  ARENA_DIFFICULTIES, ARENA_ATTEMPTS_PER_DAY, MASTERY,
+} = require('../config');
 const { checkRegistered }    = require('../utils/guards');
 const { getEffectiveStats, rarityBadge, starsDisplay } = require('../utils/cardUtils');
 const { simulateBattle, makeCombatant } = require('../utils/battleEngine');
@@ -175,10 +180,26 @@ module.exports = {
           ? `${E.win} Victory! — ${diff.emoji} ${diff.label}`
           : `${E.loss} Defeat — ${diff.emoji} ${diff.label}`)
         .addFields(
-          { name: '🤖 Enemy Team',     value: enemySummary,                                                           inline: true },
-          { name: `${E.exp} EXP / card`, value: expLabel,                                                            inline: true },
-          { name: `${E.ryo} Ryo`,      value: `**+${ryoReward.toLocaleString()}** (total: ${updatedUser.ryo.toLocaleString()})`, inline: true },
-          { name: `${E.arena} Attempts`, value: `**${updatedUser.arena_attempts}** / ${ARENA_ATTEMPTS_PER_DAY} remaining`, inline: true },
+          {
+            name:   '🤖 Enemy Team',
+            value:  enemySummary,
+            inline: true,
+          },
+          {
+            name:   `${COMBAT_EMOJIS.attack} EXP / card`,
+            value:  expLabel,
+            inline: true,
+          },
+          {
+            name:   `${COMBAT_EMOJIS.ryo} Ryo`,
+            value:  `**+${ryoReward.toLocaleString()}** (total: ${updatedUser.ryo.toLocaleString()})`,
+            inline: true,
+          },
+          {
+            name:   `${E.arena} Attempts`,
+            value:  `**${updatedUser.arena_attempts}** / ${ARENA_ATTEMPTS_PER_DAY} remaining`,
+            inline: true,
+          },
         )
         .setFooter({ text: `Battle ended in ${roundCount} round${roundCount !== 1 ? 's' : ''}` });
 
