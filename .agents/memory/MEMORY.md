@@ -1,0 +1,1 @@
+- [Naruto Bot Architecture](naruto-bot.md) — full rebuild Jul 2026; IST reset, AI arena, prestige resets L+M, 4-card teams, damage ranges
