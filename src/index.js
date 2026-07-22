@@ -9,14 +9,21 @@ const path = require('path');
 const http = require('http');
 const { PREFIXES, PULL_PREFIXES } = require('./config');
 
-// ── Keep-alive web server ──────────────────────
-// Serves a minimal page so UptimeRobot can ping this
-// URL every 5 minutes to keep the workspace awake.
+// ── Web server ─────────────────────────────────
+// Serves a status page (and acts as keep-alive for UptimeRobot).
+const htmlPath = path.join(__dirname, 'web', 'index.html');
 http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Naruto Bot is online.');
+  fs.readFile(htmlPath, (err, data) => {
+    if (err) {
+      res.writeHead(500);
+      res.end('Error loading page.');
+    } else {
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(data);
+    }
+  });
 }).listen(5000, () => {
-  console.log('  🌐 Keep-alive server running on port 5000');
+  console.log('  🌐 Web server running on port 5000');
 });
 
 // ── Discord client ─────────────────────────────
