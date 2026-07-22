@@ -9,6 +9,18 @@ const { PULLS_PER_PERIOD, ARENA_ATTEMPTS_PER_DAY, STARTING_RYO, STARTING_RAMEN }
 const db = new Database(path.join(__dirname, '..', 'data.db'));
 db.exec('PRAGMA foreign_keys = ON');
 
+// node-sqlite3-wasm only binds the first spread argument; wrap prepare()
+// so every statement receives args as an array — no call-sites need changing.
+const _prepare = db.prepare.bind(db);
+db.prepare = (sql) => {
+  const stmt = _prepare(sql);
+  return {
+    run: (...args) => stmt.run(args),
+    get: (...args) => stmt.get(args),
+    all: (...args) => stmt.all(args),
+  };
+};
+
 // ── Schema ────────────────────────────────────
 
 db.exec(`
