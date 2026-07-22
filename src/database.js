@@ -58,6 +58,15 @@ db.exec(`
   );
 
   CREATE INDEX IF NOT EXISTS idx_teams_user ON teams(user_id);
+
+  CREATE TABLE IF NOT EXISTS fragment_inventory (
+    user_id      TEXT    NOT NULL REFERENCES users(discord_id) ON DELETE CASCADE,
+    character_id TEXT    NOT NULL,
+    count        INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (user_id, character_id)
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_fraginv_user ON fragment_inventory(user_id);
 `);
 
 // ── Safe migrations ───────────────────────────

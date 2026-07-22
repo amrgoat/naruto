@@ -1,0 +1,46 @@
+// ─────────────────────────────────────────────
+//  admin/resetdaily.js  —  N resetdaily [@user]
+//  Resets the daily claim timer for a user.
+//  Requires: Administrator permission.
+// ─────────────────────────────────────────────
+
+const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { q }      = require('../../database');
+const { COLORS } = require('../../config');
+const { errorEmbed, successEmbed } = require('../../utils/embeds');
+
+module.exports = {
+  name: 'resetdaily',
+  description: '[Admin] Reset a user\'s daily claim timer · N resetdaily [@user]',
+
+  async execute(message, args) {
+    // ── Admin check ────────────────────────────
+    if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
+      return message.reply({
+        embeds: [errorEmbed('❌ You need the **Administrator** permission to use this command.')],
+      });
+    }
+
+    // ── Resolve target ─────────────────────────
+    const mention = message.mentions.users.first();
+    const target  = mention ?? message.author;
+
+    const user = q.getUser.get(target.id);
+    if (!user) {
+      return message.reply({
+        embeds: [errorEmbed(`**${target.username}** doesn't have an account yet.`)],
+      });
+    }
+
+    q.setDailyReset.run(0, target.id);
+
+    return message.reply({
+      embeds: [new EmbedBuilder()
+        .setColor(COLORS.success)
+        .setDescription(
+          `✅ Daily timer reset for **${target.username}**.\n` +
+          `They can now claim \`N daily\` immediately.`
+        )],
+    });
+  },
+};
