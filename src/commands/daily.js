@@ -19,7 +19,7 @@ const { COLORS, DAILY_REWARDS, COMBAT_EMOJIS } = require('../config');
 const { checkRegistered }       = require('../utils/guards');
 const { resolvePassiveBonuses } = require('../utils/passives');
 const { errorEmbed }            = require('../utils/embeds');
-const { formatCountdown } = require('../utils/timeUtils');
+const { formatCountdown, todayISTMidnightUTC } = require('../utils/timeUtils');
 
 const JACKPOT_RYO    = 10_000;
 const JACKPOT_CHANCE = 0.01; // 1%
@@ -95,7 +95,7 @@ module.exports = {
     q.setDailyReset.run(now, userId);
 
     const freshUser    = q.getUser.get(userId);
-    const nextMidnight = todayMidnight + 24 * 60 * 60 * 1000;
+    const nextMidnight = todayISTMidnightUTC() + 24 * 60 * 60 * 1000;
     const divider      = '━━━━━━━━━━━━━━━━━━';
 
     // ── Base rewards section ───────────────────
