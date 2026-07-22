@@ -19,7 +19,7 @@ const { COLORS, DAILY_REWARDS, COMBAT_EMOJIS } = require('../config');
 const { checkRegistered }       = require('../utils/guards');
 const { resolvePassiveBonuses } = require('../utils/passives');
 const { errorEmbed }            = require('../utils/embeds');
-const { todayISTMidnightUTC, formatCountdown } = require('../utils/timeUtils');
+const { formatCountdown } = require('../utils/timeUtils');
 
 const JACKPOT_RYO    = 10_000;
 const JACKPOT_CHANCE = 0.01; // 1%
@@ -52,17 +52,23 @@ module.exports = {
     let user = checkRegistered(message);
     if (!user) return;
 
-    const now           = Date.now();
-    const todayMidnight = todayISTMidnightUTC(now);
+    const now        = Date.now();
+    const COOLDOWN   = 24 * 60 * 60 * 1000; // 24 hours
+    const lastClaim  = user.daily_reset_at;
+    const elapsed    = now - lastClaim;
 
     // ── Cooldown check ─────────────────────────
-    if (user.daily_reset_at >= todayMidnight) {
-      const nextMidnight = todayMidnight + 24 * 60 * 60 * 1000;
+    if (lastClaim > 0 && elapsed < COOLDOWN) {
+      const remaining = COOLDOWN - elapsed;
       return message.reply({
-        embeds: [errorEmbed(
-          `You already claimed your daily rewards.\n` +
-          `Come back in **${formatCountdown(nextMidnight - now)}**.`
-        )],
+        embeds: [new EmbedBuilder()
+          .setColor(COLORS.default)
+          .setTitle('🎁 Daily Rewards')
+          .setDescription(
+            `You already collected your daily rewards.\n\n` +
+            `⏳ Try again in **${formatCountdown(remaining)}**`
+          )
+          .setFooter({ text: 'Resets 24 hours after your last claim' })],
       });
     }
 
@@ -86,7 +92,7 @@ module.exports = {
     q.addRamen.run(ramen, userId);
     q.addChakraEssence.run(essence, userId);
     q.addExpScrolls.run(expScrolls, userId);
-    q.setDailyReset.run(todayMidnight, userId);
+    q.setDailyReset.run(now, userId);
 
     const freshUser    = q.getUser.get(userId);
     const nextMidnight = todayMidnight + 24 * 60 * 60 * 1000;
