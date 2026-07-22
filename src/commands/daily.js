@@ -19,7 +19,7 @@ const { COLORS, DAILY_REWARDS, COMBAT_EMOJIS } = require('../config');
 const { checkRegistered }       = require('../utils/guards');
 const { resolvePassiveBonuses } = require('../utils/passives');
 const { errorEmbed }            = require('../utils/embeds');
-const { formatCountdown, todayISTMidnightUTC } = require('../utils/timeUtils');
+const { formatCountdown } = require('../utils/timeUtils');
 
 const JACKPOT_RYO    = 10_000;
 const JACKPOT_CHANCE = 0.01; // 1%
@@ -94,8 +94,8 @@ module.exports = {
     q.addExpScrolls.run(expScrolls, userId);
     q.setDailyReset.run(now, userId);
 
-    const freshUser    = q.getUser.get(userId);
-    const nextMidnight = todayISTMidnightUTC() + 24 * 60 * 60 * 1000;
+    const freshUser  = q.getUser.get(userId);
+    const nextClaim  = now + COOLDOWN;
     const divider      = '━━━━━━━━━━━━━━━━━━';
 
     // ── Base rewards section ───────────────────
@@ -151,7 +151,7 @@ module.exports = {
           inline: true,
         },
       )
-      .setFooter({ text: `Claim Again · ${formatCountdown(nextMidnight - now)}` });
+      .setFooter({ text: `Claim Again · ${formatCountdown(nextClaim - now)}` });
 
     // ── Info button ────────────────────────────
     const row = new ActionRowBuilder().addComponents(
