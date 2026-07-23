@@ -8,8 +8,8 @@ const PULL_PREFIXES = ['Npull', 'Ｎpull', 'npull', 'ｎpull']; // No-space pull
 
 // ── Emojis ────────────────────────────────────
 const E = {
-  ryo:      '💴',
-  ramen:    '🍜',
+  ryo:      '<:ryo:1529490447381299230>',
+  ramen:    '<:ramen:1529823076118691890>',
   pull:     '📜',
   attack:   '⚔️',
   health:   '❤️',
@@ -48,19 +48,19 @@ const COMBAT_EMOJIS = {
 // SS and UR exist in the system but are locked from pulls
 // thumb: provided rarity badge image URL shown as embed thumbnail
 const RARITIES = {
-  D:  { label: 'D-Rank',  emoji: '⬛', color: 0xB0B0B0, pullWeight: 40, locked: false,
+  D:  { label: 'D-Rank',  emoji: '<:Drarity:1529858391210721330>', color: 0xB0B0B0, pullWeight: 40, locked: false,
         thumb: 'https://cdn.discordapp.com/attachments/1528819900402106378/1528820114110288033/d.png?ex=6a5fb02f&is=6a5e5eaf&hm=8210d61deadbe0165a3543b43116c15e82602f8e8628409636ff82e7bcaa2d6c&' },
-  C:  { label: 'C-Rank',  emoji: '⬜', color: 0x47C74B, pullWeight: 30, locked: false,
+  C:  { label: 'C-Rank',  emoji: '<:Crarity:1529858387301367898>', color: 0x47C74B, pullWeight: 30, locked: false,
         thumb: 'https://cdn.discordapp.com/attachments/1528819900402106378/1528820113623486564/c.png?ex=6a5fb02f&is=6a5e5eaf&hm=8ecc0eaa5032989e913939f5dd88c7e30782f99bcb3a6aff66a7f734d13228e6&' },
-  B:  { label: 'B-Rank',  emoji: '🟩', color: 0x3FA9FF, pullWeight: 20, locked: false,
+  B:  { label: 'B-Rank',  emoji: '<:Brarity:1529858383069581342>', color: 0x3FA9FF, pullWeight: 20, locked: false,
         thumb: 'https://cdn.discordapp.com/attachments/1528819900402106378/1528820113279815882/b.png?ex=6a5fb02f&is=6a5e5eaf&hm=d02efdc2ad0df3816aaf357a1cb2923dd604b0f2aa99ca47233dfc5b60d51143&' },
-  A:  { label: 'A-Rank',  emoji: '🟦', color: 0xA85FFF, pullWeight: 8,  locked: false,
+  A:  { label: 'A-Rank',  emoji: '<:Ararity:1529858378866753577>', color: 0xA85FFF, pullWeight: 8,  locked: false,
         thumb: 'https://cdn.discordapp.com/attachments/1528819900402106378/1528820112864579677/a.png?ex=6a5fb02f&is=6a5e5eaf&hm=8bc34eb624830a6394fdffe54128b2a175966b1ac209c3bb64777e24d677c94b&' },
-  S:  { label: 'S-Rank',  emoji: '🟪', color: 0xFFC82E, pullWeight: 2,  locked: false,
+  S:  { label: 'S-Rank',  emoji: '<:Srarity:1529858395161497670>', color: 0xFFC82E, pullWeight: 2,  locked: false,
         thumb: 'https://cdn.discordapp.com/attachments/1528819900402106378/1528820114592628937/s.png?ex=6a5fb02f&is=6a5e5eaf&hm=c6ad8ba10a094c7d5ea7ed1de5f38be9c3896eaed50e446b6610ddd7a723ba12&' },
-  SS: { label: 'SS-Rank', emoji: '🟨', color: 0xF44336, pullWeight: 0,  locked: true,
+  SS: { label: 'SS-Rank', emoji: '<:SSrarity:1529858398378786858>', color: 0xF44336, pullWeight: 0,  locked: true,
         thumb: 'https://cdn.discordapp.com/attachments/1528819900402106378/1528820115024511056/ss.png?ex=6a5fb02f&is=6a5e5eaf&hm=9c255f07266b0af975b5d8629ecd6b045a8bd1bb48a05d3521957781187be5d1&' },
-  UR: { label: 'UR',      emoji: '🔴', color: 0xFFF7EC, pullWeight: 0,  locked: true,
+  UR: { label: 'UR',      emoji: '<:URrarity:1529858402174636174', color: 0xFFF7EC, pullWeight: 0,  locked: true,
         thumb: 'https://cdn.discordapp.com/attachments/1528819900402106378/1528820115762577590/ur.png?ex=6a5fb02f&is=6a5e5eaf&hm=f51091992090657ee027541fed0445d2a9e8cdd50fdc4af7d42bd014b4a7eb48&' },
 };
 
@@ -103,11 +103,11 @@ const PRESTIGE_STAT_BONUS = 0.20; // +20% per star, additive
 // ── Pull System ───────────────────────────────
 const PULLS_PER_PERIOD = 12;
 const PULL_COOLDOWN_MS  = 3_000; // 3 seconds
-const STARTING_RAMEN   = 3;
-const STARTING_RYO     = 0;
+const STARTING_RAMEN   = 0;
+const STARTING_RYO     = 5000;
 
 // ── Arena ─────────────────────────────────────
-const ARENA_ATTEMPTS_PER_DAY = 10;
+const ARENA_ATTEMPTS_PER_DAY = 5;
 
 const ARENA_DIFFICULTIES = {
   easy: {
