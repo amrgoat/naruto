@@ -218,6 +218,36 @@ const q = {
   clearTeam: db.prepare(`DELETE FROM teams WHERE user_id = ?`),
 
   teamSize: db.prepare(`SELECT COUNT(*) as count FROM teams WHERE user_id = ?`),
+
+  // ── Fragment Inventory ─────────────────────
+  /** All fragment entries for a user with count > 0, sorted by count desc */
+  getFragInv: db.prepare(`
+    SELECT character_id, count FROM fragment_inventory
+    WHERE user_id = ? AND count > 0
+    ORDER BY count DESC
+  `),
+
+  /** Single entry for one user+character */
+  getFragEntry: db.prepare(`
+    SELECT count FROM fragment_inventory WHERE user_id = ? AND character_id = ?
+  `),
+
+  /** Add 1 fragment (capped at 500). Upserts the row. */
+  addFrag: db.prepare(`
+    INSERT INTO fragment_inventory (user_id, character_id, count) VALUES (?, ?, 1)
+    ON CONFLICT(user_id, character_id) DO UPDATE SET count = MIN(count + 1, 500)
+  `),
+
+  /** Deduct N fragments */
+  deductFrag: db.prepare(`
+    UPDATE fragment_inventory SET count = count - ? WHERE user_id = ? AND character_id = ?
+  `),
+
+  /** Directly set fragment count (admin use) */
+  setFrag: db.prepare(`
+    INSERT INTO fragment_inventory (user_id, character_id, count) VALUES (?, ?, ?)
+    ON CONFLICT(user_id, character_id) DO UPDATE SET count = MIN(count + ?, 500)
+  `),
 };
 
 // ── getUserCards doesn't have rarity_order column — fix with a view-style query

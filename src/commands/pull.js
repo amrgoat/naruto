@@ -90,9 +90,10 @@ module.exports = {
 
     if (existing) {
       isDuplicate = true;
-      // Duplicates always convert to Chakra Essence (universal)
+      // Duplicates give Chakra Essence + 1 fragment in the fragment inventory
       dupEssence = ESSENCE_PER_DUP[char.rarity] ?? 20;
       q.addChakraEssence.run(dupEssence, userId);
+      q.addFrag.run(userId, characterId);   // +1 frag (capped at 500)
       card = existing;
     } else {
       // New card

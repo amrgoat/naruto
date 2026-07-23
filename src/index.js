@@ -30,14 +30,19 @@ const client = new Client({
 
 // ── Load commands ──────────────────────────────
 client.commands = new Collection();
-const commandsDir = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsDir).filter(f => f.endsWith('.js'));
 
-for (const file of commandFiles) {
-  const cmd = require(path.join(commandsDir, file));
-  client.commands.set(cmd.name, cmd);
-  console.log(`  ✓ Loaded command: ${cmd.name}`);
+function loadCommandDir(dir, tag = '') {
+  if (!fs.existsSync(dir)) return;
+  const files = fs.readdirSync(dir).filter(f => f.endsWith('.js'));
+  for (const file of files) {
+    const cmd = require(path.join(dir, file));
+    client.commands.set(cmd.name, cmd);
+    console.log(`  ✓ Loaded command: ${tag}${cmd.name}`);
+  }
 }
+
+loadCommandDir(path.join(__dirname, 'commands'));
+loadCommandDir(path.join(__dirname, 'commands', 'admin'), '[admin] ');
 
 // ── Prefix parser ──────────────────────────────
 /**
