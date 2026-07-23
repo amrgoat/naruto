@@ -51,7 +51,7 @@ module.exports = {
     if (current >= 3) {
       return message.reply({
         embeds: [new EmbedBuilder()
-          .setColor(COLORS.mastery)
+          .setColor(COLORS.EMBED_COLOR)
           .setTitle(`${E.mastery} Max Mastery`)
           .setDescription(
             `**${char.name}** has already reached **M3** — the highest Mastery tier.\n\n` +
@@ -92,7 +92,7 @@ module.exports = {
     const stars = starsDisplay(card.stars);
 
     const previewEmbed = new EmbedBuilder()
-      .setColor(COLORS.mastery)
+      .setColor(COLORS.EMBED_COLOR)
       .setTitle(`${E.mastery} Mastery Upgrade — M${current} → M${next}`)
       .setDescription(
         `${rarityBadge(char.rarity)} **${char.name}**${stars ? `  ${stars}` : ''}\n\n` +
@@ -129,7 +129,7 @@ module.exports = {
     collector.on('collect', async interaction => {
       if (interaction.customId === `mastery_cancel_${card.id}`) {
         return interaction.update({
-          embeds: [new EmbedBuilder().setColor(COLORS.info).setDescription('Mastery upgrade cancelled.')],
+          embeds: [new EmbedBuilder().setColor(COLORS.EMBED_COLOR).setDescription('Mastery upgrade cancelled.')],
           components: [],
         });
       }
@@ -151,7 +151,7 @@ module.exports = {
 
       return interaction.update({
         embeds: [new EmbedBuilder()
-          .setColor(COLORS.mastery)
+          .setColor(COLORS.EMBED_COLOR)
           .setTitle(`${E.mastery} Mastery Upgraded!`)
           .setDescription(
             `**${char.name}** advanced to **M${next}**!\n\n` +

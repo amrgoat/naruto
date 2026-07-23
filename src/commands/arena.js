@@ -88,7 +88,7 @@ module.exports = {
 
     // ── Difficulty selector ────────────────────
     const selectorEmbed = new EmbedBuilder()
-      .setColor(COLORS.arena)
+      .setColor(COLORS.EMBED_COLOR)
       .setTitle(`${E.arena} Arena`)
       .setDescription(
         `**${user.arena_attempts}** / **${ARENA_ATTEMPTS_PER_DAY}** attempts remaining.\n\n` +
@@ -175,7 +175,7 @@ module.exports = {
         : `**+${expReward.toLocaleString()}**`;
 
       const resultEmbed = new EmbedBuilder()
-        .setColor(playerWon ? COLORS.success : COLORS.error)
+        .setColor(COLORS.EMBED_COLOR)
         .setTitle(playerWon
           ? `${E.win} Victory! — ${diff.emoji} ${diff.label}`
           : `${E.loss} Defeat — ${diff.emoji} ${diff.label}`)

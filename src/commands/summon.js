@@ -72,7 +72,7 @@ module.exports = {
       const rarity = RARITIES[char.rarity] ?? RARITIES.D;
       return message.reply({
         embeds: [new EmbedBuilder()
-          .setColor(COLORS.error)
+          .setColor(COLORS.EMBED_COLOR)
           .setDescription(
             `${rarity.emoji} **${char.name}**\n\n` +
             `You need **${SUMMON_COST} ${E.fragment} fragments** to summon this card.\n` +

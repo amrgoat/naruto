@@ -55,7 +55,7 @@ module.exports = {
       q.setPremium.run(0, 0, target.id);
       return message.reply({
         embeds: [new EmbedBuilder()
-          .setColor(COLORS.error)
+          .setColor(COLORS.EMBED_COLOR)
           .setDescription(`❌ Premium removed from **${target.username}**.`)],
       });
     }
@@ -77,7 +77,7 @@ module.exports = {
 
     return message.reply({
       embeds: [new EmbedBuilder()
-        .setColor(COLORS.prestige)
+        .setColor(COLORS.EMBED_COLOR)
         .setDescription(`✅ **${target.username}** is now a Jinchūriki.\nExpires: ${expLabel}`)],
     });
   },

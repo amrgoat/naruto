@@ -39,7 +39,7 @@ module.exports = {
     if (!args.length) {
       return message.reply({
         embeds: [new EmbedBuilder()
-          .setColor(COLORS.info)
+          .setColor(COLORS.EMBED_COLOR)
           .setDescription('`n craft <amount> <card>`')],
       });
     }
@@ -56,7 +56,7 @@ module.exports = {
     if (!cardName) {
       return message.reply({
         embeds: [new EmbedBuilder()
-          .setColor(COLORS.info)
+          .setColor(COLORS.EMBED_COLOR)
           .setDescription('`n craft <amount> <card>`')],
       });
     }

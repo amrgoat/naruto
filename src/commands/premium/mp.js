@@ -8,7 +8,7 @@ const { EmbedBuilder }   = require('discord.js');
 const { q }              = require('../../database');
 const { CHARACTERS, PULL_POOL } = require('../../data/characters');
 const {
-  RARITIES, PULL_POOL_RARITIES, ESSENCE_PER_DUP,
+  RARITIES, PULL_POOL_RARITIES, ESSENCE_PER_DUP, COLORS,
 } = require('../../config');
 const { checkRegistered }  = require('../../utils/guards');
 const { errorEmbed }       = require('../../utils/embeds');
@@ -50,7 +50,7 @@ module.exports = {
     if (!hasPremium(user)) {
       return message.reply({
         embeds: [new EmbedBuilder()
-          .setColor(0x9B59B6)
+          .setColor(COLORS.EMBED_COLOR)
           .setDescription('Only **Jinchūriki** can use this command.')],
       });
     }
@@ -119,7 +119,7 @@ module.exports = {
 
     return message.reply({
       embeds: [new EmbedBuilder()
-        .setColor(0x9B59B6)
+        .setColor(COLORS.EMBED_COLOR)
         .setTitle(`⚡ MP Used — ${pullsToUse} Pull${pullsToUse !== 1 ? 's' : ''}`)
         .setDescription(truncated)
         .setFooter({ text: '~strikethrough~ = duplicate → converted to Essence' })],

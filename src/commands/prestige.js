@@ -70,7 +70,7 @@ module.exports = {
     if (card.stars >= MAX_STARS) {
       return message.reply({
         embeds: [new EmbedBuilder()
-          .setColor(COLORS.prestige)
+          .setColor(COLORS.EMBED_COLOR)
           .setTitle(`${E.prestige} Max Stars Reached!`)
           .setDescription(
             `**${char.name}** already has **${starsDisplay(MAX_STARS)}** — the maximum!\n\n` +
@@ -106,7 +106,7 @@ module.exports = {
     const newBonus     = `+${(nextStar   * PRESTIGE_STAT_BONUS * 100).toFixed(0)}%`;
 
     const previewEmbed = new EmbedBuilder()
-      .setColor(COLORS.prestige)
+      .setColor(COLORS.EMBED_COLOR)
       .setTitle(`${E.prestige} Prestige — ⭐${nextStar}`)
       .setDescription([
         `${rarityBadge(char.rarity)} **${char.name}**`,
@@ -147,7 +147,7 @@ module.exports = {
     collector.on('collect', async interaction => {
       if (interaction.customId === `prestige_cancel_${card.id}`) {
         return interaction.update({
-          embeds: [new EmbedBuilder().setColor(COLORS.info).setDescription('Prestige cancelled.')],
+          embeds: [new EmbedBuilder().setColor(COLORS.EMBED_COLOR).setDescription('Prestige cancelled.')],
           components: [],
         });
       }
@@ -169,7 +169,7 @@ module.exports = {
 
       return interaction.update({
         embeds: [new EmbedBuilder()
-          .setColor(COLORS.prestige)
+          .setColor(COLORS.EMBED_COLOR)
           .setTitle(`${E.prestige} Prestige Successful — ${starsDisplay(nextStar)}`)
           .setDescription(
             `**${char.name}** is now **${starsDisplay(nextStar)}**!\n\n` +

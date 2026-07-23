@@ -40,7 +40,7 @@ module.exports = {
 
     return message.reply({
       embeds: [new EmbedBuilder()
-        .setColor(COLORS.ramen)
+        .setColor(COLORS.EMBED_COLOR)
         .setTitle(`${E.ramen} Delicious!`)
         .setDescription(
           `The ramen restored your energy.\n` +

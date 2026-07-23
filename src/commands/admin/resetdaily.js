@@ -31,7 +31,7 @@ module.exports = {
 
     return message.reply({
       embeds: [new EmbedBuilder()
-        .setColor(COLORS.success)
+        .setColor(COLORS.EMBED_COLOR)
         .setDescription(
           `✅ Daily timer reset for **${target.username}**.\n` +
           `They can now claim \`N daily\` immediately.`

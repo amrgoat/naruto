@@ -21,7 +21,7 @@ module.exports = {
     if (result.changes === 0) {
       return message.reply({
         embeds: [new EmbedBuilder()
-          .setColor(COLORS.info)
+          .setColor(COLORS.EMBED_COLOR)
           .setTitle(`${E.leaf} Already Registered`)
           .setDescription(
             `You already have a ninja profile, **${username}**.\n` +
@@ -35,7 +35,7 @@ module.exports = {
 
     return message.reply({
       embeds: [new EmbedBuilder()
-        .setColor(COLORS.success)
+        .setColor(COLORS.EMBED_COLOR)
         .setTitle(`${E.leaf} Welcome to the Hidden Leaf!`)
         .setDescription(
           `Your ninja record has been created, **${username}**.\n\n` +

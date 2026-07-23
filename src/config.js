@@ -172,6 +172,10 @@ function expToNextLevel(level) {
 
 // ── Colors ────────────────────────────────────
 const COLORS = {
+  // ← Change EMBED_COLOR to restyle every general embed in the bot at once.
+  // Card embeds (n pull, n ci, n mci) always use the card's rarity color instead.
+  EMBED_COLOR: 0xE74C3C,  // red
+
   default:  0x1A1A2E,
   success:  0x2ECC71,
   error:    0xE74C3C,

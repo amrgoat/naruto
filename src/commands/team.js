@@ -47,7 +47,7 @@ function buildTeamEmbed(userId, username) {
   }
 
   return new EmbedBuilder()
-    .setColor(COLORS.default)
+    .setColor(COLORS.EMBED_COLOR)
     .setTitle(`${E.team} ${username}'s Team`)
     .setDescription(lines.join('\n\n') || '*No cards in team.*')
     .setFooter({ text: `${teamCards.length} / ${MAX_TEAM} slots filled  ·  N team add <name>` });

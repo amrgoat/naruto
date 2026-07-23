@@ -42,7 +42,7 @@ function buildPage(entries, page, username, subtitle) {
   const totalCap    = entries.length * MAX_FRAGS;
 
   return new EmbedBuilder()
-    .setColor(COLORS.info)
+    .setColor(COLORS.EMBED_COLOR)
     .setTitle(`${E.fragment} ${username}'s Fragment Inventory${subtitle ? `  ·  ${subtitle}` : ''}`)
     .setDescription(lines.join('\n') || '*Nothing here.*')
     .setFooter({
@@ -109,7 +109,7 @@ module.exports = {
     if (!raw.length) {
       return message.reply({
         embeds: [new EmbedBuilder()
-          .setColor(COLORS.info)
+          .setColor(COLORS.EMBED_COLOR)
           .setDescription(
             `${E.fragment} **No fragments yet!**\n\n` +
             `Earn fragments by pulling characters you already own.\n` +
@@ -135,7 +135,7 @@ module.exports = {
         const rar = RARITIES[rarityKey];
         return message.reply({
           embeds: [new EmbedBuilder()
-            .setColor(COLORS.info)
+            .setColor(COLORS.EMBED_COLOR)
             .setDescription(`${rar.emoji} No **${rar.label}** fragments in your inventory.`)],
         });
       }
@@ -153,7 +153,7 @@ module.exports = {
     if (!match) {
       return message.reply({
         embeds: [new EmbedBuilder()
-          .setColor(COLORS.info)
+          .setColor(COLORS.EMBED_COLOR)
           .setDescription(`${E.fragment} No fragments found for **"${query}"**.`)],
       });
     }

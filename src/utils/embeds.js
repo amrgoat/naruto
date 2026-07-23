@@ -174,15 +174,15 @@ function buildRosterEmbed(char, footerText) {
 // ─────────────────────────────────────────────
 
 function errorEmbed(description) {
-  return new EmbedBuilder().setColor(COLORS.error).setDescription(`${description}`);
+  return new EmbedBuilder().setColor(COLORS.EMBED_COLOR).setDescription(`${description}`);
 }
 
 function successEmbed(description) {
-  return new EmbedBuilder().setColor(COLORS.success).setDescription(`${description}`);
+  return new EmbedBuilder().setColor(COLORS.EMBED_COLOR).setDescription(`${description}`);
 }
 
 function infoEmbed(description) {
-  return new EmbedBuilder().setColor(COLORS.info).setDescription(`${description}`);
+  return new EmbedBuilder().setColor(COLORS.EMBED_COLOR).setDescription(`${description}`);
 }
 
 module.exports = {

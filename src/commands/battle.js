@@ -56,7 +56,7 @@ module.exports = {
 
     // ── Send challenge ─────────────────────────
     const challengeEmbed = new EmbedBuilder()
-      .setColor(COLORS.arena)
+      .setColor(COLORS.EMBED_COLOR)
       .setTitle(`${E.battle} Battle Challenge!`)
       .setDescription(
         `**${message.author.username}** has challenged **${target.username}** to a friendly battle!\n\n` +
@@ -93,7 +93,7 @@ module.exports = {
         return interaction.update({
           content: null,
           embeds: [new EmbedBuilder()
-            .setColor(COLORS.info)
+            .setColor(COLORS.EMBED_COLOR)
             .setDescription(`**${target.username}** declined the challenge.`)],
           components: [],
         });
@@ -133,7 +133,7 @@ module.exports = {
       if (log.length > 10) logDisplay.push(`*...+${log.length - 10} more rounds*`);
 
       const resultEmbed = new EmbedBuilder()
-        .setColor(COLORS.arena)
+        .setColor(COLORS.EMBED_COLOR)
         .setTitle(`${COMBAT_EMOJIS.attack} Battle Result`)
         .setDescription(logDisplay.join('\n') || '*No rounds recorded.*')
         .addFields(
@@ -155,7 +155,7 @@ module.exports = {
         reply.edit({
           content: null,
           embeds:  [new EmbedBuilder()
-            .setColor(COLORS.info)
+            .setColor(COLORS.EMBED_COLOR)
             .setDescription(`The battle challenge expired — **${target.username}** did not respond.`)],
           components: [],
         }).catch(() => {});

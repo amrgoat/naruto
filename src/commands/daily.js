@@ -57,7 +57,7 @@ module.exports = {
       const remaining = COOLDOWN - elapsed;
       return message.reply({
         embeds: [new EmbedBuilder()
-          .setColor(COLORS.default)
+          .setColor(COLORS.EMBED_COLOR)
           .setTitle('🎁 Daily Rewards')
           .setDescription(
             `You already collected your daily rewards.\n\n` +
@@ -112,7 +112,7 @@ module.exports = {
 
     return message.reply({
       embeds: [new EmbedBuilder()
-        .setColor(isBonus ? COLORS.prestige : 0x7C3AED)
+        .setColor(COLORS.EMBED_COLOR)
         .setTitle(title)
         .setDescription(lines.join('\n'))
         .setFooter({ text: 'You can claim daily again in 24hr' })],

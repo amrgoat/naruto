@@ -12,7 +12,7 @@ module.exports = {
   async execute(message) {
     const embed = new EmbedBuilder()
       .setTitle('Naruto Bot — Commands')
-      .setColor(COLORS.default)
+      .setColor(COLORS.EMBED_COLOR)
       .addFields(
         {
           name: 'General',

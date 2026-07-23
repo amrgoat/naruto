@@ -11,13 +11,13 @@ module.exports = {
   description: 'Check bot latency.',
 
   async execute(message, _args, client) {
-    const sent    = await message.reply({ embeds: [new EmbedBuilder().setColor(COLORS.info).setDescription('Pinging...')] });
+    const sent    = await message.reply({ embeds: [new EmbedBuilder().setColor(COLORS.EMBED_COLOR).setDescription('Pinging...')] });
     const latency = sent.createdTimestamp - message.createdTimestamp;
     const ws      = Math.round(client.ws.ping);
 
     return sent.edit({
       embeds: [new EmbedBuilder()
-        .setColor(COLORS.info)
+        .setColor(COLORS.EMBED_COLOR)
         .setTitle(`${E.ping} Pong!`)
         .addFields(
           { name: '📨 Message Latency', value: `**${latency}ms**`, inline: true },

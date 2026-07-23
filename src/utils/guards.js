@@ -17,7 +17,7 @@ function checkRegistered(message) {
   if (!user) {
     message.reply({
       embeds: [new EmbedBuilder()
-        .setColor(COLORS.error)
+        .setColor(COLORS.EMBED_COLOR)
         .setDescription('You don\'t have an account yet.\nRun **N start** to begin your ninja journey.')],
     }).catch(() => {});
     return null;

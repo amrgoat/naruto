@@ -28,7 +28,7 @@ module.exports = {
     const boundTag       = '🔒';
 
     const embed = new EmbedBuilder()
-      .setColor(COLORS.default)
+      .setColor(COLORS.EMBED_COLOR)
       .setTitle(`${COMBAT_EMOJIS.ryo} ${username}'s Wallet`)
       .addFields(
         {

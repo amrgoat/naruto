@@ -75,7 +75,7 @@ module.exports = {
 
     return message.reply({
       embeds: [new EmbedBuilder()
-        .setColor(COLORS.success)
+        .setColor(COLORS.EMBED_COLOR)
         .setTitle('✅ Item Given')
         .setDescription(
           `${item.emoji} **+${amount.toLocaleString()} ${item.name}** → **${target.username}**\n\n` +

@@ -68,7 +68,7 @@ module.exports = {
 
     return message.reply({
       embeds: [new EmbedBuilder()
-        .setColor(COLORS.success)
+        .setColor(COLORS.EMBED_COLOR)
         .setDescription(
           `${timer.emoji} **${timer.label}** reset for **${target.username}**.\n` +
           timer.detail(target.id)

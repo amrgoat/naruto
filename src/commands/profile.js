@@ -77,7 +77,7 @@ module.exports = {
 
     // ── Build embed ───────────────────────────────
     const embed = new EmbedBuilder()
-      .setColor(COLORS.default)
+      .setColor(COLORS.EMBED_COLOR)
       .setTitle(`${E.leaf} ${user.username}'s Ninja Profile`)
       .setThumbnail(target.displayAvatarURL({ size: 128 }))
       .addFields(
