@@ -10,7 +10,7 @@ const http = require('http');
 const { PREFIXES }   = require('./config');
 const { sendBackup } = require('./utils/backup');
 
-const BACKUP_INTERVAL_MS = 6 * 60 * 60 * 1000; // every 6 hours
+const BACKUP_INTERVAL_MS = 1 * 60 * 60 * 1000; // every 1 hour
 
 // ── Keep-alive web server ──────────────────────
 http.createServer((req, res) => {
