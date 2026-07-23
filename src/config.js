@@ -37,11 +37,11 @@ const E = {
 // (Arena, PvP Battle, Raid, Damage Logs, Combat Result Embeds).
 // Do NOT use inside N ci, N mci, collection, shop, lab, or daily.
 const COMBAT_EMOJIS = {
-  attack:  '<:attack:1529384616513765456>',
-  health:  '<:health:1529384650781229140>',
-  speed:   '<:speed:1529384678270963773>',
-  ryo:     '<:ryo:1529384564001214484>',
-  essence: '<:essence:1529384777394688100>',
+  attack:  '<:attack:1529490433179123783>',
+  health:  '<:health:1529490384747757709>',
+  speed:   '<:speed:1529490438468272148>',
+  ryo:     '<:ryo:1529490447381299230>',
+  essence: '<:essence:1529490380905644143>',
 };
 
 // ── Rarity Definitions ────────────────────────
