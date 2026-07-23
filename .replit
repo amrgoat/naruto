@@ -33,3 +33,8 @@ run = ["node", "src/index.js"]
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[userenv]
+
+[userenv.shared]
+BACKUP_CHANNEL_ID = "1529836338642292857"

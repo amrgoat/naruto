@@ -7,7 +7,10 @@ const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const fs   = require('fs');
 const path = require('path');
 const http = require('http');
-const { PREFIXES } = require('./config');
+const { PREFIXES }   = require('./config');
+const { sendBackup } = require('./utils/backup');
+
+const BACKUP_INTERVAL_MS = 6 * 60 * 60 * 1000; // every 6 hours
 
 // ── Keep-alive web server ──────────────────────
 http.createServer((req, res) => {
@@ -89,6 +92,10 @@ client.once('clientReady', () => {
   console.log(`   Prefix  : N`);
   console.log(`   Servers : ${client.guilds.cache.size}`);
   console.log(`   Commands: ${client.commands.size}`);
+
+  // Send a startup backup, then schedule one every 6 hours
+  sendBackup(client, 'Startup');
+  setInterval(() => sendBackup(client, 'Auto'), BACKUP_INTERVAL_MS);
 });
 
 // ── Message handler ────────────────────────────
