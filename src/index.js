@@ -7,11 +7,9 @@ const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const fs   = require('fs');
 const path = require('path');
 const http = require('http');
-const { PREFIXES, PULL_PREFIXES } = require('./config');
+const { PREFIXES } = require('./config');
 
 // ── Keep-alive web server ──────────────────────
-// Serves a minimal page so UptimeRobot can ping this
-// URL every 5 minutes to keep the workspace awake.
 http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Naruto Bot is online.');
@@ -26,7 +24,13 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
   ],
+  // Never ping the user on replies by default
+  allowedMentions: { repliedUser: false },
 });
+
+// ── Universal cooldown (3 seconds per user) ────
+const cooldowns = new Map(); // userId -> lastCommandTimestamp
+const UNIVERSAL_COOLDOWN_MS = 3000;
 
 // ── Load commands ──────────────────────────────
 client.commands = new Collection();
@@ -42,31 +46,36 @@ function loadCommandDir(dir, tag = '') {
 }
 
 loadCommandDir(path.join(__dirname, 'commands'));
-loadCommandDir(path.join(__dirname, 'commands', 'admin'), '[admin] ');
+loadCommandDir(path.join(__dirname, 'commands', 'admin'),   '[admin] ');
+loadCommandDir(path.join(__dirname, 'commands', 'premium'), '[premium] ');
 
 // ── Prefix parser ──────────────────────────────
 /**
  * Parses a raw message content string into { command, args } or null.
  *
- * Supported forms (all case-handled by PREFIXES/PULL_PREFIXES):
- *   N pull, N pull, n pull, n pull   (general: prefix + command)
- *   Npull, N pull, npull, n pull     (direct pull aliases)
+ * Supported forms:
+ *   N pull, n pull, Ｎ pull, ｎ pull   (prefix + space + command)
+ *   Npull, npull, nhelp, etc.          (no-space — all commands)
  */
 function parseMessage(content) {
-  // Direct pull aliases first (Npull, npull, Ｎpull, ｎpull)
-  for (const p of PULL_PREFIXES) {
-    if (content.toLowerCase().startsWith(p.toLowerCase())) {
-      const rest = content.slice(p.length).trim();
-      return { command: 'pull', args: rest ? rest.split(/\s+/) : [] };
-    }
-  }
-
-  // General prefix aliases (N , n , Ｎ , ｎ )
-  for (const p of PREFIXES) {
+  // Spaced prefixes — try these first so "N help" works
+  const spacedPrefixes = ['N ', 'Ｎ ', 'n ', 'ｎ '];
+  for (const p of spacedPrefixes) {
     if (content.startsWith(p)) {
       const rest = content.slice(p.length).trim();
       if (!rest) return null;
       const [cmd, ...args] = rest.split(/\s+/);
+      return { command: cmd.toLowerCase(), args };
+    }
+  }
+
+  // No-space prefixes — "Nhelp", "npull", "nDaily", etc.
+  const noSpacePrefixes = ['N', 'Ｎ', 'n', 'ｎ'];
+  for (const p of noSpacePrefixes) {
+    if (content.startsWith(p) && content.length > p.length) {
+      const rest = content.slice(p.length);
+      if (!rest || !/^[a-zA-Z]/.test(rest)) continue;
+      const [cmd, ...args] = rest.trim().split(/\s+/);
       return { command: cmd.toLowerCase(), args };
     }
   }
@@ -84,7 +93,6 @@ client.once('clientReady', () => {
 
 // ── Message handler ────────────────────────────
 client.on('messageCreate', async message => {
-  // Ignore bots and DMs
   if (message.author.bot) return;
   if (!message.guild)     return;
 
@@ -95,6 +103,22 @@ client.on('messageCreate', async message => {
   const cmd = client.commands.get(command);
   if (!cmd) return;
 
+  const userId = message.author.id;
+  const now    = Date.now();
+
+  // ── Universal 3-second cooldown ────────────
+  const lastUsed = cooldowns.get(userId) ?? 0;
+  const sinceLast = now - lastUsed;
+  if (sinceLast < UNIVERSAL_COOLDOWN_MS) {
+    const remaining = UNIVERSAL_COOLDOWN_MS - sinceLast;
+    const timeStr = remaining < 1000 ? '**a second**' : `**${(remaining / 1000).toFixed(1)}s**`;
+    return message.reply({
+      content: `This command is under cooldown for ${timeStr}`,
+      allowedMentions: { repliedUser: false },
+    });
+  }
+  cooldowns.set(userId, now);
+
   try {
     await cmd.execute(message, args, client);
   } catch (err) {
@@ -104,6 +128,7 @@ client.on('messageCreate', async message => {
         embeds: [require('./utils/embeds').errorEmbed(
           'Something went wrong. Please try again.'
         )],
+        allowedMentions: { repliedUser: false },
       });
     } catch { /* swallow */ }
   }

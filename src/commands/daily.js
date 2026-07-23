@@ -1,47 +1,44 @@
 // ─────────────────────────────────────────────
 //  daily.js  —  N daily
-//  Claim daily rewards once per day (resets 12 AM IST).
-//  Base: 1000 Ryo · 1 Ramen · 30 Chakra Essence · 1 EXP Scroll
-//  Passives: Konohamaru (Ryo) · Teuchi (Ramen) · Tsunade (jackpot)
-//
-//  Design: premium embed showing base rewards + passive bonuses
-//  separately, with an ℹ️ info button listing passive cards.
+//  Claim daily rewards once every 24 hours.
+//  Base: 7,200 Ryo · 1 Ramen · 7 Chakra Essence
+//  Streak: every 5th day → 14,400 Ryo + 3 Ramen
 // ─────────────────────────────────────────────
 
-const {
-  EmbedBuilder,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-} = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { q }            = require('../database');
-const { COLORS, DAILY_REWARDS, COMBAT_EMOJIS } = require('../config');
+const { COLORS, COMBAT_EMOJIS } = require('../config');
 const { checkRegistered }       = require('../utils/guards');
-const { resolvePassiveBonuses } = require('../utils/passives');
 const { errorEmbed }            = require('../utils/embeds');
-const { formatCountdown } = require('../utils/timeUtils');
+const { formatCountdown }       = require('../utils/timeUtils');
 
-const JACKPOT_RYO    = 10_000;
-const JACKPOT_CHANCE = 0.01; // 1%
+const ARROW   = '<:arrowRed:1529820697172508712>';
+const RAMEN_E = '<:ramen:1529823076118691890>';
 
-// ── Passive card guide info ───────────────────
-const DAILY_PASSIVE_GUIDE = [
-  {
-    id: 'konohamaru',
-    name: 'Konohamaru',
-    desc: 'M1 +500 Ryo  ·  M2 +1,000 Ryo  ·  M3 +3,000 Ryo',
-  },
-  {
-    id: 'teuchi',
-    name: 'Teuchi',
-    desc: 'M1 +1 Ramen  ·  M2 +2 Ramen  ·  M3 +4 Ramen',
-  },
-  {
-    id: 'tsunade',
-    name: 'Tsunade',
-    desc: '1% chance to win +10,000 Ryo (jackpot)',
-  },
-];
+const BASE_RYO     = 7_200;
+const BASE_RAMEN   = 1;
+const BASE_ESSENCE = 7;
+
+const BONUS_RYO   = 14_400;  // double on 5th day
+const BONUS_RAMEN = 3;
+
+const COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours in ms
+
+/**
+ * Get IST calendar day number (seconds since epoch ÷ 86400, shifted +5:30).
+ */
+function istDay(timestampMs) {
+  return Math.floor((timestampMs / 1000 + 19800) / 86400);
+}
+
+/**
+ * Build a ★☆ stars string for the given streak.
+ * Shows position within the 5-day cycle (max 5 stars).
+ */
+function streakStars(streak) {
+  const pos = ((streak - 1) % 5) + 1;
+  return '★'.repeat(pos) + '☆'.repeat(5 - pos);
+}
 
 module.exports = {
   name: 'daily',
@@ -49,16 +46,14 @@ module.exports = {
 
   async execute(message) {
     const userId = message.author.id;
-    let user = checkRegistered(message);
+    const user   = checkRegistered(message);
     if (!user) return;
 
-    const now        = Date.now();
-    const COOLDOWN   = 24 * 60 * 60 * 1000; // 24 hours
-    const lastClaim  = user.daily_reset_at;
-    const elapsed    = now - lastClaim;
+    const now     = Date.now();
+    const elapsed = now - user.daily_reset_at;
 
     // ── Cooldown check ─────────────────────────
-    if (lastClaim > 0 && elapsed < COOLDOWN) {
+    if (user.daily_reset_at > 0 && elapsed < COOLDOWN) {
       const remaining = COOLDOWN - elapsed;
       return message.reply({
         embeds: [new EmbedBuilder()
@@ -68,132 +63,59 @@ module.exports = {
             `You already collected your daily rewards.\n\n` +
             `⏳ Try again in **${formatCountdown(remaining)}**`
           )
-          .setFooter({ text: 'Resets 24 hours after your last claim' })],
+          .setFooter({ text: 'You can claim daily again in 24hr' })],
       });
     }
 
-    // ── Passive bonuses ────────────────────────
-    const pb = resolvePassiveBonuses(userId);
+    // ── Streak calculation ─────────────────────
+    const today    = istDay(now);
+    const lastDay  = user.daily_streak_last_day ?? 0;
+    let   streak   = user.daily_streak ?? 0;
 
-    // ── Calculate rewards ──────────────────────
-    let ryo          = DAILY_REWARDS.ryo    + pb.dailyRyo;
-    let ramen        = DAILY_REWARDS.ramen  + pb.dailyRamen;
-    const essence    = DAILY_REWARDS.chakraEssence;
-    const expScrolls = DAILY_REWARDS.expScrolls;
-
-    let jackpotWon = false;
-    if (pb.tsunadeJackpot && Math.random() < JACKPOT_CHANCE) {
-      ryo       += JACKPOT_RYO;
-      jackpotWon = true;
+    if (lastDay === today - 1) {
+      // Consecutive day
+      streak += 1;
+    } else {
+      // Missed a day or first claim
+      streak = 1;
     }
+
+    // ── Bonus on every 5th day ─────────────────
+    const isBonus = streak % 5 === 0;
+    const ryo     = isBonus ? BONUS_RYO   : BASE_RYO;
+    const ramen   = isBonus ? BONUS_RAMEN : BASE_RAMEN;
+    const essence = BASE_ESSENCE;
 
     // ── Apply rewards ──────────────────────────
     q.addRyo.run(ryo, userId);
     q.addRamen.run(ramen, userId);
     q.addChakraEssence.run(essence, userId);
-    q.addExpScrolls.run(expScrolls, userId);
     q.setDailyReset.run(now, userId);
+    q.updateDailyStreak.run(streak, today, userId);
 
-    const freshUser  = q.getUser.get(userId);
-    const nextClaim  = now + COOLDOWN;
-    const divider      = '━━━━━━━━━━━━━━━━━━';
+    // ── Build embed ────────────────────────────
+    const stars = streakStars(streak);
+    const title = isBonus
+      ? '🌟 Bonus Day! Daily Rewards have been claimed successfully'
+      : 'Daily Rewards have been claimed successfully';
 
-    // ── Base rewards section ───────────────────
-    const baseLines = [
-      `${divider}`,
-      `**Base Rewards**`,
-      ``,
-      `${COMBAT_EMOJIS.ryo} +${DAILY_REWARDS.ryo.toLocaleString()} Ryo`,
-      `🍜 +${DAILY_REWARDS.ramen} Ramen`,
-      `${COMBAT_EMOJIS.essence} +${essence} Chakra Essence`,
+    const lines = [
+      `${ARROW} Ryo Obtained: **${ryo.toLocaleString()}** ${COMBAT_EMOJIS.ryo}`,
+      `${ARROW} Ramen Obtained: **${ramen}** ${RAMEN_E}`,
+      `${ARROW} Chakra Essence Obtained: **${essence}** ${COMBAT_EMOJIS.essence}`,
+      `${ARROW} Daily Streak: ${stars}`,
     ];
 
-    // ── Passive bonuses section ────────────────
-    const hasPassives = pb.dailyRyo > 0 || pb.dailyRamen > 0 || pb.tsunadeJackpot;
-    const passiveLines = [];
-
-    if (hasPassives) {
-      passiveLines.push(``, `${divider}`, `**Passive Bonuses**`, ``);
-
-      if (pb.dailyRyo > 0) {
-        passiveLines.push(`Konohamaru — ${COMBAT_EMOJIS.ryo} +${pb.dailyRyo.toLocaleString()} Ryo`);
-      }
-      if (pb.dailyRamen > 0) {
-        passiveLines.push(`Teuchi — 🍜 +${pb.dailyRamen} Ramen`);
-      }
-      if (jackpotWon) {
-        passiveLines.push(`Tsunade — ${COMBAT_EMOJIS.ryo} **✨ JACKPOT! +${JACKPOT_RYO.toLocaleString()} Ryo**`);
-      } else if (pb.tsunadeJackpot) {
-        passiveLines.push(`Tsunade — 1% jackpot *(not this time)*`);
-      }
+    if (isBonus) {
+      lines.push('', `🎉 **5-Day Streak Bonus!** Double Ryo + extra Ramen awarded.`);
     }
 
-    passiveLines.push(``, `${divider}`);
-
-    const embed = new EmbedBuilder()
-      .setColor(jackpotWon ? COLORS.prestige : 0x7C3AED)
-      .setTitle(jackpotWon ? '✨ JACKPOT! — Daily Rewards' : '🎁 Daily Rewards')
-      .setDescription([...baseLines, ...passiveLines].join('\n'))
-      .addFields(
-        {
-          name:   `${COMBAT_EMOJIS.ryo} Ryo`,
-          value:  `**${freshUser.ryo.toLocaleString()}**`,
-          inline: true,
-        },
-        {
-          name:   '🍜 Ramen',
-          value:  `**${freshUser.ramen}**`,
-          inline: true,
-        },
-        {
-          name:   `${COMBAT_EMOJIS.essence} Essence`,
-          value:  `**${freshUser.chakra_essence.toLocaleString()}**`,
-          inline: true,
-        },
-      )
-      .setFooter({ text: `Claim Again · ${formatCountdown(nextClaim - now)}` });
-
-    // ── Info button ────────────────────────────
-    const row = new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setCustomId('daily_info')
-        .setLabel('ℹ  Passive Cards')
-        .setStyle(ButtonStyle.Secondary),
-    );
-
-    const reply = await message.reply({ embeds: [embed], components: [row] });
-
-    // ── Info button collector ──────────────────
-    const collector = reply.createMessageComponentCollector({
-      filter: i => i.user.id === userId && i.customId === 'daily_info',
-      time:   120_000,
-      max:    5,
-    });
-
-    collector.on('collect', async i => {
-      const ownedIds = new Set(
-        q.getUserCards.all(userId).map(c => c.character_id)
-      );
-
-      const lines = DAILY_PASSIVE_GUIDE.map(p => {
-        const status = ownedIds.has(p.id) ? '✅' : '❌';
-        return `${status} **${p.name}**\n> ${p.desc}`;
-      });
-
-      const infoEmbed = new EmbedBuilder()
-        .setColor(0x7C3AED)
-        .setTitle('📋 Daily Passive Cards')
-        .setDescription(
-          `Own these cards to boost your daily rewards.\n\n` +
-          lines.join('\n\n')
-        )
-        .setFooter({ text: 'Passives activate at any mastery level' });
-
-      await i.reply({ embeds: [infoEmbed], ephemeral: true });
-    });
-
-    collector.on('end', () => {
-      reply.edit({ components: [] }).catch(() => {});
+    return message.reply({
+      embeds: [new EmbedBuilder()
+        .setColor(isBonus ? COLORS.prestige : 0x7C3AED)
+        .setTitle(title)
+        .setDescription(lines.join('\n'))
+        .setFooter({ text: 'You can claim daily again in 24hr' })],
     });
   },
 };

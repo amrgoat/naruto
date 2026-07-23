@@ -72,9 +72,13 @@ db.exec(`
 // ── Safe migrations ───────────────────────────
 // Add new columns if they don't exist yet (safe to re-run).
 for (const col of [
-  'chakra_essence INTEGER NOT NULL DEFAULT 0',
-  'daily_reset_at  INTEGER NOT NULL DEFAULT 0',
-  'exp_scrolls     INTEGER NOT NULL DEFAULT 0',
+  'chakra_essence        INTEGER NOT NULL DEFAULT 0',
+  'daily_reset_at        INTEGER NOT NULL DEFAULT 0',
+  'exp_scrolls           INTEGER NOT NULL DEFAULT 0',
+  'daily_streak          INTEGER NOT NULL DEFAULT 0',
+  'daily_streak_last_day INTEGER NOT NULL DEFAULT 0',
+  'is_premium            INTEGER NOT NULL DEFAULT 0',
+  'premium_expires_at    INTEGER NOT NULL DEFAULT 0',
 ]) {
   try { db.exec(`ALTER TABLE users ADD COLUMN ${col}`); } catch { /* already exists */ }
 }
@@ -125,6 +129,16 @@ const q = {
   addExpScrolls:    db.prepare(`UPDATE users SET exp_scrolls    = exp_scrolls    + ? WHERE discord_id = ?`),
   setDailyReset:    db.prepare(`UPDATE users SET daily_reset_at = ? WHERE discord_id = ?`),
 
+  /** Update streak counter and the last-claim IST day */
+  updateDailyStreak: db.prepare(`
+    UPDATE users SET daily_streak = ?, daily_streak_last_day = ? WHERE discord_id = ?
+  `),
+
+  /** Grant or revoke premium (is_premium 0/1, expires_at ms timestamp or 0 for permanent) */
+  setPremium: db.prepare(`
+    UPDATE users SET is_premium = ?, premium_expires_at = ? WHERE discord_id = ?
+  `),
+
   /** Consume 1 arena attempt; reset if new day */
   consumeArena: db.prepare(`
     UPDATE users SET arena_attempts = arena_attempts - 1 WHERE discord_id = ?
@@ -156,6 +170,11 @@ const q = {
   /** Add a fragment to a specific card */
   addFragment: db.prepare(`
     UPDATE cards SET fragments = fragments + 1 WHERE id = ?
+  `),
+
+  /** Add N fragments to a specific card */
+  addFragmentsN: db.prepare(`
+    UPDATE cards SET fragments = fragments + ? WHERE id = ?
   `),
 
   /** Add EXP; leveling is handled in JS */

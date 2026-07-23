@@ -1,27 +1,22 @@
 // ─────────────────────────────────────────────
 //  admin/resetdaily.js  —  N resetdaily [@user]
 //  Resets the daily claim timer for a user.
-//  Requires: Administrator permission.
+//  Owner only.
 // ─────────────────────────────────────────────
 
-const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { q }      = require('../../database');
-const { COLORS } = require('../../config');
-const { errorEmbed, successEmbed } = require('../../utils/embeds');
+const { EmbedBuilder } = require('discord.js');
+const { q }            = require('../../database');
+const { COLORS }       = require('../../config');
+const { errorEmbed }   = require('../../utils/embeds');
+const { isOwner }      = require('../../utils/owner');
 
 module.exports = {
   name: 'resetdaily',
   description: '[Admin] Reset a user\'s daily claim timer · N resetdaily [@user]',
 
   async execute(message, args) {
-    // ── Admin check ────────────────────────────
-    if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
-      return message.reply({
-        embeds: [errorEmbed('❌ You need the **Administrator** permission to use this command.')],
-      });
-    }
+    if (!isOwner(message.author.id)) return;
 
-    // ── Resolve target ─────────────────────────
     const mention = message.mentions.users.first();
     const target  = mention ?? message.author;
 

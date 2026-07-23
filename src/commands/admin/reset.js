@@ -1,43 +1,33 @@
 // ─────────────────────────────────────────────
 //  admin/reset.js  —  N reset @user <cmd>
 //  Reset a command's cooldown/timer for a user.
-//  Admin only.
-//
-//  Supported timers:
-//    daily  — resets the 24h daily claim
-//    arena  — restores all arena attempts
-//    pulls  — restores all pulls for the current period
+//  Owner only.
 // ─────────────────────────────────────────────
 
-const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { q }      = require('../../database');
+const { EmbedBuilder } = require('discord.js');
+const { q }            = require('../../database');
 const { COLORS, PULLS_PER_PERIOD, ARENA_ATTEMPTS_PER_DAY } = require('../../config');
-const { errorEmbed } = require('../../utils/embeds');
+const { errorEmbed }   = require('../../utils/embeds');
+const { isOwner }      = require('../../utils/owner');
 
 const TIMERS = {
   daily: {
-    label:   'Daily Reward',
-    emoji:   '🎁',
-    reset:   (userId) => {
-      q.setDailyReset.run(0, userId);
-    },
-    detail:  (userId) => 'Can claim `N daily` immediately.',
+    label:  'Daily Reward',
+    emoji:  '🎁',
+    reset:  (userId) => q.setDailyReset.run(0, userId),
+    detail: ()       => 'Can claim `N daily` immediately.',
   },
   arena: {
-    label:   'Arena Attempts',
-    emoji:   '🏟️',
-    reset:   (userId) => {
-      q.resetArena.run(0, userId);
-    },
-    detail:  () => `Restored to **${ARENA_ATTEMPTS_PER_DAY}** attempts.`,
+    label:  'Arena Attempts',
+    emoji:  '🏟️',
+    reset:  (userId) => q.resetArena.run(0, userId),
+    detail: ()       => `Restored to **${ARENA_ATTEMPTS_PER_DAY}** attempts.`,
   },
   pulls: {
-    label:   'Pull Charges',
-    emoji:   '📜',
-    reset:   (userId) => {
-      q.resetPulls.run(0, userId);
-    },
-    detail:  () => `Restored to **${PULLS_PER_PERIOD}** pulls.`,
+    label:  'Pull Charges',
+    emoji:  '📜',
+    reset:  (userId) => q.resetPulls.run(0, userId),
+    detail: ()       => `Restored to **${PULLS_PER_PERIOD}** pulls.`,
   },
 };
 
@@ -48,12 +38,8 @@ module.exports = {
   description: '[Admin] Reset a command timer for a user · N reset @user <daily|arena|pulls>',
 
   async execute(message, args) {
-    // ── Admin check ────────────────────────────
-    if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
-      return message.reply({ embeds: [errorEmbed('❌ Administrator permission required.')] });
-    }
+    if (!isOwner(message.author.id)) return;
 
-    // ── Parse args ─────────────────────────────
     const target = message.mentions.users.first();
     if (!target) {
       return message.reply({
@@ -70,7 +56,6 @@ module.exports = {
       });
     }
 
-    // ── Target must have an account ────────────
     const targetUser = q.getUser.get(target.id);
     if (!targetUser) {
       return message.reply({
@@ -78,7 +63,6 @@ module.exports = {
       });
     }
 
-    // ── Apply reset ────────────────────────────
     const timer = TIMERS[timerKey];
     timer.reset(target.id);
 

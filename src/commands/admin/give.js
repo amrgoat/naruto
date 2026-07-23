@@ -1,18 +1,15 @@
 // ─────────────────────────────────────────────
 //  admin/give.js  —  N give @user <item> <amount>
-//  Give any item to a player. Admin only.
-//
-//  Supported items: ryo, ramen, essence, expscroll
-//  Usage: N give @Naruto ryo 5000
+//  Give any item to a player. Owner only.
 // ─────────────────────────────────────────────
 
-const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const { q }       = require('../../database');
-const { COLORS }  = require('../../config');
+const { EmbedBuilder } = require('discord.js');
+const { q }            = require('../../database');
+const { COLORS }       = require('../../config');
 const { ITEMS, findItem } = require('../../items');
-const { errorEmbed } = require('../../utils/embeds');
+const { errorEmbed }   = require('../../utils/embeds');
+const { isOwner }      = require('../../utils/owner');
 
-// Maps item db_col → the prepared statement that adds to it
 const GIVE_HANDLERS = {
   ryo:            (userId, amount) => q.addRyo.run(amount, userId),
   ramen:          (userId, amount) => q.addRamen.run(amount, userId),
@@ -25,12 +22,8 @@ module.exports = {
   description: '[Admin] Give an item to a user · N give @user <item> <amount>',
 
   async execute(message, args) {
-    // ── Admin check ────────────────────────────
-    if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
-      return message.reply({ embeds: [errorEmbed('❌ Administrator permission required.')] });
-    }
+    if (!isOwner(message.author.id)) return;
 
-    // ── Parse args: N give @user <item> <amount> ──
     const target = message.mentions.users.first();
     if (!target) {
       return message.reply({
@@ -41,7 +34,6 @@ module.exports = {
       });
     }
 
-    // Strip mention from args to get [item, amount]
     const rest = args.filter(a => !a.match(/^<@!?\d+>$/));
     const [itemQuery, rawAmount] = rest;
 
@@ -71,7 +63,6 @@ module.exports = {
       });
     }
 
-    // ── Target must have an account ────────────
     const targetUser = q.getUser.get(target.id);
     if (!targetUser) {
       return message.reply({
@@ -79,7 +70,6 @@ module.exports = {
       });
     }
 
-    // ── Give item ──────────────────────────────
     GIVE_HANDLERS[item.db_col](target.id, amount);
     const fresh = q.getUser.get(target.id);
 

@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────
-//  craft.js  —  N craft
-//  Orochimaru's Laboratory: craft fragments using
+//  craft.js  —  N craft <amount> <card>
+//  Craft fragments for a card you own using
 //  Chakra Essence. Requires owning Orochimaru.
 //
 //  M1: Craft D–A rank fragments
@@ -8,271 +8,118 @@
 //  M3: + 20% discount on all crafting costs
 // ─────────────────────────────────────────────
 
-const {
-  EmbedBuilder,
-  ActionRowBuilder,
-  StringSelectMenuBuilder,
-  StringSelectMenuOptionBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-} = require('discord.js');
+const { EmbedBuilder }           = require('discord.js');
 const { q }                      = require('../database');
 const { CHARACTERS }             = require('../data/characters');
 const { COLORS, RARITIES }       = require('../config');
 const { checkRegistered }        = require('../utils/guards');
 const { resolvePassiveBonuses }  = require('../utils/passives');
-const { errorEmbed, successEmbed } = require('../utils/embeds');
+const { errorEmbed }             = require('../utils/embeds');
 
-// ── Crafting Costs ─────────────────────────────
 const CRAFT_COSTS = { D: 30, C: 50, B: 90, A: 150, S: 250 };
 
-// Derive Orochimaru mastery tier from passive bonuses
-function oroMasteryLabel(pb) {
-  if (pb.labDiscount > 0) return 'M3';
-  if (pb.labSRank)        return 'M2';
-  return 'M1';
+// Find a character by name (case-insensitive, partial match)
+function findCharacter(query) {
+  const q_ = query.toLowerCase();
+  return Object.values(CHARACTERS).find(
+    c => c.name.toLowerCase() === q_ || c.name.toLowerCase().startsWith(q_)
+  );
 }
 
 module.exports = {
   name: 'craft',
-  description: "Orochimaru's Laboratory — craft fragments · N craft",
+  description: 'Craft card fragments · N craft <amount> <card>',
 
-  async execute(message) {
+  async execute(message, args) {
     const userId = message.author.id;
     const user   = checkRegistered(message);
     if (!user) return;
+
+    // ── Show usage if no args ──────────────────
+    if (!args.length) {
+      return message.reply({
+        embeds: [new EmbedBuilder()
+          .setColor(COLORS.info)
+          .setDescription('`n craft <amount> <card>`')],
+      });
+    }
+
+    // ── Parse amount and card name ─────────────
+    const amount = parseInt(args[0], 10);
+    if (isNaN(amount) || amount < 1 || amount > 500) {
+      return message.reply({
+        embeds: [errorEmbed('`n craft <amount> <card>` — amount must be between 1 and 500.')],
+      });
+    }
+
+    const cardName = args.slice(1).join(' ').trim();
+    if (!cardName) {
+      return message.reply({
+        embeds: [new EmbedBuilder()
+          .setColor(COLORS.info)
+          .setDescription('`n craft <amount> <card>`')],
+      });
+    }
 
     // ── Orochimaru passive check ───────────────
     const pb = resolvePassiveBonuses(userId);
     if (!pb.unlockLab) {
       return message.reply({
+        embeds: [errorEmbed('The Laboratory is locked.\nObtain **Orochimaru** to unlock it.')],
+      });
+    }
+
+    // ── Find character ─────────────────────────
+    const char = findCharacter(cardName);
+    if (!char) {
+      return message.reply({
+        embeds: [errorEmbed(`No character found matching **"${cardName}"**.`)],
+      });
+    }
+
+    // ── Check rarity access ────────────────────
+    const canCraftS = pb.labSRank;
+    if (char.rarity === 'S' && !canCraftS) {
+      return message.reply({
+        embeds: [errorEmbed('S-rank crafting requires **Orochimaru M2 or higher**.')],
+      });
+    }
+    if (!CRAFT_COSTS[char.rarity]) {
+      return message.reply({
+        embeds: [errorEmbed(`**${char.name}** (${char.rarity}) cannot be crafted.`)],
+      });
+    }
+
+    // ── Check user owns this card ──────────────
+    const card = q.getCardByCharacter.get(userId, char.id);
+    if (!card) {
+      return message.reply({
+        embeds: [errorEmbed(`You don't own **${char.name}**'s card yet.`)],
+      });
+    }
+
+    // ── Calculate cost ─────────────────────────
+    const baseCost  = CRAFT_COSTS[char.rarity];
+    const discount  = pb.labDiscount ?? 0;
+    const unitCost  = Math.floor(baseCost * (1 - discount));
+    const totalCost = unitCost * amount;
+
+    if (user.chakra_essence < totalCost) {
+      return message.reply({
         embeds: [errorEmbed(
-          'The Laboratory is locked.\nObtain **Orochimaru** to unlock it.'
+          `Not enough Chakra Essence.\n` +
+          `Need **${totalCost.toLocaleString()}** — you have **${user.chakra_essence.toLocaleString()}**.`
         )],
       });
     }
 
-    const discount     = pb.labDiscount;
-    const canCraftS    = pb.labSRank;
-    const masteryLabel = oroMasteryLabel(pb);
+    // ── Craft ──────────────────────────────────
+    q.addChakraEssence.run(-totalCost, userId);
+    q.addFragmentsN.run(amount, card.id);
 
-    const availableRanks = canCraftS
-      ? ['D', 'C', 'B', 'A', 'S']
-      : ['D', 'C', 'B', 'A'];
-
-    // ── Overview embed ─────────────────────────
-    const divider = '━━━━━━━━━━━━━━━━━━';
-
-    let masteryLine;
-    if (masteryLabel === 'M3') {
-      masteryLine = `🔮 Orochimaru **M3** — **-20% discount** on all crafting`;
-    } else if (masteryLabel === 'M2') {
-      masteryLine = `🔮 Orochimaru **M2** — S-rank crafting unlocked`;
-    } else {
-      masteryLine = `🔮 Orochimaru **M1** — D through A-rank crafting available`;
-    }
-
-    const costLines = availableRanks.map(r => {
-      const base = CRAFT_COSTS[r];
-      const cost = Math.floor(base * (1 - discount));
-      const rarityEmoji = RARITIES[r]?.emoji ?? r;
-      return discount > 0
-        ? `${rarityEmoji} **${r} Fragment** — ~~${base}~~ **${cost}** Essence`
-        : `${rarityEmoji} **${r} Fragment** — **${cost}** Essence`;
-    });
-
-    const descLines = [
-      masteryLine,
-      `⚡ Chakra Essence: **${user.chakra_essence.toLocaleString()}**`,
-      ``,
-      divider,
-      `**Crafting Costs**`,
-      divider,
-      ...costLines,
-      ``,
-      divider,
-      `**Unlocked Rarities:** ${availableRanks.join(' · ')}`,
-    ];
-
-    const craftEmbed = new EmbedBuilder()
-      .setColor(COLORS.mastery)
-      .setTitle('🧪 Orochimaru\'s Laboratory')
-      .setDescription(descLines.join('\n'));
-
-    const rankMenu = new StringSelectMenuBuilder()
-      .setCustomId('craft_rank')
-      .setPlaceholder('Select rank to craft...')
-      .addOptions(
-        availableRanks.map(r => {
-          const cost = Math.floor(CRAFT_COSTS[r] * (1 - discount));
-          return new StringSelectMenuOptionBuilder()
-            .setLabel(`${r} Rank  —  ${cost} Essence`)
-            .setValue(r);
-        })
-      );
-
-    const reply = await message.reply({
-      embeds:     [craftEmbed],
-      components: [new ActionRowBuilder().addComponents(rankMenu)],
-    });
-
-    // ── Rank collector ─────────────────────────
-    const rankCollector = reply.createMessageComponentCollector({
-      filter: i => i.user.id === userId && i.customId === 'craft_rank',
-      time:   60_000,
-      max:    1,
-    });
-
-    rankCollector.on('collect', async rankInteraction => {
-      const rank = rankInteraction.values[0];
-      const cost = Math.floor(CRAFT_COSTS[rank] * (1 - discount));
-
-      const ownedCards = q.getUserCards.all(userId).filter(c => {
-        const ch = CHARACTERS[c.character_id];
-        return ch?.rarity === rank;
-      });
-
-      if (!ownedCards.length) {
-        return rankInteraction.update({
-          embeds: [errorEmbed(
-            `You don't own any **${rank} Rank** cards to craft fragments for.\n` +
-            `Pull more cards and try again.`
-          )],
-          components: [],
-        });
-      }
-
-      // ── Character select ──────────────────────
-      const charOptions = ownedCards.slice(0, 25).map(c => {
-        const ch = CHARACTERS[c.character_id];
-        return new StringSelectMenuOptionBuilder()
-          .setLabel(ch.name)
-          .setDescription(`Fragments: ${c.fragments}  ·  M${c.mastery} Lv.${c.level}`)
-          .setValue(String(c.id));
-      });
-
-      const charMenu = new StringSelectMenuBuilder()
-        .setCustomId('craft_char')
-        .setPlaceholder(`Select a ${rank} Rank card...`)
-        .addOptions(charOptions);
-
-      await rankInteraction.update({
-        embeds: [new EmbedBuilder()
-          .setColor(COLORS.mastery)
-          .setTitle(`🧪 Craft ${rank} Rank Fragment`)
-          .setDescription(
-            `Cost: **${cost} Chakra Essence**\n` +
-            `Your Essence: **${q.getUser.get(userId).chakra_essence.toLocaleString()}**\n\n` +
-            `Select which **${rank} Rank** card gets the fragment:`
-          )],
-        components: [new ActionRowBuilder().addComponents(charMenu)],
-      });
-
-      // ── Char collector ────────────────────────
-      const charCollector = reply.createMessageComponentCollector({
-        filter: i => i.user.id === userId && i.customId === 'craft_char',
-        time:   60_000,
-        max:    1,
-      });
-
-      charCollector.on('collect', async charInteraction => {
-        const cardId     = parseInt(charInteraction.values[0], 10);
-        const freshUser  = q.getUser.get(userId);
-        const targetCard = q.getCard.get(cardId);
-
-        if (!targetCard) {
-          return charInteraction.update({ embeds: [errorEmbed('Card not found.')], components: [] });
-        }
-
-        const char           = CHARACTERS[targetCard.character_id];
-        const currentEssence = freshUser.chakra_essence;
-
-        if (currentEssence < cost) {
-          return charInteraction.update({
-            embeds: [errorEmbed(
-              `Not enough Chakra Essence.\n` +
-              `Need **${cost}**, you have **${currentEssence}**.`
-            )],
-            components: [],
-          });
-        }
-
-        // ── Confirm ───────────────────────────
-        const confirmRow = new ActionRowBuilder().addComponents(
-          new ButtonBuilder()
-            .setCustomId('craft_confirm')
-            .setLabel(`Craft — ${cost} Essence`)
-            .setStyle(ButtonStyle.Success),
-          new ButtonBuilder()
-            .setCustomId('craft_cancel')
-            .setLabel('Cancel')
-            .setStyle(ButtonStyle.Secondary),
-        );
-
-        await charInteraction.update({
-          embeds: [new EmbedBuilder()
-            .setColor(COLORS.mastery)
-            .setTitle('🧪 Confirm Crafting')
-            .setDescription(
-              `Craft **1x ${char.name} Fragment** for **${cost} Chakra Essence**?\n\n` +
-              `Your Essence: **${currentEssence.toLocaleString()}**\n` +
-              `After: **${(currentEssence - cost).toLocaleString()}**`
-            )],
-          components: [confirmRow],
-        });
-
-        // ── Confirm collector ──────────────────
-        const confirmCollector = reply.createMessageComponentCollector({
-          filter: i => i.user.id === userId &&
-            (i.customId === 'craft_confirm' || i.customId === 'craft_cancel'),
-          time: 30_000,
-          max:  1,
-        });
-
-        confirmCollector.on('collect', async confirmInteraction => {
-          if (confirmInteraction.customId === 'craft_cancel') {
-            return confirmInteraction.update({
-              embeds: [new EmbedBuilder().setColor(COLORS.info).setDescription('Crafting cancelled.')],
-              components: [],
-            });
-          }
-
-          const latestUser = q.getUser.get(userId);
-          if (latestUser.chakra_essence < cost) {
-            return confirmInteraction.update({
-              embeds: [errorEmbed('Not enough Chakra Essence.')],
-              components: [],
-            });
-          }
-
-          q.addChakraEssence.run(-cost, userId);
-          q.addFragment.run(cardId);
-
-          const updatedCard = q.getCard.get(cardId);
-          const updatedUser = q.getUser.get(userId);
-
-          return confirmInteraction.update({
-            embeds: [successEmbed(
-              `🧪 Crafted **1x ${char.name} Fragment**!\n\n` +
-              `${char.name} Fragments: **${updatedCard.fragments}**\n` +
-              `Chakra Essence remaining: **${updatedUser.chakra_essence.toLocaleString()}**`
-            )],
-            components: [],
-          });
-        });
-
-        confirmCollector.on('end', (_, reason) => {
-          if (reason === 'time') reply.edit({ components: [] }).catch(() => {});
-        });
-      });
-
-      charCollector.on('end', (_, reason) => {
-        if (reason === 'time') reply.edit({ components: [] }).catch(() => {});
-      });
-    });
-
-    rankCollector.on('end', (_, reason) => {
-      if (reason === 'time') reply.edit({ components: [] }).catch(() => {});
+    return message.reply({
+      content: `Successfully crafted **${amount}×${char.name}**`,
+      allowedMentions: { repliedUser: false },
     });
   },
 };
