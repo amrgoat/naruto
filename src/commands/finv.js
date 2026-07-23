@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────
 //  finv.js  —  N finv [rarity | name]
 //
-//  N finv          → full inventory, paginated
+//  N finv          → full inventory, sorted by count (high → low)
 //  N finv C        → only C-rarity characters
 //  N finv Naruto   → single character lookup
 // ─────────────────────────────────────────────
@@ -19,45 +19,48 @@ const SUMMON_COST = 15;
 const RARITY_ORDER = { D: 0, C: 1, B: 2, A: 3, S: 4, SS: 5, UR: 6 };
 const RARITY_KEYS  = new Set(Object.keys(RARITY_ORDER));
 
-// ── Line builder ───────────────────────────────
+// ── Sort: highest count first ──────────────────
+function sortEntries(entries) {
+  return [...entries].sort((a, b) => b.count - a.count);
+}
+
+// ── Single list line ───────────────────────────
 function entryLine({ character_id, count }) {
   const char   = CHARACTERS[character_id];
   if (!char) return null;
   const rarity = RARITIES[char.rarity] ?? RARITIES.D;
-  const maxTag = count >= MAX_FRAGS ? ' ⬆️ **MAX**' : '';
-  return `${rarity.emoji} **${char.name}** (${char.rarity}) — ${count} / ${MAX_FRAGS} ${E.fragment}${maxTag}`;
+  const maxTag = count >= MAX_FRAGS ? ' ⬆️ MAX' : '';
+  return `${rarity.emoji} **${char.name}** (${char.rarity}) — ${count}/${MAX_FRAGS} ${E.fragment}${maxTag}`;
 }
 
 // ── Paginated embed ────────────────────────────
 function buildPage(entries, page, username, subtitle) {
-  const totalPages = Math.ceil(entries.length / PAGE_SIZE);
-  const slice      = entries.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
-  const lines      = slice.map(entryLine).filter(Boolean);
+  const totalPages  = Math.ceil(entries.length / PAGE_SIZE);
+  const slice       = entries.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+  const lines       = slice.map(entryLine).filter(Boolean);
+  const totalFrags  = entries.reduce((s, e) => s + e.count, 0);
+  const totalCap    = entries.length * MAX_FRAGS;
 
-  const embed = new EmbedBuilder()
+  return new EmbedBuilder()
     .setColor(COLORS.info)
     .setTitle(`${E.fragment} ${username}'s Fragment Inventory${subtitle ? `  ·  ${subtitle}` : ''}`)
     .setDescription(lines.join('\n') || '*Nothing here.*')
     .setFooter({
-      text: `Page ${page + 1} / ${totalPages}  ·  ${entries.length} character${entries.length !== 1 ? 's' : ''} with fragments`,
+      text: [
+        `Page ${page + 1}/${totalPages}`,
+        `${entries.length} character${entries.length !== 1 ? 's' : ''}`,
+        `Total: ${totalFrags.toLocaleString()}/${totalCap.toLocaleString()} ${E.fragment}`,
+      ].join('  ·  '),
     });
-
-  return embed;
 }
 
 function buildNavRow(page, total) {
   const totalPages = Math.ceil(total / PAGE_SIZE);
   return new ActionRowBuilder().addComponents(
     new ButtonBuilder()
-      .setCustomId('finv_prev')
-      .setLabel('◀')
-      .setStyle(ButtonStyle.Secondary)
-      .setDisabled(page === 0),
+      .setCustomId('finv_prev').setLabel('◀').setStyle(ButtonStyle.Secondary).setDisabled(page === 0),
     new ButtonBuilder()
-      .setCustomId('finv_next')
-      .setLabel('▶')
-      .setStyle(ButtonStyle.Secondary)
-      .setDisabled(page >= totalPages - 1),
+      .setCustomId('finv_next').setLabel('▶').setStyle(ButtonStyle.Secondary).setDisabled(page >= totalPages - 1),
   );
 }
 
@@ -100,17 +103,10 @@ module.exports = {
     const userId   = message.author.id;
     const username = message.member?.displayName ?? message.author.username;
 
-    // Fetch & sort all fragment rows: rarity desc → count desc
     const raw = q.getFragInv.all(userId);
-    const all = [...raw].sort((a, b) => {
-      const ra = RARITY_ORDER[CHARACTERS[a.character_id]?.rarity ?? 'D'];
-      const rb = RARITY_ORDER[CHARACTERS[b.character_id]?.rarity ?? 'D'];
-      if (ra !== rb) return rb - ra;
-      return b.count - a.count;
-    });
 
     // ── Empty state ────────────────────────────
-    if (!all.length) {
+    if (!raw.length) {
       return message.reply({
         embeds: [new EmbedBuilder()
           .setColor(COLORS.info)
@@ -122,6 +118,7 @@ module.exports = {
       });
     }
 
+    const all   = sortEntries(raw);   // always high → low count
     const query = args.join(' ').trim();
 
     // ── No args → full inventory ───────────────
@@ -129,7 +126,7 @@ module.exports = {
       return paginate(message, all, username, null);
     }
 
-    // ── Rarity filter: single letter D/C/B/A/S/SS/UR ──
+    // ── Rarity filter: D / C / B / A / S / SS / UR ──
     const rarityKey = query.toUpperCase();
     if (RARITY_KEYS.has(rarityKey)) {
       const filtered = all.filter(e => CHARACTERS[e.character_id]?.rarity === rarityKey);
@@ -146,7 +143,7 @@ module.exports = {
       return paginate(message, filtered, username, RARITIES[rarityKey].label);
     }
 
-    // ── Name search → single character card ────
+    // ── Name search → single character embed ───
     const needle = query.toLowerCase();
     const match  = all.find(e => {
       const name = CHARACTERS[e.character_id]?.name?.toLowerCase() ?? '';
@@ -156,33 +153,33 @@ module.exports = {
     if (!match) {
       return message.reply({
         embeds: [new EmbedBuilder()
-          .setColor(COLORS.error ?? COLORS.info)
+          .setColor(COLORS.info)
           .setDescription(`${E.fragment} No fragments found for **"${query}"**.`)],
       });
     }
 
-    const char    = CHARACTERS[match.character_id];
-    const rarity  = RARITIES[char.rarity] ?? RARITIES.D;
-    const needed  = Math.max(0, SUMMON_COST - match.count);
-    const bar     = buildBar(match.count, SUMMON_COST);
+    const char   = CHARACTERS[match.character_id];
+    const rarity = RARITIES[char.rarity] ?? RARITIES.D;
+    const needed = Math.max(0, SUMMON_COST - match.count);
 
     return message.reply({
       embeds: [new EmbedBuilder()
         .setColor(rarity.color)
-        .setTitle(`${rarity.emoji} ${char.name} (${char.rarity}) — Fragments`)
+        .setTitle(`${rarity.emoji} ${char.name} (${char.rarity})`)
         .setThumbnail(char.image ?? null)
         .addFields(
-          { name: 'Fragments',   value: `**${match.count}** / ${MAX_FRAGS} ${E.fragment}`, inline: true },
-          { name: 'To Summon',   value: needed === 0 ? '✅ Ready!' : `**${needed}** more needed`, inline: true },
-          { name: 'Progress',    value: bar, inline: false },
+          {
+            name:   `${E.fragment} Fragments`,
+            value:  `**${match.count}** / ${MAX_FRAGS}`,
+            inline: true,
+          },
+          {
+            name:   '✨ Summon',
+            value:  needed === 0 ? '✅ Ready! Use `N summon`' : `**${needed}** more to summon`,
+            inline: true,
+          },
         )
-        .setFooter({ text: `Use N summon ${char.name} once you have ${SUMMON_COST} fragments.` })],
+        .setFooter({ text: `${match.count}/${MAX_FRAGS} fragments  ·  ${match.count >= SUMMON_COST ? 'Can summon now' : `Need ${needed} more`}` })],
     });
   },
 };
-
-// ── Simple progress bar (15-step) ─────────────
-function buildBar(count, goal) {
-  const filled = Math.min(Math.floor((count / goal) * 15), 15);
-  return '█'.repeat(filled) + '░'.repeat(15 - filled) + ` ${count}/${goal}`;
-}
