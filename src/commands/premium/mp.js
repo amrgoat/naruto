@@ -14,6 +14,17 @@ const { checkRegistered }  = require('../../utils/guards');
 const { errorEmbed }       = require('../../utils/embeds');
 const { currentPullPeriodStartUTC, nextPullResetUTC, formatCountdown } = require('../../utils/timeUtils');
 
+// ── Custom rarity emojis ───────────────────────
+const RARITY_EMOJI = {
+  UR: '<:URrarity:1529858402174636174>',
+  SS: '<:SSrarity:1529858398378786858>',
+  S:  '<:Srarity:1529858395161497670>',
+  A:  '<:Ararity:1529858378866753577>',
+  B:  '<:Brarity:1529858383069581342>',
+  C:  '<:Crarity:1529858387301367898>',
+  D:  '<:Drarity:1529858391210721330>',
+};
+
 // ── Weighted random rarity roll ────────────────
 function rollRarity() {
   const total = PULL_POOL_RARITIES.reduce((s, r) => s + RARITIES[r].pullWeight, 0);
@@ -87,9 +98,9 @@ module.exports = {
 
       q.consumePull.run(now, userId);
 
-      const existing = q.getCardByCharacter.get(userId, characterId);
-      let   isDuplicate = false;
-      let   dupEssence  = 0;
+      const existing  = q.getCardByCharacter.get(userId, characterId);
+      let isDuplicate = false;
+      let dupEssence  = 0;
 
       if (existing) {
         isDuplicate = true;
@@ -102,27 +113,30 @@ module.exports = {
       results.push({ char, isDuplicate, dupEssence });
     }
 
-    // ── Build result embed ─────────────────────
+    // ── Build result lines ─────────────────────
     const lines = results.map((r, i) => {
-      const rarityEmoji = RARITIES[r.char.rarity]?.emoji ?? r.char.rarity;
+      const re = RARITY_EMOJI[r.char.rarity] ?? r.char.rarity;
       if (r.isDuplicate) {
-        return `${i + 1}. ~~${r.char.name}~~ ${rarityEmoji} → **${r.dupEssence} Essence**`;
+        return `\`${i + 1}\` ${re} ~~${r.char.name}~~\n> converted to chakra essence → **${r.dupEssence}**`;
       }
-      return `${i + 1}. **${r.char.name}** ${rarityEmoji}`;
+      return `\`${i + 1}\` ${re} ${r.char.name}`;
     });
 
-    // Discord description limit: split if too long
     const description = lines.join('\n');
     const truncated   = description.length > 3900
       ? description.slice(0, 3900) + '\n…'
       : description;
 
+    const avatarURL = message.author.displayAvatarURL({ dynamic: true, size: 128 });
+    const userName  = message.member?.displayName ?? message.author.username;
+
     return message.reply({
       embeds: [new EmbedBuilder()
         .setColor(COLORS.EMBED_COLOR)
-        .setTitle(`⚡ MP Used — ${pullsToUse} Pull${pullsToUse !== 1 ? 's' : ''}`)
+        .setTitle(`${userName} pulled ${pullsToUse} card${pullsToUse !== 1 ? 's' : ''}!`)
+        .setThumbnail(avatarURL)
         .setDescription(truncated)
-        .setFooter({ text: '~strikethrough~ = duplicate → converted to Essence' })],
+        .setFooter({ text: 'only jinchūrikis can use this cmd' })],
     });
   },
 };

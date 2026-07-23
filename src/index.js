@@ -31,8 +31,8 @@ const client = new Client({
   allowedMentions: { repliedUser: false },
 });
 
-// ── Universal cooldown (3 seconds per user) ────
-const cooldowns = new Map(); // userId -> lastCommandTimestamp
+// ── Per-command cooldown (3 seconds per user per command) ──
+const cooldowns = new Map(); // `${userId}:${command}` -> lastCommandTimestamp
 const UNIVERSAL_COOLDOWN_MS = 3000;
 
 // ── Load commands ──────────────────────────────
@@ -110,11 +110,12 @@ client.on('messageCreate', async message => {
   const cmd = client.commands.get(command);
   if (!cmd) return;
 
-  const userId = message.author.id;
-  const now    = Date.now();
+  const userId   = message.author.id;
+  const now      = Date.now();
+  const cdKey    = `${userId}:${command}`;
 
-  // ── Universal 3-second cooldown ────────────
-  const lastUsed = cooldowns.get(userId) ?? 0;
+  // ── Per-command 3-second cooldown ──────────
+  const lastUsed  = cooldowns.get(cdKey) ?? 0;
   const sinceLast = now - lastUsed;
   if (sinceLast < UNIVERSAL_COOLDOWN_MS) {
     const remaining = UNIVERSAL_COOLDOWN_MS - sinceLast;
@@ -124,7 +125,7 @@ client.on('messageCreate', async message => {
       allowedMentions: { repliedUser: false },
     });
   }
-  cooldowns.set(userId, now);
+  cooldowns.set(cdKey, now);
 
   try {
     await cmd.execute(message, args, client);

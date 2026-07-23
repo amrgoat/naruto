@@ -37,4 +37,4 @@ externalPort = 80
 [userenv]
 
 [userenv.shared]
-BACKUP_CHANNEL_ID = "1529836338642292857"
+BACKUP_CHANNEL_ID = ""
