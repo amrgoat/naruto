@@ -7,12 +7,11 @@
 
 const { EmbedBuilder } = require('discord.js');
 const { q }            = require('../database');
-const { COLORS, COMBAT_EMOJIS } = require('../config');
+const { COLORS, COMBAT_EMOJIS, ARROW_EMOJI } = require('../config');
 const { checkRegistered }       = require('../utils/guards');
 const { errorEmbed }            = require('../utils/embeds');
 const { formatCountdown }       = require('../utils/timeUtils');
 
-const ARROW   = '<:arrowRed:1529820697172508712>';
 const RAMEN_E = '<:ramen:1529823076118691890>';
 
 const BASE_RYO     = 7_200;
@@ -100,10 +99,10 @@ module.exports = {
       : 'Daily Rewards have been claimed successfully';
 
     const lines = [
-      `${ARROW} Ryo Obtained: **${ryo.toLocaleString()}** ${COMBAT_EMOJIS.ryo}`,
-      `${ARROW} Ramen Obtained: **${ramen}** ${RAMEN_E}`,
-      `${ARROW} Chakra Essence Obtained: **${essence}** ${COMBAT_EMOJIS.essence}`,
-      `${ARROW} Daily Streak: ${stars}`,
+      `${ARROW_EMOJI} Ryo Obtained: **${ryo.toLocaleString()}** ${COMBAT_EMOJIS.ryo}`,
+      `${ARROW_EMOJI} Ramen Obtained: **${ramen}** ${RAMEN_E}`,
+      `${ARROW_EMOJI} Chakra Essence Obtained: **${essence}** ${COMBAT_EMOJIS.essence}`,
+      `${ARROW_EMOJI} Daily Streak: ${stars}`,
     ];
 
     if (isBonus) {

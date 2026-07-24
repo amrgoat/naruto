@@ -5,7 +5,7 @@
 
 const { EmbedBuilder } = require('discord.js');
 const { q }            = require('../database');
-const { COLORS, COMBAT_EMOJIS, E } = require('../config');
+const { COLORS, COMBAT_EMOJIS, E, ARROW_EMOJI, WALLET_EMOJI } = require('../config');
 const { ITEMS }        = require('../items');
 const { checkRegistered } = require('../utils/guards');
 
@@ -30,35 +30,13 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(COLORS.EMBED_COLOR)
-      .setTitle(`${COMBAT_EMOJIS.ryo} ${username}'s Wallet`)
-      .addFields(
-        {
-          name:   `${COMBAT_EMOJIS.ryo} Ryo  ${tradableTag}`,
-          value:  `**${user.ryo.toLocaleString()}**`,
-          inline: true,
-        },
-        {
-          name:   `${E.ramen} Ramen  ${tradableTag}`,
-          value:  `**${user.ramen}**`,
-          inline: true,
-        },
-        {
-          name:   `${E.scroll} EXP Scrolls  ${tradableTag}`,
-          value:  `**${user.exp_scrolls}**`,
-          inline: true,
-        },
-        {
-          name:   `${COMBAT_EMOJIS.essence} Chakra Essence  ${boundTag}`,
-          value:  `**${user.chakra_essence.toLocaleString()}**`,
-          inline: true,
-        },
-        {
-          name:   `${E.fragment} Fragments  ${boundTag}`,
-          value:  `**${totalFrags.toLocaleString()}** across **${charCount}** character${charCount !== 1 ? 's' : ''}`,
-          inline: true,
-        },
-      )
-      .setFooter({ text: `${tradableTag} Tradable  ·  ${boundTag} Soul-bound` });
+      .setTitle(`${username}'s Wallet`)
+      .setDescription([
+        `${WALLET_EMOJI} **Wallet:**`,
+        `${ARROW_EMOJI} Ryo: **${user.ryo.toLocaleString()}** ${COMBAT_EMOJIS.ryo}`,
+        `${ARROW_EMOJI} Ramen: **${user.ramen}** ${E.ramen}`,
+        `${ARROW_EMOJI} Chakra Essence: **${user.chakra_essence.toLocaleString()}** ${COMBAT_EMOJIS.essence}`,
+      ].join('\n'));
 
     return message.reply({ embeds: [embed] });
   },

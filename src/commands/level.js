@@ -7,7 +7,7 @@
 const { EmbedBuilder }   = require('discord.js');
 const { q, giveExpToCard } = require('../database');
 const { CHARACTERS }     = require('../data/characters');
-const { COLORS, MASTERY } = require('../config');
+const { COLORS, MASTERY, LVLOP_EMOJI } = require('../config');
 const { checkRegistered } = require('../utils/guards');
 const { errorEmbed }     = require('../utils/embeds');
 
@@ -113,7 +113,7 @@ module.exports = {
     const atCap        = updatedCard.level >= (MASTERY[updatedCard.mastery]?.levelCap ?? 100);
 
     const lines = [
-      `📈 **${char.name}** gained **${totalExp.toLocaleString()} EXP** (${amount} scroll${amount !== 1 ? 's' : ''})`,
+      `${LVLOP_EMOJI} **${char.name}** gained **${totalExp.toLocaleString()} EXP** (${amount} scroll${amount !== 1 ? 's' : ''})`,
       `Level: **${card.level}** → **${updatedCard.level}**${levelsGained > 0 ? ` *(+${levelsGained})*` : ''}`,
       atCap ? `⚠️ Level cap reached (**${updatedCard.level}**). Upgrade mastery to continue.` : '',
     ].filter(Boolean);

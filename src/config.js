@@ -5,6 +5,11 @@
 /** All command prefixes that the bot responds to */
 const PREFIXES = ['t', 't ', 'T ', 'T'];
 
+// ── Shared UI Emojis (update here to change everywhere) ──────────────────
+const ARROW_EMOJI  = '<:arrow:1530116419381887089>';
+const LVLOP_EMOJI  = '<:lvlop:1530058173808115733>';
+const WALLET_EMOJI = '<:Nwallet:1530113305417613414>';
+
 // ── Emojis ────────────────────────────────────
 const E = {
   ryo:      '<:ryo:1529490447381299230>',
@@ -187,6 +192,7 @@ const COLORS = {
 };
 
 module.exports = {
+  ARROW_EMOJI, LVLOP_EMOJI, WALLET_EMOJI,
   PREFIXES,
   E, COMBAT_EMOJIS, RARITIES, PULL_POOL_RARITIES,
   MASTERY, MASTERY_UPGRADE_COST,

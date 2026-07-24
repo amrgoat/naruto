@@ -8,7 +8,7 @@ const { EmbedBuilder }   = require('discord.js');
 const { q }              = require('../../database');
 const { CHARACTERS, PULL_POOL } = require('../../data/characters');
 const {
-  RARITIES, PULL_POOL_RARITIES, ESSENCE_PER_DUP, COLORS,
+  RARITIES, PULL_POOL_RARITIES, ESSENCE_PER_DUP, COLORS, COMBAT_EMOJIS,
 } = require('../../config');
 const { checkRegistered }  = require('../../utils/guards');
 const { errorEmbed }       = require('../../utils/embeds');
@@ -118,12 +118,12 @@ module.exports = {
     const lines = results.map((r, i) => {
       const re = RARITY_EMOJI[r.char.rarity] ?? r.char.rarity;
       if (r.isDuplicate) {
-        return `\`${i + 1}\` ${re} ~~${r.char.name}~~\n> converted to chakra essence → **${r.dupEssence}**`;
+        return `\`${i + 1}\` ${re} ~~${r.char.name}~~\n> → ${COMBAT_EMOJIS.essence} **${r.dupEssence}** Chakra Essence`;
       }
       return `\`${i + 1}\` ${re} ${r.char.name}`;
     });
 
-    const description = lines.join('\n');
+    const description = lines.join('\n\n');
     const truncated   = description.length > 3900
       ? description.slice(0, 3900) + '\n…'
       : description;
