@@ -22,7 +22,7 @@ const ITEMS = {
     id:          'ramen',
     name:        'Ramen',
     emoji:       E.ramen,                          // 🍜
-    tradable:    true,
+    tradable:    false,
     description: 'Ichiraku\'s finest. Restores 12 pulls instantly.',
     db_col:      'ramen',
     aliases:     ['ramen', 'noodles', 'food'],
@@ -32,7 +32,7 @@ const ITEMS = {
     id:          'essence',
     name:        'Chakra Essence',
     emoji:       COMBAT_EMOJIS.essence,            // <:essence:...>
-    tradable:    false,   // soul-bound — earned through battle & duplicates
+    tradable:   true,   // soul-bound — earned through battle & duplicates
     description: 'Crystallised chakra earned from duplicates and battles. Used in crafting.',
     db_col:      'chakra_essence',
     aliases:     ['essence', 'chakra', 'ce'],
@@ -52,7 +52,7 @@ const ITEMS = {
     id:          'fragment',
     name:        'Fragment',
     emoji:       E.fragment,                       // 💎
-    tradable:    false,   // soul-bound — character-specific, used for summon/mastery/prestige
+    tradable:    true,   // soul-bound — character-specific, used for summon/mastery/prestige
     description: 'Character-specific shards. Collect 15 to summon a card via N summon.',
     db_col:      null,    // stored in fragment_inventory table, not users
     aliases:     ['fragment', 'frag', 'frags', 'fragments'],
