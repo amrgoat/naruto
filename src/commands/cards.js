@@ -39,7 +39,8 @@ function buildNavRow(page, total) {
 }
 
 module.exports = {
-  name: 'cards',
+  name: 'mycollection',
+  aliases: ['mc'],
   description: 'Browse your card collection.',
 
   async execute(message) {

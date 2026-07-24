@@ -35,6 +35,7 @@ function pickCharacter(rarity) {
 
 module.exports = {
   name: 'pull',
+  aliases: ['op'],
   description: 'Summon a ninja card · 12 pulls per reset (12 AM & 12 PM IST)',
 
   async execute(message) {

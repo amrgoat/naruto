@@ -11,8 +11,9 @@ const { resolvePassiveBonuses }     = require('../utils/passives');
 const { buildMyCardInfoEmbed, errorEmbed } = require('../utils/embeds');
 
 module.exports = {
-  name: 'mci',
-  description: 'View your card with full detail · N mci <name>',
+  name: 'mycardinfo',
+  aliases: ['mci'],
+  description: 'View your card with full detail · N mycardinfo <name>',
 
   async execute(message, args) {
     const user = checkRegistered(message);

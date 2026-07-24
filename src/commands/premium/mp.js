@@ -49,7 +49,8 @@ function hasPremium(user) {
 }
 
 module.exports = {
-  name: 'mp',
+  name: 'multipull',
+  aliases: ['mp'],
   description: 'Mass Pull — use all remaining pulls at once · Premium only',
 
   async execute(message) {

@@ -81,8 +81,9 @@ function buildMasteryRow(m) {
 // ── Command ───────────────────────────────────
 
 module.exports = {
-  name: 'ci',
-  description: 'Look up any character · N ci <name>',
+  name: 'cardinfo',
+  aliases: ['ci'],
+  description: 'Look up any character · N cardinfo <name>',
 
   async execute(message, args) {
     if (!args.length) {

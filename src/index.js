@@ -44,7 +44,13 @@ function loadCommandDir(dir, tag = '') {
   for (const file of files) {
     const cmd = require(path.join(dir, file));
     client.commands.set(cmd.name, cmd);
-    console.log(`  ✓ Loaded command: ${tag}${cmd.name}`);
+    if (Array.isArray(cmd.aliases)) {
+      for (const alias of cmd.aliases) {
+        client.commands.set(alias, cmd);
+      }
+    }
+    const aliasStr = cmd.aliases?.length ? ` [${cmd.aliases.join(', ')}]` : '';
+    console.log(`  ✓ Loaded command: ${tag}${cmd.name}${aliasStr}`);
   }
 }
 

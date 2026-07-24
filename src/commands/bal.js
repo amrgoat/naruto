@@ -10,8 +10,9 @@ const { ITEMS }        = require('../items');
 const { checkRegistered } = require('../utils/guards');
 
 module.exports = {
-  name: 'bal',
-  description: 'Check your wallet and item balances · N bal',
+  name: 'balance',
+  aliases: ['bal'],
+  description: 'Check your wallet and item balances · N balance',
 
   async execute(message) {
     const user = checkRegistered(message);
