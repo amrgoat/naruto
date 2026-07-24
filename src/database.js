@@ -41,7 +41,7 @@ db.exec(`
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id       TEXT    NOT NULL REFERENCES users(discord_id) ON DELETE CASCADE,
     character_id  TEXT    NOT NULL,
-    level         INTEGER NOT NULL DEFAULT 1,
+    level         INTEGER NOT NULL DEFAULT 0,
     exp           INTEGER NOT NULL DEFAULT 0,
     mastery       INTEGER NOT NULL DEFAULT 1,
     stars         INTEGER NOT NULL DEFAULT 0,
@@ -195,7 +195,7 @@ const q = {
     UPDATE cards
     SET stars     = stars + 1,
         fragments = fragments - ?,
-        level     = 1,
+        level     = 0,
         exp       = 0,
         mastery   = 1
     WHERE id = ?

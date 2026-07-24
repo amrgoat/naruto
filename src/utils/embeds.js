@@ -71,12 +71,14 @@ function buildCardEmbed(card) {
   const lines = [char.description];
   if (card.stars > 0) lines.push(stars);
   lines.push(
-    `Level **${card.level}** / ${cap}  ·  Mastery **${card.mastery}**`,
-    atCap ? '*Level cap reached*' : expBar(card),
+    atCap
+      ? `Level **${card.level}** · *Level cap reached (${cap})*`
+      : `Level **${card.level}** · ${expBar(card)}`,
+    `Mastery **${card.mastery}**`,
     '',
-    `**ATK:** ${formatAtk(stats.atkMin, stats.atkMax)}`,
-    `**HP:** ${stats.hp.toLocaleString()}`,
-    `**SPD:** ${stats.spd}`,
+    `**Attack:** ${formatAtk(stats.atkMin, stats.atkMax)}`,
+    `**Health:** ${stats.hp.toLocaleString()}`,
+    `**Speed:** ${stats.spd}`,
     `**Type:** ${char.type}`,
     `**Fragments:** ${card.fragments}`,
   );
@@ -112,23 +114,17 @@ function buildMyCardInfoEmbed(card, passiveBonuses = {}) {
   const lines = [char.description];
   if (card.stars > 0) lines.push(stars);
   lines.push(
-    `Level **${card.level}** / ${cap}  ·  Mastery **${card.mastery}**`,
-    atCap ? '*Level cap reached*' : expBar(card),
+    atCap
+      ? `Level **${card.level}** · *Level cap reached (${cap})*`
+      : `Level **${card.level}** · ${expBar(card)}`,
+    `Mastery **${card.mastery}**`,
     '',
-    `**ATK:** ${formatAtk(stats.atkMin, stats.atkMax)}`,
-    `**HP:** ${stats.hp.toLocaleString()}`,
-    `**SPD:** ${stats.spd}`,
+    `**Attack:** ${formatAtk(stats.atkMin, stats.atkMax)}`,
+    `**Health:** ${stats.hp.toLocaleString()}`,
+    `**Speed:** ${stats.spd}`,
     `**Type:** ${char.type}`,
     `**Fragments:** ${card.fragments}`,
   );
-
-  // Show active passive stat bonuses
-  const activeBoosts = [];
-  if (hpPct > 0)   activeBoosts.push(`+${Math.round(hpPct * 100)}% HP (Choji)`);
-  if (flatSpd > 0)  activeBoosts.push(`+${flatSpd} Speed (Rock Lee)`);
-  if (activeBoosts.length) {
-    lines.push('', `✦ **Passives Active:** ${activeBoosts.join('  ·  ')}`);
-  }
 
   return new EmbedBuilder()
     .setColor(rarityColor(char.rarity))
@@ -145,19 +141,19 @@ function buildMyCardInfoEmbed(card, passiveBonuses = {}) {
 
 function buildRosterEmbed(char, footerText) {
   const stats  = getEffectiveStats({
-    character_id: char.id, level: 1, mastery: 1, stars: 0, fragments: 0, exp: 0,
+    character_id: char.id, level: 0, mastery: 1, stars: 0, fragments: 0, exp: 0,
   });
   const locked = RARITIES[char.rarity]?.locked ?? false;
 
   const lines = [char.description];
-  if (locked) lines.push(`${E.locked} *Cannot be pulled*`);
+  if (locked) lines.push(`${E.locked} *Unavailable*`);
   lines.push(
     '',
-    `**ATK:** ${formatAtk(stats.atkMin, stats.atkMax)}`,
-    `**HP:** ${stats.hp.toLocaleString()}`,
-    `**SPD:** ${stats.spd}`,
+    `**Attack:** ${formatAtk(stats.atkMin, stats.atkMax)}`,
+    `**Health:** ${stats.hp.toLocaleString()}`,
+    `**Speed:** ${stats.spd}`,
     `**Type:** ${char.type}`,
-    `**Source:** ${locked ? 'Locked' : 'Card Pulls'}`,
+    `**Source:** ${locked ? 'Unavailable' : 'Card Pulls'}`,
   );
 
   return new EmbedBuilder()
