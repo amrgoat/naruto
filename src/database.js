@@ -177,13 +177,9 @@ const q = {
     UPDATE cards SET fragments = fragments + ? WHERE id = ?
   `),
 
-  /** Add EXP; leveling is handled in JS */
-  addExp: db.prepare(`
-    UPDATE cards SET exp = exp + ? WHERE id = ?
-  `),
-
-  levelUp: db.prepare(`
-    UPDATE cards SET level = level + 1, exp = exp - ? WHERE id = ?
+  /** Set level and exp directly (used by giveExpToCard) */
+  setLevelAndExp: db.prepare(`
+    UPDATE cards SET level = ?, exp = ? WHERE id = ?
   `),
 
   /** Upgrade mastery and deduct fragments */
@@ -281,26 +277,27 @@ q.getUserCards = db.prepare(`SELECT * FROM cards WHERE user_id = ? ORDER BY id`)
  */
 function giveExpToCard(cardId, expAmount, masteryData) {
   const { expToNextLevel } = require('./config');
-  let card = q.getCard.get(cardId);
+  const card = q.getCard.get(cardId);
   if (!card) return null;
 
   const levelCap = masteryData[card.mastery]?.levelCap ?? 100;
-  let remaining = expAmount;
+  let pool     = card.exp + expAmount;
+  let newLevel = card.level;
 
-  while (remaining > 0 && card.level < levelCap) {
-    const needed = expToNextLevel(card.level);
-    const newExp = card.exp + remaining;
-    if (newExp >= needed) {
-      q.levelUp.run(needed, card.id);
-      remaining = newExp - needed;
+  // Calculate all level-ups in JS first — no intermediate DB reads
+  while (newLevel < levelCap) {
+    const needed = expToNextLevel(newLevel);
+    if (pool >= needed) {
+      pool -= needed;
+      newLevel++;
     } else {
-      q.addExp.run(remaining, card.id);
-      remaining = 0;
+      break;
     }
-    card = q.getCard.get(card.id);
   }
 
-  return card;
+  // Single write: set final level and leftover EXP
+  q.setLevelAndExp.run(newLevel, pool, cardId);
+  return q.getCard.get(cardId);
 }
 
 module.exports = { db, q, giveExpToCard };
