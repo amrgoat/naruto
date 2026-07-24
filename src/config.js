@@ -167,7 +167,7 @@ const ARENA_DIFFICULTIES = {
 // ── EXP Formula ───────────────────────────────
 /** EXP required to reach the NEXT level from `level` */
 function expToNextLevel(level) {
-  return level * 100;
+  return 1000;
 }
 
 // ── Colors ────────────────────────────────────
