@@ -40,8 +40,8 @@ module.exports = {
         .setColor(COLORS.EMBED_COLOR)
         .setTitle('Your ninja record has been created.')
         .setDescription(
-          `You start with ${E.ryo} **5,000** Ryo and **${STARTING_RAMEN}** ${E.ramen} Ramen.\n\n` +
-          `Begin your journey with \`N pull\` to summon your first card.`
+          `You start with ${E.ryo} 5000 ryo and 3 ${E.ramen} Ramen.\n\n` +
+          `Begin your journey with \`n pull\` to summon your first card.`
         )
         .setFooter({ text: username, iconURL: avatarURL })],
     });
