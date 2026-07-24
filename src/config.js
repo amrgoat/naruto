@@ -3,7 +3,7 @@
 // ─────────────────────────────────────────────
 
 /** All command prefixes that the bot responds to */
-const PREFIXES = ['N', 'N ', 'n ', 'ｎ'];
+const PREFIXES = ['t', 't ', 'T ', 'T'];
 const PULL_PREFIXES = ['Npull', 'Ｎpull', 'npull', 'ｎpull']; // No-space pull aliases
 
 // ── Emojis ────────────────────────────────────

@@ -82,6 +82,18 @@ module.exports = {
       });
     }
 
+    // ── Cap scrolls to what's actually needed ──
+    const expNeeded     = (levelCap - card.level) * 1000 - card.exp;
+    const scrollsNeeded = Math.ceil(expNeeded / EXP_PER_SCROLL);
+    if (amount > scrollsNeeded) {
+      return message.reply({
+        embeds: [errorEmbed(
+          `Too many scrolls! **${char.name}** only needs **${scrollsNeeded}** scroll${scrollsNeeded !== 1 ? 's' : ''} to reach the level cap (**${levelCap}**).\n` +
+          `Run \`n level ${scrollsNeeded} ${char.name}\` instead.`
+        )],
+      });
+    }
+
     // ── Check scroll balance ───────────────────
     if ((user.exp_scrolls ?? 0) < amount) {
       return message.reply({
