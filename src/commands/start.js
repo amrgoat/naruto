@@ -33,19 +33,17 @@ module.exports = {
     // Keep username fresh for future lookups
     q.updateUsername.run(username, id);
 
+    const avatarURL = message.author.displayAvatarURL({ dynamic: true, size: 128 });
+
     return message.reply({
       embeds: [new EmbedBuilder()
         .setColor(COLORS.EMBED_COLOR)
-        .setTitle(`${E.leaf} Welcome to the Hidden Leaf!`)
+        .setTitle('Your ninja record has been created.')
         .setDescription(
-          `Your ninja record has been created, **${username}**.\n\n` +
-          `You start with **${PULLS_PER_PERIOD} pulls** and **${STARTING_RAMEN} ${E.ramen} Ramen**.\n\n` +
+          `You start with ${E.ryo} **5,000** Ryo and **${STARTING_RAMEN}** ${E.ramen} Ramen.\n\n` +
           `Begin your journey with \`N pull\` to summon your first card.`
         )
-        .addFields(
-          { name: `${E.pull} Pulls`,  value: `**${PULLS_PER_PERIOD}**`, inline: true },
-          { name: `${E.ramen} Ramen`, value: `**${STARTING_RAMEN}**`,   inline: true },
-        )],
+        .setFooter({ text: username, iconURL: avatarURL })],
     });
   },
 };

@@ -107,7 +107,7 @@ const PRESTIGE_STAT_BONUS = 0.20; // +20% per star, additive
 // ── Pull System ───────────────────────────────
 const PULLS_PER_PERIOD = 12;
 const PULL_COOLDOWN_MS  = 3_000; // 3 seconds
-const STARTING_RAMEN   = 0;
+const STARTING_RAMEN   = 3;
 const STARTING_RYO     = 5000;
 
 // ── Arena ─────────────────────────────────────
