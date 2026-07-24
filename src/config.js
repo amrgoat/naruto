@@ -4,7 +4,6 @@
 
 /** All command prefixes that the bot responds to */
 const PREFIXES = ['t', 't ', 'T ', 'T'];
-const PULL_PREFIXES = ['Npull', 'Ｎpull', 'npull', 'ｎpull']; // No-space pull aliases
 
 // ── Emojis ────────────────────────────────────
 const E = {
@@ -188,7 +187,7 @@ const COLORS = {
 };
 
 module.exports = {
-  PREFIXES, PULL_PREFIXES,
+  PREFIXES,
   E, COMBAT_EMOJIS, RARITIES, PULL_POOL_RARITIES,
   MASTERY, MASTERY_UPGRADE_COST,
   MAX_STARS, PRESTIGE_COSTS, PRESTIGE_STAT_BONUS,
