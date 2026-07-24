@@ -31,6 +31,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setColor(COLORS.EMBED_COLOR)
       .setTitle(`${username}'s Wallet`)
+      .setThumbnail(message.author.displayAvatarURL({ dynamic: true, size: 128 }))
       .setDescription([
         `${WALLET_EMOJI} **Wallet:**`,
         `${ARROW_EMOJI} Ryo: **${user.ryo.toLocaleString()}** ${COMBAT_EMOJIS.ryo}`,
