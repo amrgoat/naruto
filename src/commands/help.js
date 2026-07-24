@@ -16,27 +16,27 @@ module.exports = {
       .addFields(
         {
           name: 'General',
-          value: '`n start` , `n profile` , `n daily` , `n ping` , `n balance` (`n bal`) , `n ramen` , `n help`',
+          value: '`n start` , `n profile` , `n daily` , `n ping` , `n balance` , `n ramen`',
         },
         {
           name: 'Collection',
-          value: '`n pull` (`nop`) , `n mycollection` (`n mc`) , `n all` , `n cardinfo` (`n ci`) , `n mycardinfo` (`n mci`) , `n finv` , `n summon`',
+          value: '`n pull` , `n mycollection` , `n all` , `n cardinfo` , `n mycardinfo` , `n finv` , `n summon`',
         },
         {
           name: 'Team',
-          value: '`n team` , `n team add <name>` , `n team remove <name>`',
+          value: '`n team` , `n team add` , `n team remove`',
         },
         {
           name: 'Progression',
-          value: '`n mastery` , `n prestige` , `n craft <amount> <card>` , `n level <amount> <card>`',
+          value: '`n mastery` , `n prestige` , `n craft` , `n level`',
         },
         {
           name: 'Battle',
           value: '`n arena` , `n battle`',
         },
         {
-          name: '👑 Premium',
-          value: '`n multipull` (`n mp`)',
+          name: 'Premium',
+          value: '`n multipull`',
         },
       );
 
