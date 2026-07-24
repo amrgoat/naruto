@@ -68,7 +68,7 @@ loadCommandDir(path.join(__dirname, 'commands', 'premium'), '[premium] ');
  */
 function parseMessage(content) {
   // Spaced prefixes — try these first so "t help" works
-  const spacedPrefixes = ['t ', 'T '];
+  const spacedPrefixes = PREFIXES.filter(p => p.endsWith(' '));
   for (const p of spacedPrefixes) {
     if (content.startsWith(p)) {
       const rest = content.slice(p.length).trim();
@@ -78,8 +78,8 @@ function parseMessage(content) {
     }
   }
 
-  // No-space prefixes — "tpull", "Tpull", etc.
-  const noSpacePrefixes = ['t', 'T'];
+  // No-space prefixes — e.g. "tpull"
+  const noSpacePrefixes = PREFIXES.filter(p => !p.endsWith(' '));
   for (const p of noSpacePrefixes) {
     if (content.startsWith(p) && content.length > p.length) {
       const rest = content.slice(p.length);
@@ -95,7 +95,7 @@ function parseMessage(content) {
 // ── Ready ──────────────────────────────────────
 client.once('clientReady', () => {
   console.log(`\n${require('./config').E.leaf} ${client.user.tag} is online!`);
-  console.log(`   Prefix  : t`);
+  console.log(`   Prefix  : ${PREFIXES[0].trim()}`);
   console.log(`   Servers : ${client.guilds.cache.size}`);
   console.log(`   Commands: ${client.commands.size}`);
 
