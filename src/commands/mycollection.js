@@ -1,24 +1,24 @@
 // ─────────────────────────────────────────────
-//  cards.js  —  N cards
-//  Browse your collection — each card displayed
-//  exactly like the pull embed, with ◀ ▶ buttons.
+//  mycollection.js  —  N mc [rarity]
+//  Browse your collection — highest rarity first.
+//  Optional: N mc S  →  show only S-rank cards.
 // ─────────────────────────────────────────────
 
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { q }              = require('../database');
-const { CHARACTERS }     = require('../data/characters');
+const { q }               = require('../database');
+const { CHARACTERS }      = require('../data/characters');
 const { checkRegistered } = require('../utils/guards');
 const { buildPullEmbed, errorEmbed } = require('../utils/embeds');
-const { rarityBadge }    = require('../utils/cardUtils');
 
-// Sort order: rarity then ID
+// Higher number = higher rarity (sort descending)
 const RARITY_ORDER = { C: 0, B: 1, A: 2, S: 3, SS: 4, UR: 5 };
+const VALID_RARITIES = new Set(['C', 'B', 'A', 'S', 'SS', 'UR']);
 
 function sortCards(cards) {
   return [...cards].sort((a, b) => {
     const ra = RARITY_ORDER[CHARACTERS[a.character_id]?.rarity ?? 'C'];
     const rb = RARITY_ORDER[CHARACTERS[b.character_id]?.rarity ?? 'C'];
-    if (ra !== rb) return ra - rb;
+    if (ra !== rb) return rb - ra; // highest rarity first
     return a.id - b.id;
   });
 }
@@ -41,12 +41,20 @@ function buildNavRow(page, total) {
 module.exports = {
   name: 'mycollection',
   aliases: ['mc'],
-  description: 'Browse your card collection.',
+  description: 'Browse your card collection. Usage: `N mc` or `N mc <rarity>`',
 
-  async execute(message) {
+  async execute(message, args) {
     const userId = message.author.id;
     const user   = checkRegistered(message);
     if (!user) return;
+
+    // Optional rarity filter
+    const rarityArg = args[0]?.toUpperCase();
+    if (rarityArg && !VALID_RARITIES.has(rarityArg)) {
+      return message.reply({
+        embeds: [errorEmbed(`Invalid rarity **${args[0]}**.\nValid options: \`C\`, \`B\`, \`A\`, \`S\`, \`SS\`, \`UR\``)],
+      });
+    }
 
     const rawCards = q.getUserCards.all(userId);
     if (!rawCards.length) {
@@ -55,19 +63,25 @@ module.exports = {
       });
     }
 
-    const cards      = sortCards(rawCards);
+    // Filter by rarity if requested
+    const filtered = rarityArg
+      ? rawCards.filter(c => CHARACTERS[c.character_id]?.rarity === rarityArg)
+      : rawCards;
+
+    if (!filtered.length) {
+      return message.reply({
+        embeds: [errorEmbed(`You don't own any **${rarityArg}-Rank** cards yet.`)],
+      });
+    }
+
+    const cards      = sortCards(filtered);
     const memberName = message.member?.displayName ?? message.author.username;
     let   page       = 0;
 
     const buildPage = (idx) => {
-      const card = cards[idx];
-      const char = CHARACTERS[card.character_id];
-
-      // Reuse the pull embed style, then replace the footer with page info
+      const card  = cards[idx];
       const embed = buildPullEmbed(card, false, memberName, card.fragments);
-      embed.setFooter({
-        text: `Card ${idx + 1} of ${cards.length}  ·  ${rarityBadge(char.rarity)} ${char.name}`,
-      });
+      embed.setFooter({ text: `Card ${idx + 1} of ${cards.length}` });
       return embed;
     };
 
