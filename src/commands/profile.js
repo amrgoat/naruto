@@ -3,16 +3,11 @@
 //  Displays a player's ninja profile.
 // ─────────────────────────────────────────────
 
-const { EmbedBuilder }      = require('discord.js');
-const { q }                 = require('../database');
-const { COLORS, E, PULLS_PER_PERIOD, ARENA_ATTEMPTS_PER_DAY } = require('../config');
-const { CHARACTERS }        = require('../data/characters');
-const { checkRegistered }   = require('../utils/guards');
-const { starsDisplay, rarityBadge, getEffectiveStats } = require('../utils/cardUtils');
-const { nextPullResetUTC, todayISTMidnightUTC, formatCountdown, currentPullPeriodStartUTC } = require('../utils/timeUtils');
-
-// Total pullable characters for collection progress
-const TOTAL_CHARACTERS = Object.values(CHARACTERS).filter(c => !c.pullLocked).length;
+const { EmbedBuilder }    = require('discord.js');
+const { q }               = require('../database');
+const { COLORS, E, COMBAT_EMOJIS, ARROW_EMOJI, WALLET_EMOJI } = require('../config');
+const { checkRegistered } = require('../utils/guards');
+const { currentPullPeriodStartUTC, todayISTMidnightUTC } = require('../utils/timeUtils');
 
 module.exports = {
   name: 'profile',
@@ -37,64 +32,54 @@ module.exports = {
 
     const now = Date.now();
 
-    // ── Pulls: auto-reset if period changed ──────
+    // ── Auto-resets ───────────────────────────────
     const periodStart = currentPullPeriodStartUTC(now);
     if (user.pulls_reset_at < periodStart) {
       q.resetPulls.run(periodStart, userId);
       user = q.getUser.get(userId);
     }
 
-    // ── Arena: auto-reset if new day ─────────────
     const todayMidnight = todayISTMidnightUTC(now);
     if (user.arena_reset_at < todayMidnight) {
       q.resetArena.run(todayMidnight, userId);
       user = q.getUser.get(userId);
     }
 
-    // ── Data ──────────────────────────────────────
-    const teamCards   = q.getTeam.all(userId);
-    const allCards    = q.getUserCards.all(userId);
-    const uniqueChars = new Set(allCards.map(c => c.character_id)).size;
+    // ── Card counts ───────────────────────────────
+    const allCards   = q.getUserCards.all(userId);
+    const totalCards = allCards.length;
+    const m1Cards    = allCards.filter(c => c.mastery === 1).length;
+    const m2Cards    = allCards.filter(c => c.mastery === 2).length;
+    const m3Cards    = allCards.filter(c => c.mastery === 3).length;
 
-    const nextReset  = nextPullResetUTC(now);
-    const pullsLine  = `**${user.pulls_remaining}** / ${PULLS_PER_PERIOD}  *(reset in ${formatCountdown(nextReset - now)})*`;
-    const arenaLine  = `**${user.arena_attempts}** / ${ARENA_ATTEMPTS_PER_DAY}`;
+    // ── Build description ─────────────────────────
+    const A = ARROW_EMOJI;
 
-    // ── Team display ──────────────────────────────
-    let teamText = '';
-    if (teamCards.length === 0) {
-      teamText = '*No cards in team — use `N team add <name>`*';
-    } else {
-      teamText = teamCards.map(card => {
-        const char  = CHARACTERS[card.character_id];
-        const stars = starsDisplay(card.stars);
-        return `${rarityBadge(char.rarity)} **${char.name}**  M${card.mastery} Lv.${card.level}${stars ? `  ${stars}` : ''}`;
-      }).join('\n');
-      for (let i = teamCards.length; i < 4; i++) {
-        teamText += '\n*— Empty Slot —*';
-      }
-    }
+    const desc = [
+      `${WALLET_EMOJI} **Balance:**`,
+      `${A} Ryo: **${user.ryo.toLocaleString()}** ${E.ryo}`,
+      `${A} Ramen: **${user.ramen}** ${E.ramen}`,
+      `${A} Chakra Essence: **${(user.chakra_essence ?? 0).toLocaleString()}** ${COMBAT_EMOJIS.essence}`,
+      `${A} Badges: *(none yet)*`,
+      ``,
+      `🃏 **Cards:**`,
+      `${A} Total Cards Owned: **${totalCards}**`,
+      `${A} M1 Cards Owned: **${m1Cards}**`,
+      `${A} M2 Cards Owned: **${m2Cards}**`,
+      `${A} M3 Cards Owned: **${m3Cards}**`,
+      ``,
+      `📊 **Stats:**`,
+      `${A} Rank: **Ninja**`,
+      `${A} Missions Finished: **${user.missions_finished ?? 0}**`,
+      `${A} All Time Votes: **${user.all_time_votes ?? 0}**`,
+      `${A} Vote Streak: **${user.vote_streak ?? 0}**`,
+    ].join('\n');
 
-    // ── Build embed ───────────────────────────────
     const embed = new EmbedBuilder()
       .setColor(COLORS.EMBED_COLOR)
-      .setTitle(`${E.leaf} ${user.username}'s Ninja Profile`)
+      .setTitle(`${target.username}'s Ninja Profile`)
       .setThumbnail(target.displayAvatarURL({ size: 128 }))
-      .addFields(
-        { name: `${E.ryo} Ryo`,              value: `**${user.ryo.toLocaleString()}**`,            inline: true },
-        { name: `${E.ramen} Ramen`,           value: `**${user.ramen}**`,                           inline: true },
-        { name: '\u26a1 Chakra Essence',      value: `**${(user.chakra_essence ?? 0).toLocaleString()}**`, inline: true },
-        { name: '\u{1F4dc} EXP Scrolls',      value: `**${user.exp_scrolls ?? 0}**`,                inline: true },
-        { name: `${E.pull} Pulls`,            value: pullsLine,                                     inline: false },
-        { name: `${E.arena} Arena`,           value: arenaLine,                                     inline: false },
-        { name: `${E.team} Active Team`,      value: teamText,                                      inline: false },
-        {
-          name:  `${E.scroll} Collection`,
-          value: `**${uniqueChars}** / **${TOTAL_CHARACTERS}** characters`,
-          inline: false,
-        },
-      )
-      .setFooter({ text: `Ninja since ${new Date(user.created_at * 1000).toLocaleDateString()}` });
+      .setDescription(desc);
 
     return message.reply({ embeds: [embed] });
   },
