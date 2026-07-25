@@ -52,9 +52,9 @@ const ITEMS = {
     id:          'fragment',
     name:        'Fragment',
     emoji:       E.fragment,                       // 💎
-    tradable:    true,   // soul-bound — character-specific, used for summon/mastery/prestige
-    description: 'Character-specific shards. Collect 15 to summon a card via N summon.',
-    db_col:      null,    // stored in fragment_inventory table, not users
+    tradable:    true,   // tradable — character-specific shards stored in fragment_inventory
+    description: 'Character-specific shards. Tradable between players. Used for summon, mastery, and prestige.',
+    db_col:      null,    // stored in fragment_inventory table, not the users table
     aliases:     ['fragment', 'frag', 'frags', 'fragments'],
   },
 };
