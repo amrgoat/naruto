@@ -30,7 +30,7 @@ const CHARACTERS = {
     baseHp: 100,    hpGrowth: 3,
     baseSpd: 38,    spdGrowth: 0.4,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/8/8a/Konohamaru_Sarutobi.png/revision/latest',
+    image: 'https://i.pinimg.com/originals/2d/e2/e6/2de2e62109e0ec45585f7c6a686b4011.jpg',
   },
 
   moegi: {
@@ -43,7 +43,7 @@ const CHARACTERS = {
     baseHp: 80,     hpGrowth: 2,
     baseSpd: 42,    spdGrowth: 0.4,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/7/7f/Moegi.png/revision/latest',
+    image: 'https://i.pinimg.com/originals/f9/ad/e5/f9ade5861832986958958dac6d105f46.jpg',
   },
 
   udon: {
@@ -56,7 +56,7 @@ const CHARACTERS = {
     baseHp: 85,     hpGrowth: 2,
     baseSpd: 32,    spdGrowth: 0.3,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/d/d8/Udon.png/revision/latest',
+    image: 'https://i.pinimg.com/originals/e1/a3/7d/e1a37d43d28cb87473b2b86f622b40fe.jpg',
   },
 
   inari: {
@@ -69,7 +69,7 @@ const CHARACTERS = {
     baseHp: 75,     hpGrowth: 2,
     baseSpd: 28,    spdGrowth: 0.3,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/3/3d/Inari.png/revision/latest',
+    image: 'https://media.easy-peasy.ai/27feb2bb-aeb4-4a83-9fb6-8f3f2a15885e/8452e0a4-7b9a-470b-b68d-0fe2b5c705f1_thumb.webp',
   },
 
   tazuna: {
@@ -82,7 +82,7 @@ const CHARACTERS = {
     baseHp: 110,    hpGrowth: 3,
     baseSpd: 20,    spdGrowth: 0.2,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/a/ae/Tazuna.png/revision/latest',
+    image: 'https://b.thumbs.redditmedia.com/enmWW2WxnfDytYNslhYIgDNHBtyHq1gkjbjPHft_zpM.jpg',
   },
 
   mizuki: {
@@ -95,7 +95,7 @@ const CHARACTERS = {
     baseHp: 115,    hpGrowth: 3,
     baseSpd: 44,    spdGrowth: 0.5,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/e/e1/Mizuki.png/revision/latest',
+    image: 'https://static0.srcdn.com/wordpress/wp-content/uploads/2017/11/Team-Dosu-Naruto.jpg?q=70&fit=crop&w=825&dpr=1',
   },
 
   ebisu: {
@@ -108,7 +108,7 @@ const CHARACTERS = {
     baseHp: 120,    hpGrowth: 3,
     baseSpd: 46,    spdGrowth: 0.5,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/f/f8/Ebisu.png/revision/latest',
+    image: 'https://i.pinimg.com/originals/37/f0/d5/37f0d52e0442f0db0e5b1f1f69a5e28d.jpg',
   },
 
   iruka: {
@@ -121,7 +121,7 @@ const CHARACTERS = {
     baseHp: 130,    hpGrowth: 4,
     baseSpd: 50,    spdGrowth: 0.5,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/5/5f/Iruka_Umino.png/revision/latest',
+    image: 'https://static0.cbrimages.com/wordpress/wp-content/uploads/2020/03/Iruka-Umino-1.jpg?q=50&fit=crop&w=825&dpr=1.5',
   },
 
   kin_tsuchi: {
@@ -134,7 +134,7 @@ const CHARACTERS = {
     baseHp: 95,     hpGrowth: 3,
     baseSpd: 52,    spdGrowth: 0.5,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/4/49/Kin_Tsuchi.png/revision/latest',
+    image: 'https://i.pinimg.com/originals/50/71/c0/5071c02d36c1931240213150761000b2.jpg',
   },
 
   zaku_abumi: {
@@ -147,7 +147,7 @@ const CHARACTERS = {
     baseHp: 100,    hpGrowth: 3,
     baseSpd: 48,    spdGrowth: 0.5,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/5/56/Zaku_Abumi.png/revision/latest',
+    image: 'https://gbaike-image.cdn.bcebos.com/cc11728b4710b912c8fcea8145a7eb039245d6888400/cc11728b4710b912c8fcea8145a7eb039245d6888400_url?x-bce-process=image/format,f_auto/resize,m_lfit,h_400,limit_1',
   },
 
   // ════════════════════════
@@ -164,7 +164,7 @@ const CHARACTERS = {
     baseHp: 250,    hpGrowth: 7,
     baseSpd: 62,    spdGrowth: 0.8,
     critRate: 10,
-    image: 'https://images4.alphacoders.com/124/thumb-440-1241754.webp',
+    image: 'https://m.media-amazon.com/images/I/51uldCLMnLL.jpg',
   },
 
   ino: {
@@ -177,7 +177,7 @@ const CHARACTERS = {
     baseHp: 175,    hpGrowth: 5,
     baseSpd: 66,    spdGrowth: 0.8,
     critRate: 10,
-    image: 'https://wallpapers.com/images/hd/ino-yamanaka-lt6ixygfn2mn0ani.jpg',
+    image: 'https://i.pinimg.com/originals/f0/3c/1e/f03c1e3d6d8bb7434fbefa750f30a96e.jpg',
   },
 
   choji: {
@@ -190,7 +190,7 @@ const CHARACTERS = {
     baseHp: 420,    hpGrowth: 12,
     baseSpd: 24,    spdGrowth: 0.3,
     critRate: 10,
-    image: 'https://i.pinimg.com/originals/00/99/80/009980c3ae8877db3bfa1cb31eb17583.jpg',
+    image: 'https://getwallpapers.com/wallpaper/full/d/0/1/809686-cool-choji-akimichi-wallpapers-1700x2186.jpg',
   },
 
   kiba: {
@@ -203,7 +203,7 @@ const CHARACTERS = {
     baseHp: 168,    hpGrowth: 5,
     baseSpd: 72,    spdGrowth: 0.9,
     critRate: 10,
-    image: 'https://i.pinimg.com/originals/f6/72/7e/f6727edb43842cb44fe6a2c02108e482.jpg',
+    image: 'https://www.creativeuncut.com/gallery-22/art/nuns-kiba-inuzuka.jpg',
   },
 
   shino: {
@@ -216,7 +216,7 @@ const CHARACTERS = {
     baseHp: 210,    hpGrowth: 6,
     baseSpd: 40,    spdGrowth: 0.5,
     critRate: 10,
-    image: 'https://i.pinimg.com/originals/19/d2/6b/19d26b746f2e17eacaf78bdcd47dfe7e.jpg',
+    image: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/60e03beb-7a94-4141-b310-9a77ba5dec35/dge5m9x-c9759302-c2c1-49c7-8de7-f4298700e486.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzYwZTAzYmViLTdhOTQtNDE0MS1iMzEwLTlhNzdiYTVkZWMzNVwvZGdlNW05eC1jOTc1OTMwMi1jMmMxLTQ5YzctOGRlNy1mNDI5ODcwMGU0ODYucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.jawKheWqOsCXQDoaLaccDzcad4Icqag6aGou2wMX1FQ',
   },
 
   hinata: {
@@ -229,7 +229,7 @@ const CHARACTERS = {
     baseHp: 192,    hpGrowth: 5,
     baseSpd: 58,    spdGrowth: 0.7,
     critRate: 10,
-    image: 'https://wallpapercat.com/w/full/2/f/2/739419-1080x1920-mobile-full-hd-hinata-hyuga-background-image.jpg',
+    image: 'https://wallpapercat.com/w/full/1/c/2/739345-1730x3060-samsung-hd-hinata-hyuga-wallpaper-photo.jpg',
   },
 
   tenten: {
@@ -242,7 +242,7 @@ const CHARACTERS = {
     baseHp: 180,    hpGrowth: 5,
     baseSpd: 68,    spdGrowth: 0.8,
     critRate: 10,
-    image: 'https://i.pinimg.com/originals/2a/e5/c6/2ae5c64d4e39d8790b02ad03a6e85739.jpg',
+    image: 'https://wallpaperaccess.com/full/5641858.png',
   },
 
   dosu: {
@@ -255,7 +255,7 @@ const CHARACTERS = {
     baseHp: 195,    hpGrowth: 6,
     baseSpd: 44,    spdGrowth: 0.5,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/3/31/Dosu_Kinuta.png/revision/latest',
+    image: 'https://images.alphacoders.com/964/thumbbig-96421.webp',
   },
 
   yoroi: {
@@ -268,7 +268,7 @@ const CHARACTERS = {
     baseHp: 185,    hpGrowth: 5,
     baseSpd: 54,    spdGrowth: 0.6,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/5/55/Yoroi_Akado.png/revision/latest',
+    image: 'https://ami.animecharactersdatabase.com/images/naruto/Yoroi_Akadou.png',
   },
 
   misumi: {
@@ -281,7 +281,7 @@ const CHARACTERS = {
     baseHp: 178,    hpGrowth: 5,
     baseSpd: 60,    spdGrowth: 0.7,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/1/13/Misumi_Tsurugi.png/revision/latest',
+    image: 'https://ami.animecharactersdatabase.com/uploads/chars/5688-663522538.jpg',
   },
 
   // ════════════════════════
@@ -298,7 +298,7 @@ const CHARACTERS = {
     baseHp: 320,    hpGrowth: 9,
     baseSpd: 88,    spdGrowth: 1.2,
     critRate: 10,
-    image: 'https://i.pinimg.com/originals/1b/5c/cd/1b5ccd57b3afc64a56cbf52857d6ca64.jpg',
+    image: 'https://aiartes.com/works/naruto-uzumaki-midjourney-art-style-of-claire-wendling-small.jpg',
   },
 
   sasuke: {
@@ -311,7 +311,7 @@ const CHARACTERS = {
     baseHp: 290,    hpGrowth: 7,
     baseSpd: 102,   spdGrowth: 1.4,
     critRate: 10,
-    image: 'https://i.pinimg.com/originals/fc/5d/e4/fc5de4889521dc7fa660f97ef213c901.jpg',
+    image: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/028079fc-266f-4466-bf55-8911883760c0/diigtd6-f73e1320-810c-43d2-b955-955820d3e6a9.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzAyODA3OWZjLTI2NmYtNDQ2Ni1iZjU1LTg5MTE4ODM3NjBjMFwvZGlpZ3RkNi1mNzNlMTMyMC04MTBjLTQzZDItYjk1NS05NTU4MjBkM2U2YTkuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.SQDkjTw1JclSOBb3wROCAjQWLLEiLGtN6VE31GzeOw8',
   },
 
   rock_lee: {
@@ -324,7 +324,7 @@ const CHARACTERS = {
     baseHp: 270,    hpGrowth: 7,
     baseSpd: 148,   spdGrowth: 1.9,
     critRate: 10,
-    image: 'https://i.redd.it/6fdytiehhhu51.jpg',
+    image: 'https://a.thumbs.redditmedia.com/MrifkHEWyFBqHuqXVlNCkjGM5W3Yy8tH5ePh4HWHSj0.jpg',
   },
 
   neji: {
@@ -337,7 +337,7 @@ const CHARACTERS = {
     baseHp: 260,    hpGrowth: 7,
     baseSpd: 80,    spdGrowth: 1.0,
     critRate: 10,
-    image: 'https://static.zerochan.net/Hyuuga.Neji.full.100872.jpg',
+    image: 'https://w0.peakpx.com/wallpaper/895/55/HD-wallpaper-neji-neji-hyuga-naruto-shippuden-anime-sad-otaku-anime-art-hyuga-anime-thumbnail.jpg',
   },
 
   shikamaru: {
@@ -350,7 +350,7 @@ const CHARACTERS = {
     baseHp: 280,    hpGrowth: 7,
     baseSpd: 82,    spdGrowth: 1.1,
     critRate: 10,
-    image: 'https://wallpapers.com/images/hd/shikamaru-shadow-art-0nakqq6659wq0vk0.jpg',
+    image: 'https://render.fineartamerica.com/images/images-profile-flow/400/images/artworkimages/mediumlarge/3/3-naruto-anime-hai-dang.jpg',
   },
 
   kankuro: {
@@ -363,7 +363,7 @@ const CHARACTERS = {
     baseHp: 275,    hpGrowth: 7,
     baseSpd: 70,    spdGrowth: 0.9,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/2/2e/Kankuro.png/revision/latest',
+    image: 'https://i.ebayimg.com/images/g/XG4AAeSwhBRpRPir/s-l500.jpg',
   },
 
   temari: {
@@ -376,7 +376,7 @@ const CHARACTERS = {
     baseHp: 268,    hpGrowth: 7,
     baseSpd: 86,    spdGrowth: 1.1,
     critRate: 10,
-    image: 'https://w0.peakpx.com/wallpaper/531/680/HD-wallpaper-anime-naruto-minimalist-temari-naruto-shikamaru-nara-thumbnail.jpg',
+    image: 'https://i.pinimg.com/originals/f0/d0/bd/f0d0bd4fda219db2fccc6528ef3e777a.jpg',
   },
 
   kabuto: {
@@ -389,7 +389,7 @@ const CHARACTERS = {
     baseHp: 310,    hpGrowth: 8,
     baseSpd: 76,    spdGrowth: 1.0,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/e/e4/Kabuto_Yakushi.png/revision/latest',
+    image: 'https://www.creativeuncut.com/gallery-22/art/nscnr3-kabuto-yakushi.jpg',
   },
 
   anko: {
@@ -402,7 +402,7 @@ const CHARACTERS = {
     baseHp: 285,    hpGrowth: 7,
     baseSpd: 92,    spdGrowth: 1.2,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/b/b8/Anko_Mitarashi.png/revision/latest',
+    image: 'https://www.pngplay.com/wp-content/uploads/12/Anko-Mitarashi-Free-PNG.png',
   },
 
   hayate: {
@@ -415,7 +415,7 @@ const CHARACTERS = {
     baseHp: 265,    hpGrowth: 7,
     baseSpd: 84,    spdGrowth: 1.1,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/9/9d/Hayate_Gekko.png/revision/latest',
+    image: 'https://i.pinimg.com/originals/44/77/4e/44774eccb403b0947b9a62cf6a71c7fc.jpg',
   },
 
   genma: {
@@ -428,7 +428,7 @@ const CHARACTERS = {
     baseHp: 270,    hpGrowth: 7,
     baseSpd: 80,    spdGrowth: 1.0,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/6/6f/Genma_Shiranui.png/revision/latest',
+    image: 'https://i.pinimg.com/originals/9e/8f/81/9e8f81af16cb53a2947adf60229aa465.jpg',
   },
 
   baki: {
@@ -441,7 +441,7 @@ const CHARACTERS = {
     baseHp: 295,    hpGrowth: 8,
     baseSpd: 88,    spdGrowth: 1.1,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/a/a0/Baki.png/revision/latest',
+    image: 'https://www.creativeuncut.com/gallery-22/art/nscnr3-baki.jpg',
   },
 
   // ════════════════════════
@@ -458,7 +458,7 @@ const CHARACTERS = {
     baseHp: 480,    hpGrowth: 12,
     baseSpd: 118,   spdGrowth: 1.7,
     critRate: 10,
-    image: 'https://i.pinimg.com/originals/68/a3/dc/68a3dcbaf7fb3958bd5b78359e21ffc1.jpg',
+    image: 'https://www.pngplay.com/wp-content/uploads/12/Kakashi-Hatake-Background-PNG-Image.png',
   },
 
   might_guy: {
@@ -471,7 +471,7 @@ const CHARACTERS = {
     baseHp: 520,    hpGrowth: 13,
     baseSpd: 155,   spdGrowth: 2.1,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/6/6f/Might_Guy.png/revision/latest',
+    image: 'https://i.redd.it/zohmg4zfmyp81.jpg',
   },
 
   gaara: {
@@ -484,7 +484,7 @@ const CHARACTERS = {
     baseHp: 680,    hpGrowth: 18,
     baseSpd: 30,    spdGrowth: 0.4,
     critRate: 10,
-    image: 'https://wallpapers.com/images/hd/cool-gaara-digital-art-hzux6z9g8huvmvz0.jpg',
+    image: 'https://wallpaperaccess.com/full/6833858.jpg',
   },
 
   zabuza: {
@@ -497,7 +497,7 @@ const CHARACTERS = {
     baseHp: 510,    hpGrowth: 13,
     baseSpd: 105,   spdGrowth: 1.5,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/0/01/Zabuza_Momochi.png/revision/latest',
+    image: 'https://www.pngplay.com/wp-content/uploads/12/Zabuza-Momochi-Download-Free-PNG.png',
   },
 
   haku: {
@@ -510,7 +510,7 @@ const CHARACTERS = {
     baseHp: 440,    hpGrowth: 11,
     baseSpd: 148,   spdGrowth: 2.0,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/e/eb/Haku.png/revision/latest',
+    image: 'https://wallpapercave.com/wp/wp7885791.jpg',
   },
 
   asuma: {
@@ -523,7 +523,7 @@ const CHARACTERS = {
     baseHp: 490,    hpGrowth: 12,
     baseSpd: 100,   spdGrowth: 1.4,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/e/ef/Asuma_Sarutobi.png/revision/latest',
+    image: 'https://i.pinimg.com/originals/4e/06/68/4e06688efd63f3bff89f4ee0836c16c7.jpg',
   },
 
   kurenai: {
@@ -536,7 +536,7 @@ const CHARACTERS = {
     baseHp: 430,    hpGrowth: 11,
     baseSpd: 96,    spdGrowth: 1.3,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/e/e4/Kurenai_Yuhi.png/revision/latest',
+    image: 'https://i.pinimg.com/originals/77/38/c8/7738c81657f145706b7fc482c440b511.jpg',
   },
 
   kimimaro: {
@@ -549,7 +549,7 @@ const CHARACTERS = {
     baseHp: 500,    hpGrowth: 13,
     baseSpd: 112,   spdGrowth: 1.6,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/1/1f/Kimimaro.png/revision/latest',
+    image: 'https://i.pinimg.com/originals/19/2f/0a/192f0aa42cd63339d6521503ba22d39a.jpg',
   },
 
   jirobo: {
@@ -562,7 +562,7 @@ const CHARACTERS = {
     baseHp: 640,    hpGrowth: 16,
     baseSpd: 52,    spdGrowth: 0.7,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/a/a4/Jirobo.png/revision/latest',
+    image: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/402e21b1-03cb-4a1c-8292-5acc83968c94/da27t4h-1fbe3a89-e8b3-4dd9-8cb3-c9c2d19461e1.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiIvZi80MDJlMjFiMS0wM2NiLTRhMWMtODI5Mi01YWNjODM5NjhjOTQvZGEyN3Q0aC0xZmJlM2E4OS1lOGIzLTRkZDktOGNiMy1jOWMyZDE5NDYxZTEuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.D_Z4w_IDvG0CCC-jGqqzd2ikQjxvRp5oxdxa4RizK10',
   },
 
   kidomaru: {
@@ -575,7 +575,7 @@ const CHARACTERS = {
     baseHp: 455,    hpGrowth: 11,
     baseSpd: 108,   spdGrowth: 1.5,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/5/57/Kidomaru.png/revision/latest',
+    image: 'https://b.thumbs.redditmedia.com/-nhRXE_FoByKwTDBzURdWF2LOAKEoOg7dcntclSuQmg.jpg',
   },
 
   tayuya: {
@@ -588,7 +588,7 @@ const CHARACTERS = {
     baseHp: 435,    hpGrowth: 11,
     baseSpd: 104,   spdGrowth: 1.4,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/f/f3/Tayuya.png/revision/latest',
+    image: 'https://m.media-amazon.com/images/I/710SSnA+m3S.jpg',
   },
 
   sakon: {
@@ -601,7 +601,7 @@ const CHARACTERS = {
     baseHp: 475,    hpGrowth: 12,
     baseSpd: 118,   spdGrowth: 1.6,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/3/37/Sakon_and_Ukon.png/revision/latest',
+    image: 'https://s.ecrater.com/stores/488421/63773d3798b22_488421b.jpg',
   },
 
   // ════════════════════════
@@ -618,7 +618,7 @@ const CHARACTERS = {
     baseHp: 600,    hpGrowth: 16,
     baseSpd: 105,   spdGrowth: 1.6,
     critRate: 10,
-    image: 'https://wallpapers.com/images/hd/jiraiya-vector-art-y4idgbli8v127x5v.jpg',
+    image: 'https://i.pinimg.com/originals/90/a5/43/90a5430e7a0832b3663c8846b51afa42.jpg',
   },
 
   itachi: {
@@ -631,7 +631,7 @@ const CHARACTERS = {
     baseHp: 440,     hpGrowth: 11,
     baseSpd: 122,    spdGrowth: 1.9,
     critRate: 10,
-    image: 'https://www.turtlewings.co/cdn/shop/files/u6348236244_Full-body_shot_of_a_heroic_anime-style_scene_of_Ita_b7b684de-9307-47fa-b679-0b2cdb5778f9-2.jpg?v=1753098096&width=1445',
+    image: 'https://w0.peakpx.com/wallpaper/79/109/HD-wallpaper-uchiha-itachi-itachi-anime-manga-naruto-naruto-shippuden-akatsuki-itachi-uchiha-digital-art-digital-painting-thumbnail.jpg',
   },
 
   orochimaru: {
@@ -644,7 +644,7 @@ const CHARACTERS = {
     baseHp: 620,    hpGrowth: 16,
     baseSpd: 112,   spdGrowth: 1.7,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/2/21/Orochimaru.png/revision/latest',
+    image: 'https://y0.wallpaperyeah.com/wallpaperimgs/789/767/desktop-wallpaper-orochimaru-sannin-snake-naruto-thumbnail.jpg',
   },
 
   hiruzen: {
@@ -657,7 +657,7 @@ const CHARACTERS = {
     baseHp: 680,    hpGrowth: 18,
     baseSpd: 96,    spdGrowth: 1.5,
     critRate: 10,
-    image: 'https://static.wikia.nocookie.net/naruto/images/8/8c/Hiruzen_Sarutobi.png/revision/latest',
+    image: 'https://www.pngplay.com/wp-content/uploads/12/Hiruzen-Sarutobi-PNG-Pic-Background.png',
   },
 
   tsunade: {
@@ -670,7 +670,7 @@ const CHARACTERS = {
     baseHp: 820,    hpGrowth: 22,
     baseSpd: 84,    spdGrowth: 1.3,
     critRate: 10,
-    image: 'https://b.thumbs.redditmedia.com/ZXzl2hMuhIDLdvCQoX7SEj-7QdITrBfct0t5kcZ6iZU.jpg',
+    image: 'https://wallpapers.com/images/hd/tsunade-senju-naruto-hokage-ninja-art-creation-rebirth-5iaeh3tebvnkukch.jpg',
   },
 
   // ════════════════════════
@@ -688,7 +688,7 @@ const CHARACTERS = {
     baseHp: 1,     hpGrowth: 0,
     baseSpd: 1,    spdGrowth: 0,
     critRate: 0,
-    image: 'https://static.wikia.nocookie.net/naruto/images/9/9b/Teuchi.png/revision/latest',
+    image: 'https://daddyjim.ai/_next/image?url=https://cdn.daddyjim.com/naruto/characters/teuchi-featured-2c48d4a3.webp&w=3840&q=90',
   },
 
 };
