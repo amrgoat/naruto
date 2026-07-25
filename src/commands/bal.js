@@ -37,6 +37,7 @@ module.exports = {
         `${ARROW_EMOJI} Ryo: **${user.ryo.toLocaleString()}** ${COMBAT_EMOJIS.ryo}`,
         `${ARROW_EMOJI} Ramen: **${user.ramen}** ${E.ramen}`,
         `${ARROW_EMOJI} Chakra Essence: **${user.chakra_essence.toLocaleString()}** ${COMBAT_EMOJIS.essence}`,
+        `${ARROW_EMOJI} Fragments: **${totalFrags.toLocaleString()}** ${E.fragment} (${charCount} character${charCount !== 1 ? 's' : ''})`,
       ].join('\n'));
 
     return message.reply({ embeds: [embed] });

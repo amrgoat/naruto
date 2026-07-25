@@ -639,7 +639,7 @@ const CHARACTERS = {
     name: 'Orochimaru',
     rarity: 'S',
     type: 'Combat',
-    description: 'The serpent Sannin who sacrificed his humanity in pursuit of immortality.',
+    description: "A shinobi who passed his serpent arts and Curse Mark onto chosen students, striking with fang and blade.",
     baseAtkMin: 95, baseAtkMax: 136, atkGrowth: 4.4,
     baseHp: 620,    hpGrowth: 16,
     baseSpd: 112,   spdGrowth: 1.7,

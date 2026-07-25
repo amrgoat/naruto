@@ -6,8 +6,25 @@ const { Database } = require('node-sqlite3-wasm');
 const path         = require('path');
 const { PULLS_PER_PERIOD, ARENA_ATTEMPTS_PER_DAY, STARTING_RYO, STARTING_RAMEN } = require('./config');
 
-const db = new Database(path.join(__dirname, '..', 'data.db'));
-db.exec('PRAGMA foreign_keys = ON');
+const DB_PATH = path.join(__dirname, '..', 'data.db');
+
+// On rapid workflow restarts the previous process may still hold a write lock.
+// Retry the entire open+PRAGMA sequence up to 10 times (500 ms apart).
+let db;
+for (let attempt = 1; attempt <= 10; attempt++) {
+  try {
+    db = new Database(DB_PATH);
+    // busy_timeout must come first so subsequent DDL waits instead of throwing
+    db.exec('PRAGMA busy_timeout  = 5000');
+    db.exec('PRAGMA journal_mode = WAL');
+    db.exec('PRAGMA foreign_keys  = ON');
+    break;
+  } catch (err) {
+    try { db?.close(); } catch (_) {}
+    if (attempt === 10) throw err;
+    require('child_process').execSync('sleep 0.5');
+  }
+}
 
 // node-sqlite3-wasm only binds the first spread argument; wrap prepare()
 // so every statement receives args as an array — no call-sites need changing.

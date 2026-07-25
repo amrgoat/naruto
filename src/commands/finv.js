@@ -179,7 +179,7 @@ module.exports = {
             inline: true,
           },
         )
-        .setFooter({ text: `${match.count}/${MAX_FRAGS} fragments  ·  ${match.count >= SUMMON_COST ? 'Can summon now' : `Need ${needed} more`}` })],
+        .setFooter({ text: `${match.count}/${MAX_FRAGS} fragments` })],
     });
   },
 };
