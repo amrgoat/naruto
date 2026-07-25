@@ -48,7 +48,7 @@ const PASSIVES = {
     effect: () => ({ tsunadeJackpot: true }),
   },
 
-  orochimaru: {
+  kabuto: {
     label:    'Laboratory Access',
     describe: m => {
       if (m >= 3) return 'Unlock Lab (D–S crafting) · 20% crafting discount';

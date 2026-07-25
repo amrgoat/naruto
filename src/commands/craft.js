@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────
 //  craft.js  —  N craft <amount> <card>
 //  Craft fragments for a card you own using
-//  Chakra Essence. Requires owning Orochimaru.
+//  Chakra Essence. Requires owning Kabuto.
 //
 //  M1: Craft D–A rank fragments
 //  M2: + S rank fragments
@@ -65,7 +65,7 @@ module.exports = {
     const pb = resolvePassiveBonuses(userId);
     if (!pb.unlockLab) {
       return message.reply({
-        embeds: [errorEmbed('The Laboratory is locked.\nObtain **Orochimaru** to unlock it.')],
+        embeds: [errorEmbed('The Laboratory is locked.\nObtain **Kabuto** to unlock it.')],
       });
     }
 

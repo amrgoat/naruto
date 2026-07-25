@@ -382,7 +382,7 @@ const CHARACTERS = {
   kabuto: {
     id: 'kabuto',
     name: 'Kabuto Yakushi',
-    rarity: 'B',
+    rarity: 'A',
     type: 'Combat',
     description: "Orochimaru's cunning spy whose medical ninjutsu can turn the tide of battle.",
     baseAtkMin: 36, baseAtkMax: 56, atkGrowth: 1.7,
