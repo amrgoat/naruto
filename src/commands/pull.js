@@ -82,6 +82,7 @@ module.exports = {
 
     // ── Consume pull ────────────────────────────
     q.consumePull.run(now, userId);
+    q.addTotalPull.run(userId);
 
     // ── Duplicate check ─────────────────────────
     const existing    = q.getCardByCharacter.get(userId, characterId);

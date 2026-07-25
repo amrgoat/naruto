@@ -67,6 +67,7 @@ module.exports = {
       `${A} M1 Cards Owned: **${m1Cards}**`,
       `${A} M2 Cards Owned: **${m2Cards}**`,
       `${A} M3 Cards Owned: **${m3Cards}**`,
+      `${A} Cards Pulled: **${user.total_pulls ?? 0}**`,
       ``,
       `📊 **Stats:**`,
       `${A} Rank: **Ninja**`,

@@ -1,16 +1,16 @@
 // ─────────────────────────────────────────────
 //  daily.js  —  N daily
-//  Claim daily rewards once every 24 hours.
-//  Base: 7,200 Ryo · 1 Ramen · 7 Chakra Essence
-//  Streak: every 5th day → 14,400 Ryo + 3 Ramen
+//  Claim daily rewards once per IST calendar day.
+//  Streak increments on consecutive IST days; breaks if you skip.
+//  Every 5th streak day → bonus rewards.
 // ─────────────────────────────────────────────
 
 const { EmbedBuilder } = require('discord.js');
 const { q }            = require('../database');
 const { COLORS, COMBAT_EMOJIS, ARROW_EMOJI } = require('../config');
-const { checkRegistered }       = require('../utils/guards');
-const { errorEmbed }            = require('../utils/embeds');
-const { formatCountdown }       = require('../utils/timeUtils');
+const { checkRegistered } = require('../utils/guards');
+const { errorEmbed }      = require('../utils/embeds');
+const { formatCountdown } = require('../utils/timeUtils');
 
 const RAMEN_E = '<:ramen:1529823076118691890>';
 
@@ -18,21 +18,27 @@ const BASE_RYO     = 7_200;
 const BASE_RAMEN   = 1;
 const BASE_ESSENCE = 7;
 
-const BONUS_RYO   = 14_400;  // double on 5th day
+const BONUS_RYO   = 14_400;
 const BONUS_RAMEN = 3;
 
-const COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours in ms
-
 /**
- * Get IST calendar day number (seconds since epoch ÷ 86400, shifted +5:30).
+ * Get IST calendar day number (seconds since Unix epoch, shifted +5:30).
  */
 function istDay(timestampMs) {
   return Math.floor((timestampMs / 1000 + 19800) / 86400);
 }
 
 /**
- * Build a ★☆ stars string for the given streak.
- * Shows position within the 5-day cycle (max 5 stars).
+ * UTC timestamp (ms) of the next IST midnight after nowMs.
+ */
+function nextISTMidnightUTC(nowMs) {
+  const todayIST      = istDay(nowMs);
+  const nextMidnightS = (todayIST + 1) * 86400 - 19800; // back to UTC seconds
+  return nextMidnightS * 1000;
+}
+
+/**
+ * Build a ★☆ stars string showing position within the 5-day cycle.
  */
 function streakStars(streak) {
   const pos = ((streak - 1) % 5) + 1;
@@ -48,34 +54,33 @@ module.exports = {
     const user   = checkRegistered(message);
     if (!user) return;
 
-    const now     = Date.now();
-    const elapsed = now - user.daily_reset_at;
+    const now      = Date.now();
+    const today    = istDay(now);
+    const lastDay  = user.daily_streak_last_day ?? 0;
 
-    // ── Cooldown check ─────────────────────────
-    if (user.daily_reset_at > 0 && elapsed < COOLDOWN) {
-      const remaining = COOLDOWN - elapsed;
+    // ── Already claimed today ──────────────────
+    if (lastDay >= today) {
+      const remaining = nextISTMidnightUTC(now) - now;
       return message.reply({
         embeds: [new EmbedBuilder()
           .setColor(COLORS.EMBED_COLOR)
           .setTitle('🎁 Daily Rewards')
           .setDescription(
-            `You already collected your daily rewards.\n\n` +
-            `⏳ Try again in **${formatCountdown(remaining)}**`
+            `You already collected your daily rewards today.\n\n` +
+            `⏳ Come back in **${formatCountdown(remaining)}**`
           )
-          .setFooter({ text: 'You can claim daily again in 24hr' })],
+          .setFooter({ text: 'Resets every day at 12:00 AM IST' })],
       });
     }
 
     // ── Streak calculation ─────────────────────
-    const today    = istDay(now);
-    const lastDay  = user.daily_streak_last_day ?? 0;
-    let   streak   = user.daily_streak ?? 0;
+    let streak = user.daily_streak ?? 0;
 
     if (lastDay === today - 1) {
-      // Consecutive day
+      // Consecutive IST day
       streak += 1;
     } else {
-      // Missed a day or first claim
+      // Missed one or more days (or first ever claim)
       streak = 1;
     }
 
@@ -102,7 +107,7 @@ module.exports = {
       `${ARROW_EMOJI} Ryo Obtained: **${ryo.toLocaleString()}** ${COMBAT_EMOJIS.ryo}`,
       `${ARROW_EMOJI} Ramen Obtained: **${ramen}** ${RAMEN_E}`,
       `${ARROW_EMOJI} Chakra Essence Obtained: **${essence}** ${COMBAT_EMOJIS.essence}`,
-      `${ARROW_EMOJI} Daily Streak: ${stars}`,
+      `${ARROW_EMOJI} Daily Streak: **${streak}** day${streak !== 1 ? 's' : ''}  ${stars}`,
     ];
 
     if (isBonus) {
@@ -114,7 +119,7 @@ module.exports = {
         .setColor(COLORS.EMBED_COLOR)
         .setTitle(title)
         .setDescription(lines.join('\n'))
-        .setFooter({ text: 'You can claim daily again in 24hr' })],
+        .setFooter({ text: 'Resets every day at 12:00 AM IST' })],
     });
   },
 };

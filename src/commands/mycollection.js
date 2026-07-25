@@ -9,15 +9,16 @@ const { q }               = require('../database');
 const { CHARACTERS }      = require('../data/characters');
 const { checkRegistered } = require('../utils/guards');
 const { buildPullEmbed, errorEmbed } = require('../utils/embeds');
+const { getEffectiveRarity, RARITY_SEQUENCE } = require('../utils/cardUtils');
 
-// Higher number = higher rarity (sort descending)
-const RARITY_ORDER = { C: 0, B: 1, A: 2, S: 3, SS: 4, UR: 5 };
-const VALID_RARITIES = new Set(['C', 'B', 'A', 'S', 'SS', 'UR']);
+const VALID_RARITIES = new Set(['D', 'C', 'B', 'A', 'S', 'SS', 'UR']);
 
 function sortCards(cards) {
   return [...cards].sort((a, b) => {
-    const ra = RARITY_ORDER[CHARACTERS[a.character_id]?.rarity ?? 'C'];
-    const rb = RARITY_ORDER[CHARACTERS[b.character_id]?.rarity ?? 'C'];
+    const charA  = CHARACTERS[a.character_id];
+    const charB  = CHARACTERS[b.character_id];
+    const ra = RARITY_SEQUENCE.indexOf(getEffectiveRarity(charA, a));
+    const rb = RARITY_SEQUENCE.indexOf(getEffectiveRarity(charB, b));
     if (ra !== rb) return rb - ra; // highest rarity first
     return a.id - b.id;
   });
@@ -63,9 +64,12 @@ module.exports = {
       });
     }
 
-    // Filter by rarity if requested
+    // Filter by effective rarity if requested
     const filtered = rarityArg
-      ? rawCards.filter(c => CHARACTERS[c.character_id]?.rarity === rarityArg)
+      ? rawCards.filter(c => {
+          const char = CHARACTERS[c.character_id];
+          return char && getEffectiveRarity(char, c) === rarityArg;
+        })
       : rawCards;
 
     if (!filtered.length) {

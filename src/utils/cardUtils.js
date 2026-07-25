@@ -18,6 +18,22 @@
 const { CHARACTERS }                       = require('../data/characters');
 const { MASTERY, PRESTIGE_STAT_BONUS, RARITIES } = require('../config');
 
+/** Ordered rarity tiers from weakest to strongest */
+const RARITY_SEQUENCE = ['D', 'C', 'B', 'A', 'S', 'SS', 'UR'];
+
+/**
+ * Returns the effective rarity key for an owned card.
+ * Each mastery tier above M1 bumps the rarity one step up.
+ * M1 = base rarity, M2 = +1, M3 = +2.
+ */
+function getEffectiveRarity(char, card) {
+  const baseIdx = RARITY_SEQUENCE.indexOf(char.rarity);
+  if (baseIdx === -1) return char.rarity;
+  const bump   = (card.mastery ?? 1) - 1;
+  const effIdx = Math.min(baseIdx + bump, RARITY_SEQUENCE.length - 1);
+  return RARITY_SEQUENCE[effIdx];
+}
+
 /**
  * Compute effective stats for a card row from the database.
  *
@@ -139,4 +155,6 @@ module.exports = {
   rarityColor,
   getTeamPower,
   expBar,
+  getEffectiveRarity,
+  RARITY_SEQUENCE,
 };

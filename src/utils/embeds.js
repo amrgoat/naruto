@@ -6,7 +6,7 @@ const { EmbedBuilder } = require('discord.js');
 const { COLORS, E, MASTERY, RARITIES } = require('../config');
 const { CHARACTERS }                   = require('../data/characters');
 const {
-  getEffectiveStats, formatAtk, starsDisplay, rarityColor, expBar,
+  getEffectiveStats, formatAtk, starsDisplay, rarityColor, expBar, getEffectiveRarity,
 } = require('./cardUtils');
 
 // ── Shared helpers ────────────────────────────
@@ -62,11 +62,12 @@ function buildPullEmbed(card, isDuplicate, pullerName, fragCount) {
 // ─────────────────────────────────────────────
 
 function buildCardEmbed(card) {
-  const char  = CHARACTERS[card.character_id];
-  const stats = getEffectiveStats(card);
-  const stars = starsDisplay(card.stars);
-  const cap   = MASTERY[card.mastery]?.levelCap ?? 100;
-  const atCap = card.level >= cap;
+  const char    = CHARACTERS[card.character_id];
+  const stats   = getEffectiveStats(card);
+  const stars   = starsDisplay(card.stars);
+  const cap     = MASTERY[card.mastery]?.levelCap ?? 100;
+  const atCap   = card.level >= cap;
+  const effRar  = getEffectiveRarity(char, card);
 
   const lines = [char.description];
   if (card.stars > 0) lines.push(stars);
@@ -84,12 +85,12 @@ function buildCardEmbed(card) {
   );
 
   return new EmbedBuilder()
-    .setColor(rarityColor(char.rarity))
+    .setColor(rarityColor(effRar))
     .setTitle(char.name)
-    .setThumbnail(rarityThumb(char.rarity))
+    .setThumbnail(rarityThumb(effRar))
     .setDescription(lines.join('\n'))
     .setImage(char.image)
-    .setFooter({ text: `${char.name}  ·  ${RARITIES[char.rarity]?.label ?? char.rarity}` });
+    .setFooter({ text: `${char.name}  ·  ${RARITIES[effRar]?.label ?? effRar}` });
 }
 
 // ─────────────────────────────────────────────
@@ -103,13 +104,12 @@ function buildCardEmbed(card) {
  * Uses plain text labels (ATK / HP / SPD) — no custom emojis.
  */
 function buildMyCardInfoEmbed(card, passiveBonuses = {}) {
-  const char  = CHARACTERS[card.character_id];
-  const stats = getEffectiveStats(card, passiveBonuses);
-  const stars = starsDisplay(card.stars);
-  const cap   = MASTERY[card.mastery]?.levelCap ?? 100;
-  const atCap = card.level >= cap;
-
-  const { hpPct = 0, flatSpd = 0 } = passiveBonuses;
+  const char   = CHARACTERS[card.character_id];
+  const stats  = getEffectiveStats(card, passiveBonuses);
+  const stars  = starsDisplay(card.stars);
+  const cap    = MASTERY[card.mastery]?.levelCap ?? 100;
+  const atCap  = card.level >= cap;
+  const effRar = getEffectiveRarity(char, card);
 
   const lines = [char.description];
   if (card.stars > 0) lines.push(stars);
@@ -127,12 +127,12 @@ function buildMyCardInfoEmbed(card, passiveBonuses = {}) {
   );
 
   return new EmbedBuilder()
-    .setColor(rarityColor(char.rarity))
+    .setColor(rarityColor(effRar))
     .setTitle(char.name)
-    .setThumbnail(rarityThumb(char.rarity))
+    .setThumbnail(rarityThumb(effRar))
     .setDescription(lines.join('\n'))
     .setImage(char.image)
-    .setFooter({ text: `${char.name}  ·  ${RARITIES[char.rarity]?.label ?? char.rarity}` });
+    .setFooter({ text: `${char.name}  ·  ${RARITIES[effRar]?.label ?? effRar}` });
 }
 
 // ─────────────────────────────────────────────

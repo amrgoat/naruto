@@ -96,6 +96,7 @@ for (const col of [
   'daily_streak_last_day INTEGER NOT NULL DEFAULT 0',
   'is_premium            INTEGER NOT NULL DEFAULT 0',
   'premium_expires_at    INTEGER NOT NULL DEFAULT 0',
+  'total_pulls           INTEGER NOT NULL DEFAULT 0',
 ]) {
   try { db.exec(`ALTER TABLE users ADD COLUMN ${col}`); } catch { /* already exists */ }
 }
@@ -140,6 +141,7 @@ const q = {
     WHERE discord_id = ?
   `),
 
+  addTotalPull:     db.prepare(`UPDATE users SET total_pulls    = total_pulls    + 1 WHERE discord_id = ?`),
   addRyo:           db.prepare(`UPDATE users SET ryo            = ryo            + ? WHERE discord_id = ?`),
   addRamen:         db.prepare(`UPDATE users SET ramen          = ramen          + ? WHERE discord_id = ?`),
   addChakraEssence: db.prepare(`UPDATE users SET chakra_essence = chakra_essence + ? WHERE discord_id = ?`),
