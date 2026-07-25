@@ -118,7 +118,7 @@ module.exports = {
     const lines = results.map((r, i) => {
       const re = RARITY_EMOJI[r.char.rarity] ?? r.char.rarity;
       if (r.isDuplicate) {
-        return `\`${i + 1}\` ${re} ~~${r.char.name}~~\n> → ${COMBAT_EMOJIS.essence} **${r.dupEssence}** Chakra Essence`;
+        return `\`${i + 1}\` ${re} ~~${r.char.name}~~\n→ ${COMBAT_EMOJIS.essence} **${r.dupEssence}** Chakra Essence`;
       }
       return `\`${i + 1}\` ${re} ${r.char.name}`;
     });
