@@ -64,6 +64,9 @@ module.exports = {
       return `${rarityEmoji} **${char?.name ?? card.character_id}**  M${card.mastery} Lv.${card.level}`;
     });
 
+    const userLevel = user.user_level ?? 1;
+    const userExp   = user.user_exp   ?? 0;
+
     const desc = [
       `${WALLET_EMOJI} **Balance:**`,
       `${A} Ryo: **${user.ryo.toLocaleString()}** ${E.ryo}`,
@@ -80,6 +83,7 @@ module.exports = {
       ``,
       `📊 **Stats:**`,
       `${A} Rank: **Ninja**`,
+      `${A} Level: **${userLevel}** \`(${userExp}/1000 XP)\``,
       `${A} Missions Finished: **${user.missions_finished ?? 0}**`,
       `${A} All Time Votes: **${user.all_time_votes ?? 0}**`,
       `${A} Vote Streak: **${user.vote_streak ?? 0}**`,

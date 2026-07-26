@@ -7,10 +7,10 @@
 //  · SS and UR are locked and never appear
 // ─────────────────────────────────────────────
 
-const { q }            = require('../database');
+const { q, giveExpToUser } = require('../database');
 const { CHARACTERS, PULL_POOL } = require('../data/characters');
 const {
-  RARITIES, PULL_POOL_RARITIES, PULL_COOLDOWN_MS, ESSENCE_PER_DUP,
+  RARITIES, PULL_POOL_RARITIES, PULL_COOLDOWN_MS, ESSENCE_PER_DUP, USER_EXP_PER_RARITY,
 } = require('../config');
 const { checkRegistered }       = require('../utils/guards');
 const { buildPullEmbed, errorEmbed } = require('../utils/embeds');
@@ -97,9 +97,11 @@ module.exports = {
       q.addChakraEssence.run(dupEssence, userId);
       card = existing;
     } else {
-      // New card
+      // New card — grant user EXP based on rarity
       const result = q.insertCard.run(userId, characterId);
       card         = q.getCard.get(result.lastInsertRowid);
+      const expGain = USER_EXP_PER_RARITY[char.rarity] ?? 40;
+      giveExpToUser(userId, expGain);
     }
 
     // ── Build embed ─────────────────────────────

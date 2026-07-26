@@ -1,9 +1,9 @@
 // ─────────────────────────────────────────────
-//  finv.js  —  N finv [rarity | name]
+//  finv.js  —  t finv [rarity | name]
 //
-//  N finv          → full inventory, sorted by count (high → low)
-//  N finv C        → only C-rarity characters
-//  N finv Naruto   → single character lookup
+//  t finv          → full inventory, sorted by count (high → low)
+//  t finv C        → only C-rarity characters
+//  t finv sa       → all characters whose name contains "sa"
 // ─────────────────────────────────────────────
 
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
@@ -13,45 +13,30 @@ const { COLORS, RARITIES, E } = require('../config');
 const { checkRegistered } = require('../utils/guards');
 
 const PAGE_SIZE   = 12;
-const MAX_FRAGS   = 500;
-const SUMMON_COST = 15;
+const FRAG_CAP    = 500;   // total fragment cap shown in footer
 
-const RARITY_ORDER = { D: 0, C: 1, B: 2, A: 3, S: 4, SS: 5, UR: 6 };
-const RARITY_KEYS  = new Set(Object.keys(RARITY_ORDER));
+const RARITY_KEYS = new Set(['D', 'C', 'B', 'A', 'S', 'SS', 'UR']);
 
-// ── Sort: highest count first ──────────────────
-function sortEntries(entries) {
-  return [...entries].sort((a, b) => b.count - a.count);
-}
-
-// ── Single list line ───────────────────────────
+// ── Format a single list line ──────────────────
 function entryLine({ character_id, count }) {
-  const char   = CHARACTERS[character_id];
+  const char = CHARACTERS[character_id];
   if (!char) return null;
-  const rarity = RARITIES[char.rarity] ?? RARITIES.D;
-  const maxTag = count >= MAX_FRAGS ? ' ⬆️ MAX' : '';
-  return `${rarity.emoji} **${char.name}** (${char.rarity}) — ${count}/${MAX_FRAGS} ${E.fragment}${maxTag}`;
+  return `**${char.name}** ×**${count}** (${char.rarity})`;
 }
 
 // ── Paginated embed ────────────────────────────
-function buildPage(entries, page, username, subtitle) {
-  const totalPages  = Math.ceil(entries.length / PAGE_SIZE);
-  const slice       = entries.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
-  const lines       = slice.map(entryLine).filter(Boolean);
-  const totalFrags  = entries.reduce((s, e) => s + e.count, 0);
-  const totalCap    = entries.length * MAX_FRAGS;
+function buildPage(entries, page, username, subtitle, avatarURL) {
+  const totalPages = Math.ceil(entries.length / PAGE_SIZE);
+  const slice      = entries.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+  const lines      = slice.map(entryLine).filter(Boolean);
+  const totalFrags = entries.reduce((s, e) => s + e.count, 0);
 
   return new EmbedBuilder()
     .setColor(COLORS.EMBED_COLOR)
-    .setTitle(`${E.fragment} ${username}'s Fragment Inventory${subtitle ? `  ·  ${subtitle}` : ''}`)
+    .setTitle(`${username}'s Fragment Inventory${subtitle ? `  ·  ${subtitle}` : ''}`)
+    .setThumbnail(avatarURL)
     .setDescription(lines.join('\n') || '*Nothing here.*')
-    .setFooter({
-      text: [
-        `Page ${page + 1}/${totalPages}`,
-        `${entries.length} character${entries.length !== 1 ? 's' : ''}`,
-        `Total: ${totalFrags.toLocaleString()}/${totalCap.toLocaleString()} ${E.fragment}`,
-      ].join('  ·  '),
-    });
+    .setFooter({ text: `${totalFrags}/${FRAG_CAP}${totalPages > 1 ? `  ·  Page ${page + 1}/${totalPages}` : ''}` });
 }
 
 function buildNavRow(page, total) {
@@ -64,12 +49,11 @@ function buildNavRow(page, total) {
   );
 }
 
-// ── Paginator helper ───────────────────────────
-async function paginate(message, entries, username, subtitle) {
+async function paginate(message, entries, username, subtitle, avatarURL) {
   let page = 0;
 
   const reply = await message.reply({
-    embeds:     [buildPage(entries, 0, username, subtitle)],
+    embeds:     [buildPage(entries, 0, username, subtitle, avatarURL)],
     components: entries.length > PAGE_SIZE ? [buildNavRow(0, entries.length)] : [],
   });
 
@@ -84,7 +68,7 @@ async function paginate(message, entries, username, subtitle) {
     if (i.customId === 'finv_prev') page = Math.max(0, page - 1);
     else page = Math.min(Math.ceil(entries.length / PAGE_SIZE) - 1, page + 1);
     await i.update({
-      embeds:     [buildPage(entries, page, username, subtitle)],
+      embeds:     [buildPage(entries, page, username, subtitle, avatarURL)],
       components: [buildNavRow(page, entries.length)],
     });
   });
@@ -95,35 +79,41 @@ async function paginate(message, entries, username, subtitle) {
 // ── Main export ────────────────────────────────
 module.exports = {
   name: 'finv',
-  description: 'View fragment inventory · N finv [rarity|name]',
+  aliases: ['fi'],
+  description: 'View fragment inventory · t finv [rarity|name]',
 
   async execute(message, args) {
     if (!checkRegistered(message)) return;
 
-    const userId   = message.author.id;
-    const username = message.member?.displayName ?? message.author.username;
+    const userId    = message.author.id;
+    const username  = message.member?.displayName ?? message.author.username;
+    const avatarURL = message.author.displayAvatarURL({ size: 128 });
 
     const raw = q.getFragInv.all(userId);
 
     // ── Empty state ────────────────────────────
     if (!raw.length) {
+      const totalFrags = 0;
       return message.reply({
         embeds: [new EmbedBuilder()
           .setColor(COLORS.EMBED_COLOR)
+          .setTitle('No fragments yet!')
+          .setThumbnail(avatarURL)
           .setDescription(
-            `${E.fragment} **No fragments yet!**\n\n` +
             `Earn fragments by pulling characters you already own.\n` +
-            `Collect **${SUMMON_COST} fragments** of a character to summon them via \`N summon\`.`
-          )],
+            `Collect **15 fragments** of a character to summon them via \`t summon\`.`
+          )
+          .setFooter({ text: `${totalFrags}/${FRAG_CAP}` })],
       });
     }
 
-    const all   = sortEntries(raw);   // always high → low count
+    // Sort high → low count
+    const all   = [...raw].sort((a, b) => b.count - a.count);
     const query = args.join(' ').trim();
 
     // ── No args → full inventory ───────────────
     if (!query) {
-      return paginate(message, all, username, null);
+      return paginate(message, all, username, null, avatarURL);
     }
 
     // ── Rarity filter: D / C / B / A / S / SS / UR ──
@@ -136,50 +126,32 @@ module.exports = {
         return message.reply({
           embeds: [new EmbedBuilder()
             .setColor(COLORS.EMBED_COLOR)
-            .setDescription(`${rar.emoji} No **${rar.label}** fragments in your inventory.`)],
+            .setThumbnail(avatarURL)
+            .setDescription(`${rar?.emoji ?? rarityKey} No **${rar?.label ?? rarityKey}** fragments in your inventory.`)
+            .setFooter({ text: `${all.reduce((s, e) => s + e.count, 0)}/${FRAG_CAP}` })],
         });
       }
 
-      return paginate(message, filtered, username, RARITIES[rarityKey].label);
+      return paginate(message, filtered, username, RARITIES[rarityKey]?.label ?? rarityKey, avatarURL);
     }
 
-    // ── Name search → single character embed ───
-    const needle = query.toLowerCase();
-    const match  = all.find(e => {
+    // ── Name search → all matching entries ────
+    const needle  = query.toLowerCase();
+    const matches = all.filter(e => {
       const name = CHARACTERS[e.character_id]?.name?.toLowerCase() ?? '';
-      return name === needle || name.includes(needle);
+      return name.includes(needle);
     });
 
-    if (!match) {
+    if (!matches.length) {
       return message.reply({
         embeds: [new EmbedBuilder()
           .setColor(COLORS.EMBED_COLOR)
-          .setDescription(`${E.fragment} No fragments found for **"${query}"**.`)],
+          .setThumbnail(avatarURL)
+          .setDescription(`${E.fragment} No fragments found matching **"${query}"**.`)
+          .setFooter({ text: `${all.reduce((s, e) => s + e.count, 0)}/${FRAG_CAP}` })],
       });
     }
 
-    const char   = CHARACTERS[match.character_id];
-    const rarity = RARITIES[char.rarity] ?? RARITIES.D;
-    const needed = Math.max(0, SUMMON_COST - match.count);
-
-    return message.reply({
-      embeds: [new EmbedBuilder()
-        .setColor(rarity.color)
-        .setTitle(`${rarity.emoji} ${char.name} (${char.rarity})`)
-        .setThumbnail(char.image ?? null)
-        .addFields(
-          {
-            name:   `${E.fragment} Fragments`,
-            value:  `**${match.count}** / ${MAX_FRAGS}`,
-            inline: true,
-          },
-          {
-            name:   '✨ Summon',
-            value:  needed === 0 ? '✅ Ready! Use `N summon`' : `**${needed}** more to summon`,
-            inline: true,
-          },
-        )
-        .setFooter({ text: `${match.count}/${MAX_FRAGS} fragments` })],
-    });
+    return paginate(message, matches, username, `"${query}"`, avatarURL);
   },
 };

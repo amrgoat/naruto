@@ -86,6 +86,16 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_fraginv_user ON fragment_inventory(user_id);
 `);
 
+// ── Expedition table ──────────────────────────
+db.exec(`
+  CREATE TABLE IF NOT EXISTS expeditions (
+    user_id    TEXT    PRIMARY KEY REFERENCES users(discord_id) ON DELETE CASCADE,
+    area_key   TEXT    NOT NULL,
+    started_at INTEGER NOT NULL,
+    ends_at    INTEGER NOT NULL
+  );
+`);
+
 // ── Safe migrations ───────────────────────────
 // Add new columns if they don't exist yet (safe to re-run).
 for (const col of [
@@ -105,6 +115,15 @@ for (const col of [
   'jonin_scrolls         INTEGER NOT NULL DEFAULT 0',
   'anbu_scrolls          INTEGER NOT NULL DEFAULT 0',
   'hokage_scrolls        INTEGER NOT NULL DEFAULT 0',
+  // User level system
+  'user_level            INTEGER NOT NULL DEFAULT 1',
+  'user_exp              INTEGER NOT NULL DEFAULT 0',
+  // Shop daily limits
+  'shop_reset_at         INTEGER NOT NULL DEFAULT 0',
+  'shop_ramen_bought     INTEGER NOT NULL DEFAULT 0',
+  'shop_random_bought    INTEGER NOT NULL DEFAULT 0',
+  'shop_exp_bought       INTEGER NOT NULL DEFAULT 0',
+  'shop_chakra_bought    INTEGER NOT NULL DEFAULT 0',
 ]) {
   try { db.exec(`ALTER TABLE users ADD COLUMN ${col}`); } catch { /* already exists */ }
 }
@@ -293,6 +312,34 @@ const q = {
     INSERT INTO fragment_inventory (user_id, character_id, count) VALUES (?, ?, ?)
     ON CONFLICT(user_id, character_id) DO UPDATE SET count = MIN(count + ?, 500)
   `),
+
+  // ── User level ──────────────────────────────
+  setUserLevelAndExp: db.prepare(`
+    UPDATE users SET user_level = ?, user_exp = ? WHERE discord_id = ?
+  `),
+
+  // ── Shop daily limits ───────────────────────
+  resetShop: db.prepare(`
+    UPDATE users SET shop_reset_at = ?, shop_ramen_bought = 0,
+    shop_random_bought = 0, shop_exp_bought = 0, shop_chakra_bought = 0
+    WHERE discord_id = ?
+  `),
+  incrementShopCol: {
+    shop_ramen_bought:  db.prepare(`UPDATE users SET shop_ramen_bought  = shop_ramen_bought  + ? WHERE discord_id = ?`),
+    shop_random_bought: db.prepare(`UPDATE users SET shop_random_bought = shop_random_bought + ? WHERE discord_id = ?`),
+    shop_exp_bought:    db.prepare(`UPDATE users SET shop_exp_bought    = shop_exp_bought    + ? WHERE discord_id = ?`),
+    shop_chakra_bought: db.prepare(`UPDATE users SET shop_chakra_bought = shop_chakra_bought + ? WHERE discord_id = ?`),
+  },
+  deductRyo: db.prepare(`UPDATE users SET ryo = ryo - ? WHERE discord_id = ?`),
+  addRamen:  db.prepare(`UPDATE users SET ramen = ramen + ? WHERE discord_id = ?`),
+
+  // ── Expeditions ─────────────────────────────
+  getExpedition: db.prepare(`SELECT * FROM expeditions WHERE user_id = ?`),
+  startExpedition: db.prepare(`
+    INSERT INTO expeditions (user_id, area_key, started_at, ends_at) VALUES (?, ?, ?, ?)
+    ON CONFLICT(user_id) DO UPDATE SET area_key = ?, started_at = ?, ends_at = ?
+  `),
+  clearExpedition: db.prepare(`DELETE FROM expeditions WHERE user_id = ?`),
 };
 
 // ── getUserCards doesn't have rarity_order column — fix with a view-style query
@@ -349,4 +396,25 @@ for (const col of SCROLL_COLS) {
   };
 }
 
-module.exports = { db, q, giveExpToCard, scrollStatements };
+/**
+ * Give EXP to a USER, levelling them up as needed.
+ * Returns the updated user row.
+ */
+function giveExpToUser(userId, expAmount) {
+  const { USER_EXP_PER_LEVEL } = require('./config');
+  const user = q.getUser.get(userId);
+  if (!user) return null;
+
+  let pool  = (user.user_exp   ?? 0) + expAmount;
+  let level = (user.user_level ?? 1);
+
+  while (pool >= USER_EXP_PER_LEVEL) {
+    pool -= USER_EXP_PER_LEVEL;
+    level++;
+  }
+
+  q.setUserLevelAndExp.run(level, pool, userId);
+  return q.getUser.get(userId);
+}
+
+module.exports = { db, q, giveExpToCard, giveExpToUser, scrollStatements };

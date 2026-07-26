@@ -109,19 +109,10 @@ module.exports = {
     q.addExpScrolls.run(-amount, userId);
     const updatedCard = giveExpToCard(card.id, totalExp, MASTERY);
 
-    const levelsGained = updatedCard.level - card.level;
-    const atCap        = updatedCard.level >= (MASTERY[updatedCard.mastery]?.levelCap ?? 100);
-
-    const lines = [
-      `${LVLOP_EMOJI} **${char.name}** gained **${totalExp.toLocaleString()} EXP** (${amount} scroll${amount !== 1 ? 's' : ''})`,
-      `Level: **${card.level}** → **${updatedCard.level}**${levelsGained > 0 ? ` *(+${levelsGained})*` : ''}`,
-      atCap ? `⚠️ Level cap reached (**${updatedCard.level}**). Upgrade mastery to continue.` : '',
-    ].filter(Boolean);
-
-    return message.reply({
-      embeds: [new EmbedBuilder()
-        .setColor(COLORS.EMBED_COLOR)
-        .setDescription(lines.join('\n'))],
-    });
+    const { E } = require('../config');
+    return message.reply(
+      `${E.scroll} | Successfully gave **${amount}x Exp Scroll** to **${char.name}**'s card! ` +
+      `It's now level **${updatedCard.level}** \`(${updatedCard.exp}/1000)\``
+    );
   },
 };

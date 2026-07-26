@@ -168,6 +168,74 @@ const ARENA_DIFFICULTIES = {
   },
 };
 
+// ── User Level System ─────────────────────────
+/** EXP granted to the USER when they pull a new (non-duplicate) card, by rarity */
+const USER_EXP_PER_RARITY = { D: 40, C: 75, B: 125, A: 175, S: 250, SS: 350, UR: 500 };
+/** Flat EXP required to reach each next user level */
+const USER_EXP_PER_LEVEL = 1000;
+
+// ── Shop ──────────────────────────────────────
+const SHOP_ITEMS = {
+  ramen: {
+    key: 'ramen', label: 'Ramen', price: 4000, dailyLimit: 3,
+    dbLimitCol: 'shop_ramen_bought',
+  },
+  random_scroll: {
+    key: 'random_scroll', label: 'Random Scroll', price: 3000, dailyLimit: 5,
+    dbLimitCol: 'shop_random_bought',
+  },
+  exp_scroll: {
+    key: 'exp_scroll', label: 'EXP Scroll', price: 5000, dailyLimit: 20,
+    dbLimitCol: 'shop_exp_bought',
+  },
+  chakra: {
+    key: 'chakra', label: 'Chakra Essence', price: 500, dailyLimit: 200,
+    dbLimitCol: 'shop_chakra_bought',
+  },
+};
+
+// ── Expedition Areas ──────────────────────────
+// levelReq: minimum USER level to unlock this area
+// duration: ms the expedition takes
+// rewards: what's granted per expedition completion
+const EXPEDITION_AREAS = {
+  training_grounds: {
+    key: 'training_grounds',
+    name: 'Training Grounds',
+    levelReq: 1,
+    duration: 30 * 60 * 1000,           // 30 min
+    rewards: { ryo: 500, exp_scrolls: 1 },
+  },
+  forest_of_death: {
+    key: 'forest_of_death',
+    name: 'Forest of Death',
+    levelReq: 5,
+    duration: 60 * 60 * 1000,           // 1 hr
+    rewards: { ryo: 1200, chakra_essence: 40, exp_scrolls: 1 },
+  },
+  chunin_arena: {
+    key: 'chunin_arena',
+    name: 'Chunin Arena',
+    levelReq: 10,
+    duration: 2 * 60 * 60 * 1000,       // 2 hr
+    rewards: { ryo: 2500, chakra_essence: 80, exp_scrolls: 2 },
+  },
+  valley_of_the_end: {
+    key: 'valley_of_the_end',
+    name: 'Valley of the End',
+    levelReq: 20,
+    duration: 4 * 60 * 60 * 1000,       // 4 hr
+    rewards: { ryo: 5000, chakra_essence: 150, exp_scrolls: 3 },
+  },
+  hokage_mountain: {
+    key: 'hokage_mountain',
+    name: 'Hokage Mountain',
+    levelReq: 30,
+    duration: 8 * 60 * 60 * 1000,       // 8 hr
+    rewards: { ryo: 10000, chakra_essence: 300, exp_scrolls: 5 },
+  },
+};
+
 // ── EXP Formula ───────────────────────────────
 /** EXP required to reach the NEXT level from `level` */
 function expToNextLevel(level) {
@@ -203,4 +271,7 @@ module.exports = {
   DAILY_REWARDS, ESSENCE_PER_DUP,
   expToNextLevel,
   COLORS,
+  USER_EXP_PER_RARITY, USER_EXP_PER_LEVEL,
+  SHOP_ITEMS,
+  EXPEDITION_AREAS,
 };
