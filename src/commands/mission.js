@@ -23,10 +23,10 @@ const TIME_LIMIT_MS  = 30_000;        // 30 seconds
 const SCROLL_CHANCE  = 0.30;          // 30% chance per correct answer
 
 const RANK_CONFIG = {
-  D: { title: 'D-Rank Mission • Village Errand',       color: 0x99AAB5, ryo: 1_000 },
-  C: { title: 'C-Rank Mission • Standard Assignment',  color: 0x47C74B, ryo: 2_000 },
-  B: { title: 'B-Rank Mission • Dangerous Operation',  color: 0x3FA9FF, ryo: 3_500 },
-  A: { title: 'A-Rank Mission • High Priority Mission', color: 0xA85FFF, ryo: 5_000 },
+  D: { title: 'Village Errand',       color: 0x99AAB5, ryo: 1_000 },
+  C: { title: 'Standard Assignment',  color: 0x47C74B, ryo: 2_000 },
+  B: { title: 'Dangerous Operation',  color: 0x3FA9FF, ryo: 3_500 },
+  A: { title: 'High Priority Mission', color: 0xA85FFF, ryo: 5_000 },
 };
 
 // Rank picked randomly — equal 25% each

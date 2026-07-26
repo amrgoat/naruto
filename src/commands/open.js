@@ -40,27 +40,18 @@ function buildOpeningEmbed(count, scrollLabel, scrollColor) {
 }
 
 function buildRewardEmbed(count, scrollKey, combined) {
-  const scroll     = REWARDS_CONFIG[scrollKey];
+  const scroll      = REWARDS_CONFIG[scrollKey];
   const rewardLines = formatRewardLines(combined, scrollKey);
 
-  const desc = [
-    `Opened **${count}** ${scroll.label}${count !== 1 ? 's' : ''}`,
-    '',
-    '━━━━━━━━━━━━━━━━━━━━━━',
-    '**Rewards**',
-  ];
-
-  if (rewardLines.length === 0) {
-    desc.push('*No rewards this time.*');
-  } else {
-    desc.push(...rewardLines);
-  }
+  const desc = rewardLines.length
+    ? rewardLines.join('\n')
+    : '*No rewards this time.*';
 
   return new EmbedBuilder()
     .setColor(scroll.color)
-    .setTitle(`${scroll.label} — Opened Successfully`)
-    .setDescription(desc.join('\n'))
-    .setFooter({ text: 'Rewards have been added to your inventory.' });
+    .setTitle('Rewards have been added to your inventory.')
+    .setDescription(desc)
+    .setFooter({ text: `opened **${count}**×${scroll.label}` });
 }
 
 // ── Command ───────────────────────────────────

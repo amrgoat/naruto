@@ -186,7 +186,6 @@ function formatRewardLines(combined, scrollKey) {
 
   // Fragments — one line per drop, duplicates shown separately
   if (combined.fragments?.length) {
-    lines.push(''); // spacer
     for (const frag of combined.fragments) {
       const fragCfg = scroll.rewards.fragments;
       lines.push(`${fragCfg.emoji} **${frag.characterName} Fragment**`);

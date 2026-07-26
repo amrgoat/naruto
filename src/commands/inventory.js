@@ -9,14 +9,16 @@ const { EmbedBuilder } = require('discord.js');
 const { COLORS, E, ARROW_EMOJI } = require('../config');
 const { checkRegistered }        = require('../utils/guards');
 
-// Scroll tier display order (weakest → strongest)
-const SCROLL_TIERS = [
-  { key: 'academy_scrolls', label: 'Academy Scroll'        },
-  { key: 'chunin_scrolls',  label: 'Chunin Mission Scroll' },
-  { key: 'mission_scrolls', label: 'Mission Scroll'        },
-  { key: 'jonin_scrolls',   label: 'Jonin Mission Scroll'  },
-  { key: 'anbu_scrolls',    label: 'ANBU Classified Scroll'},
-  { key: 'hokage_scrolls',  label: 'Hokage Secret Scroll'  },
+// All trackable items in display order.
+// Add new entries here as more item types are introduced.
+const INVENTORY_ITEMS = [
+  { key: 'exp_scrolls',     label: 'EXP Scroll'             },
+  { key: 'academy_scrolls', label: 'Academy Scroll'          },
+  { key: 'chunin_scrolls',  label: 'Chunin Mission Scroll'   },
+  { key: 'mission_scrolls', label: 'Mission Scroll'          },
+  { key: 'jonin_scrolls',   label: 'Jonin Mission Scroll'    },
+  { key: 'anbu_scrolls',    label: 'ANBU Classified Scroll'  },
+  { key: 'hokage_scrolls',  label: 'Hokage Secret Scroll'    },
 ];
 
 module.exports = {
@@ -30,24 +32,17 @@ module.exports = {
 
     const username = message.member?.displayName ?? message.author.username;
 
-    // ── EXP Scrolls ─────────────────────────────
-    const expScrollLines = [
-      `${E.scroll} **EXP Scrolls**`,
-      `${ARROW_EMOJI} **${(user.exp_scrolls ?? 0).toLocaleString()}x** EXP Scroll`,
-    ];
+    const lines = INVENTORY_ITEMS
+      .map(item => {
+        const count = user[item.key] ?? 0;
+        if (!count) return null;
+        return `${item.label} ×**${count.toLocaleString()}**`;
+      })
+      .filter(Boolean);
 
-    // ── Mission Scrolls ──────────────────────────
-    const scrollLines = SCROLL_TIERS.map(tier => {
-      const count = user[tier.key] ?? 0;
-      return `${ARROW_EMOJI} **${count.toLocaleString()}x** ${tier.label}`;
-    });
-
-    const desc = [
-      ...expScrollLines,
-      '',
-      `📜 **Scrolls**`,
-      ...scrollLines,
-    ].join('\n');
+    const desc = lines.length
+      ? lines.join('\n')
+      : '*Your inventory is empty.*';
 
     return message.reply({
       embeds: [

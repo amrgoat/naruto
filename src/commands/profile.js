@@ -5,7 +5,8 @@
 
 const { EmbedBuilder }    = require('discord.js');
 const { q }               = require('../database');
-const { COLORS, E, COMBAT_EMOJIS, ARROW_EMOJI, WALLET_EMOJI } = require('../config');
+const { COLORS, E, COMBAT_EMOJIS, ARROW_EMOJI, WALLET_EMOJI, RARITIES } = require('../config');
+const { CHARACTERS }      = require('../data/characters');
 const { checkRegistered } = require('../utils/guards');
 const { currentPullPeriodStartUTC, todayISTMidnightUTC } = require('../utils/timeUtils');
 
@@ -55,6 +56,14 @@ module.exports = {
     // ── Build description ─────────────────────────
     const A = ARROW_EMOJI;
 
+    // ── Active team ───────────────────────────────
+    const teamCards  = q.getTeam.all(userId);
+    const teamLines  = teamCards.map(card => {
+      const char       = CHARACTERS[card.character_id];
+      const rarityEmoji = RARITIES[char?.rarity]?.emoji ?? '';
+      return `${rarityEmoji} **${char?.name ?? card.character_id}**  M${card.mastery} Lv.${card.level}`;
+    });
+
     const desc = [
       `${WALLET_EMOJI} **Balance:**`,
       `${A} Ryo: **${user.ryo.toLocaleString()}** ${E.ryo}`,
@@ -74,6 +83,9 @@ module.exports = {
       `${A} Missions Finished: **${user.missions_finished ?? 0}**`,
       `${A} All Time Votes: **${user.all_time_votes ?? 0}**`,
       `${A} Vote Streak: **${user.vote_streak ?? 0}**`,
+      ``,
+      `🥷 **Active Team:**`,
+      ...(teamLines.length ? teamLines : [`*(no team set)*`]),
     ].join('\n');
 
     const embed = new EmbedBuilder()
