@@ -408,9 +408,15 @@ function giveExpToUser(userId, expAmount) {
   let pool  = (user.user_exp   ?? 0) + expAmount;
   let level = (user.user_level ?? 1);
 
-  while (pool >= USER_EXP_PER_LEVEL) {
+  const MAX_USER_LEVEL = 999;
+  while (pool >= USER_EXP_PER_LEVEL && level < MAX_USER_LEVEL) {
     pool -= USER_EXP_PER_LEVEL;
     level++;
+  }
+  // At max level, stop accumulating EXP
+  if (level >= MAX_USER_LEVEL) {
+    level = MAX_USER_LEVEL;
+    pool  = 0;
   }
 
   q.setUserLevelAndExp.run(level, pool, userId);
