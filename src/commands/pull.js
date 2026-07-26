@@ -90,21 +90,18 @@ module.exports = {
     let isDuplicate   = false;
     let dupEssence    = 0;
 
-    let xpGained  = 0;
-    let updatedUser = null;
+    // All pulls (new and duplicate) grant user EXP
+    const xpGained   = USER_EXP_PER_RARITY[char.rarity] ?? 40;
+    const updatedUser = giveExpToUser(userId, xpGained);
 
     if (existing) {
       isDuplicate = true;
-      // Duplicates convert to Chakra Essence only
-      dupEssence = ESSENCE_PER_DUP[char.rarity] ?? 20;
+      dupEssence  = ESSENCE_PER_DUP[char.rarity] ?? 20;
       q.addChakraEssence.run(dupEssence, userId);
       card = existing;
     } else {
-      // New card — grant user EXP based on rarity
       const result = q.insertCard.run(userId, characterId);
       card         = q.getCard.get(result.lastInsertRowid);
-      xpGained     = USER_EXP_PER_RARITY[char.rarity] ?? 40;
-      updatedUser  = giveExpToUser(userId, xpGained);
     }
 
     // ── Build embed ─────────────────────────────
@@ -119,14 +116,14 @@ module.exports = {
     const ft         = embed.data.footer?.text ?? '';
     embed.setFooter({ text: `${ft}  ·  ${resetLabel}` });
 
-    await message.reply({ embeds: [embed] });
-
-    // ── XP gain message (new cards only) ────────
-    if (!isDuplicate && updatedUser) {
+    // ── XP message BEFORE embed ─────────────────
+    if (updatedUser) {
       const lvl = updatedUser.user_level ?? 1;
       const exp = updatedUser.user_exp   ?? 0;
       await message.channel.send(`+${xpGained}xp , Level: ${lvl} [${exp}/1000]`);
     }
+
+    await message.reply({ embeds: [embed] });
 
     // ── Duplicate follow-up message ─────────────
     if (isDuplicate) {

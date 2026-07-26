@@ -103,15 +103,16 @@ module.exports = {
       let isDuplicate = false;
       let dupEssence  = 0;
 
-      let xpGained = 0;
+      // All pulls (new and duplicate) grant user EXP
+      const xpGained = USER_EXP_PER_RARITY[char.rarity] ?? 40;
+      giveExpToUser(userId, xpGained);
+
       if (existing) {
         isDuplicate = true;
         dupEssence  = ESSENCE_PER_DUP[char.rarity] ?? 20;
         q.addChakraEssence.run(dupEssence, userId);
       } else {
         q.insertCard.run(userId, characterId);
-        xpGained = USER_EXP_PER_RARITY[char.rarity] ?? 40;
-        giveExpToUser(userId, xpGained);
       }
 
       results.push({ char, isDuplicate, dupEssence, xpGained });
