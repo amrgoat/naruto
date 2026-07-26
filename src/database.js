@@ -97,6 +97,9 @@ for (const col of [
   'is_premium            INTEGER NOT NULL DEFAULT 0',
   'premium_expires_at    INTEGER NOT NULL DEFAULT 0',
   'total_pulls           INTEGER NOT NULL DEFAULT 0',
+  'mission_cooldown_at   INTEGER NOT NULL DEFAULT 0',
+  'missions_finished     INTEGER NOT NULL DEFAULT 0',
+  'mission_scrolls       INTEGER NOT NULL DEFAULT 0',
 ]) {
   try { db.exec(`ALTER TABLE users ADD COLUMN ${col}`); } catch { /* already exists */ }
 }
@@ -141,7 +144,10 @@ const q = {
     WHERE discord_id = ?
   `),
 
-  addTotalPull:     db.prepare(`UPDATE users SET total_pulls    = total_pulls    + 1 WHERE discord_id = ?`),
+  addTotalPull:        db.prepare(`UPDATE users SET total_pulls      = total_pulls      + 1 WHERE discord_id = ?`),
+  setMissionCooldown:  db.prepare(`UPDATE users SET mission_cooldown_at = ?             WHERE discord_id = ?`),
+  addMissionsFinished: db.prepare(`UPDATE users SET missions_finished  = missions_finished + 1 WHERE discord_id = ?`),
+  addMissionScrolls:   db.prepare(`UPDATE users SET mission_scrolls   = mission_scrolls  + 1 WHERE discord_id = ?`),
   addRyo:           db.prepare(`UPDATE users SET ryo            = ryo            + ? WHERE discord_id = ?`),
   addRamen:         db.prepare(`UPDATE users SET ramen          = ramen          + ? WHERE discord_id = ?`),
   addChakraEssence: db.prepare(`UPDATE users SET chakra_essence = chakra_essence + ? WHERE discord_id = ?`),
