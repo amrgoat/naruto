@@ -5,10 +5,10 @@
 // ─────────────────────────────────────────────
 
 const { EmbedBuilder }   = require('discord.js');
-const { q }              = require('../../database');
+const { q, giveExpToUser } = require('../../database');
 const { CHARACTERS, PULL_POOL } = require('../../data/characters');
 const {
-  RARITIES, PULL_POOL_RARITIES, ESSENCE_PER_DUP, COLORS, COMBAT_EMOJIS,
+  RARITIES, PULL_POOL_RARITIES, ESSENCE_PER_DUP, COLORS, COMBAT_EMOJIS, USER_EXP_PER_RARITY,
 } = require('../../config');
 const { checkRegistered }  = require('../../utils/guards');
 const { errorEmbed }       = require('../../utils/embeds');
@@ -103,15 +103,18 @@ module.exports = {
       let isDuplicate = false;
       let dupEssence  = 0;
 
+      let xpGained = 0;
       if (existing) {
         isDuplicate = true;
         dupEssence  = ESSENCE_PER_DUP[char.rarity] ?? 20;
         q.addChakraEssence.run(dupEssence, userId);
       } else {
         q.insertCard.run(userId, characterId);
+        xpGained = USER_EXP_PER_RARITY[char.rarity] ?? 40;
+        giveExpToUser(userId, xpGained);
       }
 
-      results.push({ char, isDuplicate, dupEssence });
+      results.push({ char, isDuplicate, dupEssence, xpGained });
     }
 
     // ── Build result lines ─────────────────────
@@ -131,13 +134,15 @@ module.exports = {
     const avatarURL = message.author.displayAvatarURL({ dynamic: true, size: 128 });
     const userName  = message.member?.displayName ?? message.author.username;
 
+    const totalXp = results.reduce((s, r) => s + r.xpGained, 0);
+
     return message.reply({
       embeds: [new EmbedBuilder()
         .setColor(COLORS.EMBED_COLOR)
         .setTitle(`${userName} pulled ${pullsToUse} card${pullsToUse !== 1 ? 's' : ''}!`)
         .setThumbnail(avatarURL)
         .setDescription(truncated)
-        .setFooter({ text: 'only jinchūrikis can use this cmd' })],
+        .setFooter({ text: `total xp gained → ${totalXp}` })],
     });
   },
 };

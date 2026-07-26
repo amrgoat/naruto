@@ -90,6 +90,9 @@ module.exports = {
     let isDuplicate   = false;
     let dupEssence    = 0;
 
+    let xpGained  = 0;
+    let updatedUser = null;
+
     if (existing) {
       isDuplicate = true;
       // Duplicates convert to Chakra Essence only
@@ -100,8 +103,8 @@ module.exports = {
       // New card — grant user EXP based on rarity
       const result = q.insertCard.run(userId, characterId);
       card         = q.getCard.get(result.lastInsertRowid);
-      const expGain = USER_EXP_PER_RARITY[char.rarity] ?? 40;
-      giveExpToUser(userId, expGain);
+      xpGained     = USER_EXP_PER_RARITY[char.rarity] ?? 40;
+      updatedUser  = giveExpToUser(userId, xpGained);
     }
 
     // ── Build embed ─────────────────────────────
@@ -117,6 +120,13 @@ module.exports = {
     embed.setFooter({ text: `${ft}  ·  ${resetLabel}` });
 
     await message.reply({ embeds: [embed] });
+
+    // ── XP gain message (new cards only) ────────
+    if (!isDuplicate && updatedUser) {
+      const lvl = updatedUser.user_level ?? 1;
+      const exp = updatedUser.user_exp   ?? 0;
+      await message.channel.send(`+${xpGained}xp , Level: ${lvl} [${exp}/1000]`);
+    }
 
     // ── Duplicate follow-up message ─────────────
     if (isDuplicate) {
