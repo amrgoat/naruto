@@ -6,9 +6,10 @@
 // ─────────────────────────────────────────────
 
 const { EmbedBuilder } = require('discord.js');
-const { q, scrollStatements } = require('../database');
-const { checkRegistered }     = require('../utils/guards');
-const { errorEmbed }          = require('../utils/embeds');
+const { q, scrollStatements }   = require('../database');
+const { COLORS }                = require('../config');
+const { checkRegistered }       = require('../utils/guards');
+const { errorEmbed }            = require('../utils/embeds');
 const {
   REWARDS_CONFIG,
   resolveScrollKey,
@@ -29,9 +30,9 @@ function getScrollCount(user, dbCol) {
 
 // ── Embeds ────────────────────────────────────
 
-function buildOpeningEmbed(count, scrollLabel, scrollColor) {
+function buildOpeningEmbed(count, scrollLabel) {
   return new EmbedBuilder()
-    .setColor(scrollColor)
+    .setColor(COLORS.EMBED_COLOR)
     .setTitle('Opening Scrolls...')
     .setDescription(
       `Opening **${count}** ${scrollLabel}${count !== 1 ? 's' : ''}\n\n` +
@@ -48,7 +49,7 @@ function buildRewardEmbed(count, scrollKey, combined) {
     : '*No rewards this time.*';
 
   return new EmbedBuilder()
-    .setColor(scroll.color)
+    .setColor(COLORS.EMBED_COLOR)
     .setTitle('Rewards have been added to your inventory.')
     .setDescription(desc)
     .setFooter({ text: `opened **${count}**×${scroll.label}` });
@@ -119,7 +120,7 @@ module.exports = {
 
     // ── Opening animation ───────────────────────
     const reply = await message.reply({
-      embeds: [buildOpeningEmbed(count, scroll.label, scroll.color)],
+      embeds: [buildOpeningEmbed(count, scroll.label)],
     });
 
     await sleep(2000);
