@@ -52,11 +52,11 @@ const COMBAT_EMOJIS = {
 // SS and UR exist in the system but are locked from pulls
 // thumb: provided rarity badge image URL shown as embed thumbnail
 const RARITIES = {
-  D:  { label: 'D-Rank',  emoji: '<:Drarity:1529858391210721330>', color: 0xB0B0B0, pullWeight: 40, locked: false,
+  D:  { label: 'D-Rank',  emoji: '<:Drarity:1529858391210721330>', color: 0xB0B0B0, pullWeight: 43, locked: false,
         thumb: 'https://cdn.discordapp.com/attachments/1528819900402106378/1528820114110288033/d.png?ex=6a5fb02f&is=6a5e5eaf&hm=8210d61deadbe0165a3543b43116c15e82602f8e8628409636ff82e7bcaa2d6c&' },
-  C:  { label: 'C-Rank',  emoji: '<:Crarity:1529858387301367898>', color: 0x47C74B, pullWeight: 30, locked: false,
+  C:  { label: 'C-Rank',  emoji: '<:Crarity:1529858387301367898>', color: 0x47C74B, pullWeight: 33, locked: false,
         thumb: 'https://cdn.discordapp.com/attachments/1528819900402106378/1528820113623486564/c.png?ex=6a5fb02f&is=6a5e5eaf&hm=8ecc0eaa5032989e913939f5dd88c7e30782f99bcb3a6aff66a7f734d13228e6&' },
-  B:  { label: 'B-Rank',  emoji: '<:Brarity:1529858383069581342>', color: 0x3FA9FF, pullWeight: 20, locked: false,
+  B:  { label: 'B-Rank',  emoji: '<:Brarity:1529858383069581342>', color: 0x3FA9FF, pullWeight: 21, locked: false,
         thumb: 'https://cdn.discordapp.com/attachments/1528819900402106378/1528820113279815882/b.png?ex=6a5fb02f&is=6a5e5eaf&hm=d02efdc2ad0df3816aaf357a1cb2923dd604b0f2aa99ca47233dfc5b60d51143&' },
   A:  { label: 'A-Rank',  emoji: '<:Ararity:1529858378866753577>', color: 0xA85FFF, pullWeight: 2,  locked: false,
         thumb: 'https://cdn.discordapp.com/attachments/1528819900402106378/1528820112864579677/a.png?ex=6a5fb02f&is=6a5e5eaf&hm=8bc34eb624830a6394fdffe54128b2a175966b1ac209c3bb64777e24d677c94b&' },
