@@ -6,7 +6,7 @@
     "rewards": {
       "ryo": {
         "label": "Ryo",
-        "emoji": "💴",
+        "emoji": "<:ryo:1529490447381299230>",
         "enabled": true,
         "drop_chance": 1.0,
         "min": 200,
@@ -14,7 +14,7 @@
       },
       "essence": {
         "label": "Chakra Essence",
-        "emoji": "🌀",
+        "emoji": "<:essence:1529490380905644143>",
         "enabled": true,
         "drop_chance": 1.0,
         "min": 10,
@@ -22,7 +22,7 @@
       },
       "ramen": {
         "label": "Ramen",
-        "emoji": "🍜",
+        "emoji": "<:ramen:1529823076118691890>",
         "enabled": false,
         "drop_chance": 0.0,
         "min": 1,
@@ -38,7 +38,7 @@
       },
       "fragments": {
         "label": "Fragments",
-        "emoji": "💎",
+        "emoji": "🃏",
         "enabled": true,
         "drop_chance": 0.60,
         "min_drops": 1,
@@ -58,7 +58,7 @@
     "rewards": {
       "ryo": {
         "label": "Ryo",
-        "emoji": "💴",
+        "emoji": "<:ryo:1529490447381299230>",
         "enabled": true,
         "drop_chance": 1.0,
         "min": 500,
@@ -66,7 +66,7 @@
       },
       "essence": {
         "label": "Chakra Essence",
-        "emoji": "🌀",
+        "emoji": "<:essence:1529490380905644143>",
         "enabled": true,
         "drop_chance": 1.0,
         "min": 25,
@@ -74,7 +74,7 @@
       },
       "ramen": {
         "label": "Ramen",
-        "emoji": "🍜",
+        "emoji": "<:ramen:1529823076118691890>",
         "enabled": false,
         "drop_chance": 0.0,
         "min": 1,
@@ -90,7 +90,7 @@
       },
       "fragments": {
         "label": "Fragments",
-        "emoji": "💎",
+        "emoji": "🃏",
         "enabled": true,
         "drop_chance": 0.70,
         "min_drops": 1,
@@ -110,7 +110,7 @@
     "rewards": {
       "ryo": {
         "label": "Ryo",
-        "emoji": "💴",
+        "emoji": "<:ryo:1529490447381299230>",
         "enabled": true,
         "drop_chance": 1.0,
         "min": 1000,
@@ -118,7 +118,7 @@
       },
       "essence": {
         "label": "Chakra Essence",
-        "emoji": "🌀",
+        "emoji": "<:essence:1529490380905644143>",
         "enabled": true,
         "drop_chance": 1.0,
         "min": 50,
@@ -126,7 +126,7 @@
       },
       "ramen": {
         "label": "Ramen",
-        "emoji": "🍜",
+        "emoji": "<:ramen:1529823076118691890>",
         "enabled": false,
         "drop_chance": 0.0,
         "min": 1,
@@ -142,7 +142,7 @@
       },
       "fragments": {
         "label": "Fragments",
-        "emoji": "💎",
+        "emoji": "🃏",
         "enabled": true,
         "drop_chance": 0.75,
         "min_drops": 1,
@@ -163,7 +163,7 @@
     "rewards": {
       "ryo": {
         "label": "Ryo",
-        "emoji": "💴",
+        "emoji": "<:ryo:1529490447381299230>",
         "enabled": true,
         "drop_chance": 1.0,
         "min": 2000,
@@ -171,7 +171,7 @@
       },
       "essence": {
         "label": "Chakra Essence",
-        "emoji": "🌀",
+        "emoji": "<:essence:1529490380905644143>",
         "enabled": true,
         "drop_chance": 1.0,
         "min": 80,
@@ -179,7 +179,7 @@
       },
       "ramen": {
         "label": "Ramen",
-        "emoji": "🍜",
+        "emoji": "<:ramen:1529823076118691890>",
         "enabled": true,
         "drop_chance": 0.10,
         "min": 1,
@@ -195,7 +195,7 @@
       },
       "fragments": {
         "label": "Fragments",
-        "emoji": "💎",
+        "emoji": "🃏",
         "enabled": true,
         "drop_chance": 0.80,
         "min_drops": 1,
@@ -216,7 +216,7 @@
     "rewards": {
       "ryo": {
         "label": "Ryo",
-        "emoji": "💴",
+        "emoji": "<:ryo:1529490447381299230>",
         "enabled": true,
         "drop_chance": 1.0,
         "min": 4000,
@@ -224,7 +224,7 @@
       },
       "essence": {
         "label": "Chakra Essence",
-        "emoji": "🌀",
+        "emoji": "<:essence:1529490380905644143>",
         "enabled": true,
         "drop_chance": 1.0,
         "min": 150,
@@ -232,7 +232,7 @@
       },
       "ramen": {
         "label": "Ramen",
-        "emoji": "🍜",
+        "emoji": "<:ramen:1529823076118691890>",
         "enabled": true,
         "drop_chance": 0.30,
         "min": 1,
@@ -248,7 +248,7 @@
       },
       "fragments": {
         "label": "Fragments",
-        "emoji": "💎",
+        "emoji": "🃏",
         "enabled": true,
         "drop_chance": 0.85,
         "min_drops": 1,
@@ -268,7 +268,7 @@
     "rewards": {
       "ryo": {
         "label": "Ryo",
-        "emoji": "💴",
+        "emoji": "<:ryo:1529490447381299230>",
         "enabled": true,
         "drop_chance": 1.0,
         "min": 8000,
@@ -276,7 +276,7 @@
       },
       "essence": {
         "label": "Chakra Essence",
-        "emoji": "🌀",
+        "emoji": "<:essence:1529490380905644143>",
         "enabled": true,
         "drop_chance": 1.0,
         "min": 250,
@@ -284,7 +284,7 @@
       },
       "ramen": {
         "label": "Ramen",
-        "emoji": "🍜",
+        "emoji": "<:ramen:1529823076118691890>",
         "enabled": true,
         "drop_chance": 0.50,
         "min": 1,
@@ -300,7 +300,7 @@
       },
       "fragments": {
         "label": "Fragments",
-        "emoji": "💎",
+        "emoji": "🃏",
         "enabled": true,
         "drop_chance": 0.90,
         "min_drops": 1,

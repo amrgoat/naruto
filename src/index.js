@@ -14,6 +14,200 @@ const BACKUP_INTERVAL_MS = 1 * 60 * 60 * 1000; // every 1 hour
 
 // ── Keep-alive web server ──────────────────────
 http.createServer((req, res) => {
+  if (req.url === '/preview') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scroll Embed Preview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #313338;
+    font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    padding: 32px 24px;
+    min-height: 100vh;
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 340px;
+    max-width: 420px;
+  }
+  .label {
+    color: #949ba4;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .message {
+    display: flex;
+    gap: 16px;
+    padding: 4px 0;
+  }
+  .avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff6b35, #e74c3c);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .msg-body { flex: 1; }
+  .username {
+    color: #c9cdfb;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .username span { color: #949ba4; font-size: 12px; font-weight: 400; margin-left: 6px; }
+  .embed {
+    border-radius: 4px;
+    border-left: 4px solid;
+    background: #2b2d31;
+    padding: 12px 16px;
+    max-width: 420px;
+    margin-top: 4px;
+  }
+  .embed-title {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .embed-desc {
+    color: #dbdee1;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+  .embed-desc b { color: #ffffff; font-weight: 600; }
+  .embed-footer {
+    color: #80848e;
+    font-size: 12px;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #3f4147;
+  }
+  .divider { color: #4f545c; }
+</style>
+</head>
+<body>
+
+<!-- ── Column 1: Opening animation ── -->
+<div class="column">
+  <div class="label">Step 1 — Opening animation</div>
+  <div class="message">
+    <div class="avatar">🍃</div>
+    <div class="msg-body">
+      <div class="username">Naruto Bot <span>Today at 12:00 PM</span></div>
+
+      <!-- Academy -->
+      <div class="embed" style="border-color:#b3aa93;">
+        <div class="embed-title">Opening Scrolls...</div>
+        <div class="embed-desc">Opening <b>1</b> Academy Scroll
+
+Please wait...</div>
+      </div>
+
+      <!-- Mission -->
+      <div class="embed" style="border-color:#3FA9FF; margin-top:12px;">
+        <div class="embed-title">Opening Scrolls...</div>
+        <div class="embed-desc">Opening <b>5</b> Mission Scrolls
+
+Please wait...</div>
+      </div>
+
+      <!-- Hokage -->
+      <div class="embed" style="border-color:#FFD700; margin-top:12px;">
+        <div class="embed-title">Opening Scrolls...</div>
+        <div class="embed-desc">Opening <b>3</b> Hokage Secret Scrolls
+
+Please wait...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Column 2: Reward embeds ── -->
+<div class="column">
+  <div class="label">Step 2 — Reward reveal</div>
+  <div class="message">
+    <div class="avatar">🍃</div>
+    <div class="msg-body">
+      <div class="username">Naruto Bot <span>Today at 12:00 PM</span></div>
+
+      <!-- Academy reward -->
+      <div class="embed" style="border-color:#b3aa93;">
+        <div class="embed-title">Academy Scroll — Opened Successfully</div>
+        <div class="embed-desc">Opened <b>1</b> Academy Scroll
+
+━━━━━━━━━━━━━━━━━━━━━━
+<b>Rewards</b>
+🪙 <b>+420</b> Ryo
+✨ <b>+18</b> Chakra Essence
+🃏 <b>Konohamaru Fragment</b></div>
+        <div class="embed-footer">Rewards have been added to your inventory.</div>
+      </div>
+
+      <!-- Mission reward -->
+      <div class="embed" style="border-color:#3FA9FF; margin-top:12px;">
+        <div class="embed-title">Mission Scroll — Opened Successfully</div>
+        <div class="embed-desc">Opened <b>5</b> Mission Scrolls
+
+━━━━━━━━━━━━━━━━━━━━━━
+<b>Rewards</b>
+🪙 <b>+8,350</b> Ryo
+✨ <b>+312</b> Chakra Essence
+📜 <b>+3</b> EXP Scrolls
+
+🃏 <b>Naruto Uzumaki Fragment</b>
+🃏 <b>Kiba Inuzuka Fragment</b>
+🃏 <b>Naruto Uzumaki Fragment</b>
+🃏 <b>Shikamaru Nara Fragment</b>
+🃏 <b>Kakashi Hatake Fragment</b></div>
+        <div class="embed-footer">Rewards have been added to your inventory.</div>
+      </div>
+
+      <!-- Hokage reward -->
+      <div class="embed" style="border-color:#FFD700; margin-top:12px;">
+        <div class="embed-title">Hokage Secret Scroll — Opened Successfully</div>
+        <div class="embed-desc">Opened <b>3</b> Hokage Secret Scrolls
+
+━━━━━━━━━━━━━━━━━━━━━━
+<b>Rewards</b>
+🪙 <b>+31,540</b> Ryo
+✨ <b>+1,092</b> Chakra Essence
+🍜 <b>+1</b> Ramen
+📜 <b>+7</b> EXP Scrolls
+
+🃏 <b>Itachi Uchiha Fragment</b>
+🃏 <b>Gaara of the Sand Fragment</b>
+🃏 <b>Tsunade Fragment</b>
+🃏 <b>Itachi Uchiha Fragment</b>
+🃏 <b>Orochimaru Fragment</b></div>
+        <div class="embed-footer">Rewards have been added to your inventory.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>`);
+    return;
+  }
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Naruto Bot is online.');
 }).listen(5000, () => {
