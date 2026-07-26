@@ -52,7 +52,7 @@ const COMBAT_EMOJIS = {
 // SS and UR exist in the system but are locked from pulls
 // thumb: provided rarity badge image URL shown as embed thumbnail
 const RARITIES = {
-  D:  { label: 'D-Rank',  emoji: '<:Drarity:1529858391210721330>', color: 0xB0B0B0, pullWeight: 43, locked: false,
+  D:  { label: 'D-Rank',  emoji: '<:Drarity:1529858391210721330>', color: 0xB0B0B0, pullWeight: 43.5, locked: false,
         thumb: 'https://cdn.discordapp.com/attachments/1528819900402106378/1528820114110288033/d.png?ex=6a5fb02f&is=6a5e5eaf&hm=8210d61deadbe0165a3543b43116c15e82602f8e8628409636ff82e7bcaa2d6c&' },
   C:  { label: 'C-Rank',  emoji: '<:Crarity:1529858387301367898>', color: 0x47C74B, pullWeight: 33, locked: false,
         thumb: 'https://cdn.discordapp.com/attachments/1528819900402106378/1528820113623486564/c.png?ex=6a5fb02f&is=6a5e5eaf&hm=8ecc0eaa5032989e913939f5dd88c7e30782f99bcb3a6aff66a7f734d13228e6&' },
