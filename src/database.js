@@ -100,6 +100,11 @@ for (const col of [
   'mission_cooldown_at   INTEGER NOT NULL DEFAULT 0',
   'missions_finished     INTEGER NOT NULL DEFAULT 0',
   'mission_scrolls       INTEGER NOT NULL DEFAULT 0',
+  'academy_scrolls       INTEGER NOT NULL DEFAULT 0',
+  'chunin_scrolls        INTEGER NOT NULL DEFAULT 0',
+  'jonin_scrolls         INTEGER NOT NULL DEFAULT 0',
+  'anbu_scrolls          INTEGER NOT NULL DEFAULT 0',
+  'hokage_scrolls        INTEGER NOT NULL DEFAULT 0',
 ]) {
   try { db.exec(`ALTER TABLE users ADD COLUMN ${col}`); } catch { /* already exists */ }
 }
@@ -325,4 +330,23 @@ function giveExpToCard(cardId, expAmount, masteryData) {
   return q.getCard.get(cardId);
 }
 
-module.exports = { db, q, giveExpToCard };
+// ── Scroll inventory statements ───────────────
+// Keyed by db_col name (matches scroll_rewards.json db_col values).
+const SCROLL_COLS = [
+  'academy_scrolls',
+  'chunin_scrolls',
+  'mission_scrolls',
+  'jonin_scrolls',
+  'anbu_scrolls',
+  'hokage_scrolls',
+];
+
+const scrollStatements = {};
+for (const col of SCROLL_COLS) {
+  scrollStatements[col] = {
+    add:    db.prepare(`UPDATE users SET ${col} = ${col} + ? WHERE discord_id = ?`),
+    deduct: db.prepare(`UPDATE users SET ${col} = MAX(0, ${col} - ?) WHERE discord_id = ?`),
+  };
+}
+
+module.exports = { db, q, giveExpToCard, scrollStatements };
