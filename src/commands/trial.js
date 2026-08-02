@@ -28,6 +28,7 @@ const { getEffectiveStats } = require('../utils/cardUtils');
 const { resolvePassiveBonuses } = require('../utils/passives');
 const { rollDamage }        = require('../utils/battleEngine');
 const { loadConfig, buildEnemies, getFloorReward, getFloorMaxHp } = require('../utils/trialEngine');
+const { buildHpBar }        = require('../utils/hpBar');
 
 // ── Active session store ───────────────────────
 const activeSessions = new Map();
@@ -59,19 +60,6 @@ const SCROLL_EMOJIS = {
   anbu_scrolls:    '📕',
 };
 
-// ─────────────────────────────────────────────
-//  HP bar: 10 colored squares
-// ─────────────────────────────────────────────
-function hpBar(current, max, bars = 10) {
-  const pct    = max > 0 ? Math.max(0, current) / max : 0;
-  const filled = Math.round(pct * bars);
-  const empty  = bars - filled;
-  let color;
-  if (pct > 0.5)      color = '🟩';
-  else if (pct > 0.25) color = '🟨';
-  else                 color = '🟥';
-  return color.repeat(filled) + '⬛'.repeat(empty);
-}
 
 // ─────────────────────────────────────────────
 //  Format a single combatant line
@@ -90,7 +78,7 @@ function fmtCombatant(c, isPlayer = false) {
     : ` | Lv ${c.level ?? '?'}`;
 
   const stats = `❤️ ${c.currentHp.toLocaleString()}/${c.maxHp.toLocaleString()} | ⚡ ${c.spd} | ⚔️ ${c.atkMin.toLocaleString()}–${c.atkMax.toLocaleString()}`;
-  const bar   = hpBar(c.currentHp, c.maxHp);
+  const bar   = buildHpBar(c.currentHp, c.maxHp);
   return `➜ **${c.name}**${meta}\n${stats}\n${bar}`;
 }
 
@@ -325,7 +313,10 @@ async function endTrial(session, reason, collector) {
     .setDescription(`${headline}\n\n${rewardLines}`);
   if (config.thumbnail) resultEmbed.setThumbnail(config.thumbnail);
 
-  await session.message.edit({ embeds: [resultEmbed], components: [] }).catch(() => {});
+  // Remove buttons from the battle embed, leave it visible
+  await session.message.edit({ components: [] }).catch(() => {});
+  // Send rewards as a separate follow-up message
+  await session.message.reply({ embeds: [resultEmbed] }).catch(() => {});
 }
 
 // ─────────────────────────────────────────────
