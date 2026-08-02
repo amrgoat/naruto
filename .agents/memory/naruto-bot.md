@@ -40,3 +40,16 @@ Old `data.db` from previous bot version caused `no such column` errors.
 ## Arena is AI-Only
 No PvP leaderboard. `ARENA_DIFFICULTIES` in config.js defines 4 tiers with hardcoded enemy stats.
 10 attempts/day reset at 12:00 AM IST (once daily, not twice like pulls).
+
+## Trial System (N trial1–trial4)
+Interactive dungeon — one Discord message, continuously edited, never a new embed sent.
+- Session state held in-memory `activeSessions` Map in `src/commands/trial.js` — cleared on end/timeout.
+- Ticket deduction uses `trialTicketStatements` from `database.js` (prepared statements, not raw SQL).
+- Floor configs: `towerconfig/{academy,chunin,jonin,anbu}.json` — key floors defined, intermediate floors linearly interpolated by `src/utils/trialEngine.js`.
+- Boss floors = floor % 5 === 0 (1 enemy); normal floors = 4 enemies.
+- `atSafeExit` flag goes true after clearing a boss floor; reset to false when player clicks any card button on the next floor — this is how the 100%/50%/25% checkpoint split works.
+- Skip Floors: uses 2nd-strongest (by avg ATK) combat card's ATK as skip power; HP of enemy is compared via `getFloorMaxHp()`.
+- Trial tickets are stored in `academy/chunin/jonin/anbu_trial_tickets` columns on the `users` table (safe migrations in database.js).
+
+**Why:** Single-message design prevents Discord spam and creates an RPG dungeon feel.
+**How to apply:** When modifying trial flow, remember `session.currentFloor` is mutated by `loadFloor()` — always capture it before calling that function.

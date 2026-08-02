@@ -86,6 +86,15 @@ SQLite (`data.db`) — three tables:
 - `cards` — owned cards with level/exp/mastery/stars/fragments
 - `teams` — up to 4 cards per user (slot 1–4)
 
+### Trial System (`N trial1` – `N trial4`)
+- Four difficulties: Academy → Chunin → Jonin → ANBU
+- Each consumes one Trial Ticket (`academy/chunin/jonin/anbu_trial_tickets` DB columns)
+- 100-floor dungeon; every 5th floor is a boss (1 enemy); other floors have 4 enemies
+- One-message interactive embed — no new messages ever sent; same message edited throughout
+- Configs in `towerconfig/academy|chunin|jonin|anbu.json` (key floors defined; intermediate floors auto-interpolated)
+- Checkpoint system: 100% rewards safe exit after a boss, 50% if you quit between bosses, 25% if you die
+- Skip Floors: auto-clears floors whose enemy HP ≤ 2nd-strongest card's avg ATK (all rewards granted)
+
 ## User Preferences
 - Prefix: `N` (and aliases listed above)
 - All characters are Classic Naruto (no Shippuden forms)

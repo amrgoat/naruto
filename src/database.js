@@ -119,11 +119,16 @@ for (const col of [
   'user_level            INTEGER NOT NULL DEFAULT 1',
   'user_exp              INTEGER NOT NULL DEFAULT 0',
   // Shop daily limits
-  'shop_reset_at         INTEGER NOT NULL DEFAULT 0',
-  'shop_ramen_bought     INTEGER NOT NULL DEFAULT 0',
-  'shop_random_bought    INTEGER NOT NULL DEFAULT 0',
-  'shop_exp_bought       INTEGER NOT NULL DEFAULT 0',
-  'shop_chakra_bought    INTEGER NOT NULL DEFAULT 0',
+  'shop_reset_at              INTEGER NOT NULL DEFAULT 0',
+  'shop_ramen_bought          INTEGER NOT NULL DEFAULT 0',
+  'shop_random_bought         INTEGER NOT NULL DEFAULT 0',
+  'shop_exp_bought            INTEGER NOT NULL DEFAULT 0',
+  'shop_chakra_bought         INTEGER NOT NULL DEFAULT 0',
+  // Trial tickets — one per difficulty
+  'academy_trial_tickets      INTEGER NOT NULL DEFAULT 0',
+  'chunin_trial_tickets       INTEGER NOT NULL DEFAULT 0',
+  'jonin_trial_tickets        INTEGER NOT NULL DEFAULT 0',
+  'anbu_trial_tickets         INTEGER NOT NULL DEFAULT 0',
 ]) {
   try { db.exec(`ALTER TABLE users ADD COLUMN ${col}`); } catch { /* already exists */ }
 }
@@ -423,4 +428,20 @@ function giveExpToUser(userId, expAmount) {
   return q.getUser.get(userId);
 }
 
-module.exports = { db, q, giveExpToCard, giveExpToUser, scrollStatements };
+// ── Trial ticket statements ───────────────────
+const TRIAL_TICKET_COLS = [
+  'academy_trial_tickets',
+  'chunin_trial_tickets',
+  'jonin_trial_tickets',
+  'anbu_trial_tickets',
+];
+
+const trialTicketStatements = {};
+for (const col of TRIAL_TICKET_COLS) {
+  trialTicketStatements[col] = {
+    add:    db.prepare(`UPDATE users SET ${col} = ${col} + ? WHERE discord_id = ?`),
+    deduct: db.prepare(`UPDATE users SET ${col} = MAX(0, ${col} - ?) WHERE discord_id = ?`),
+  };
+}
+
+module.exports = { db, q, giveExpToCard, giveExpToUser, scrollStatements, trialTicketStatements };
