@@ -52,6 +52,13 @@ const SCROLL_NAMES = {
   anbu_scrolls:    'ANBU Scroll',
 };
 
+const SCROLL_EMOJIS = {
+  academy_scrolls: '📜',
+  chunin_scrolls:  '📘',
+  jonin_scrolls:   '📙',
+  anbu_scrolls:    '📕',
+};
+
 // ─────────────────────────────────────────────
 //  HP bar: 10 colored squares
 // ─────────────────────────────────────────────
@@ -82,7 +89,7 @@ function fmtCombatant(c, isPlayer = false) {
     ? ` | Lv ${c.level ?? '?'}${c.mastery ? ` | M${c.mastery}` : ''}${c.prestige ? ` | P${c.prestige}` : ''}`
     : ` | Lv ${c.level ?? '?'}`;
 
-  const stats = `❤️ ${c.currentHp.toLocaleString()}/${c.maxHp.toLocaleString()} | ⚔️ ${c.atkMin.toLocaleString()}–${c.atkMax.toLocaleString()} | 💨 ${c.spd}`;
+  const stats = `❤️ ${c.currentHp.toLocaleString()}/${c.maxHp.toLocaleString()} | ⚡ ${c.spd} | ⚔️ ${c.atkMin.toLocaleString()}–${c.atkMax.toLocaleString()}`;
   const bar   = hpBar(c.currentHp, c.maxHp);
   return `➜ **${c.name}**${meta}\n${stats}\n${bar}`;
 }
@@ -260,7 +267,7 @@ function buildRewardLines(final) {
   if (final.ramen  > 0) lines.push(`🍜 **${final.ramen}** Ramen`);
   for (const col of SCROLL_COLS) {
     const n = final.scrolls?.[col] ?? 0;
-    if (n > 0) lines.push(`📜 **${n}** ${SCROLL_NAMES[col]}${n > 1 ? 's' : ''}`);
+    if (n > 0) lines.push(`${SCROLL_EMOJIS[col]} **${n}** ${SCROLL_NAMES[col]}${n > 1 ? 's' : ''}`);
   }
   return lines.length ? lines.join('\n') : '*No rewards this run.*';
 }
@@ -295,6 +302,12 @@ async function endTrial(session, reason, collector) {
     color      = COLORS.error;
   }
 
+  // On a 5n+1 floor, accumulate this floor's reward so the player gets credit
+  // for the work done on the current floor (even mid-floor) at 100% payout.
+  if (isPostBoss && (reason === 'leave' || reason === 'safeExit')) {
+    accumulateReward(session, currentFloor);
+  }
+
   const final       = applyRewards(userId, rewards, multiplier);
   const rewardLines = buildRewardLines(final);
 
@@ -310,6 +323,7 @@ async function endTrial(session, reason, collector) {
     .setColor(color)
     .setTitle(`${config.emoji} ${config.name} — Ended`)
     .setDescription(`${headline}\n\n${rewardLines}`);
+  if (config.thumbnail) resultEmbed.setThumbnail(config.thumbnail);
 
   await session.message.edit({ embeds: [resultEmbed], components: [] }).catch(() => {});
 }

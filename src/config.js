@@ -192,6 +192,10 @@ const SHOP_ITEMS = {
     key: 'chakra', label: 'Chakra Essence', price: 500, dailyLimit: 200,
     dbLimitCol: 'shop_chakra_bought',
   },
+  trial_ticket: {
+    key: 'trial_ticket', label: 'Trial Ticket', price: 1000, priceType: 'chakra', dailyLimit: 3,
+    dbLimitCol: 'shop_ticket_bought',
+  },
 };
 
 // ── Expedition Areas ──────────────────────────

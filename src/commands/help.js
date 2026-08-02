@@ -11,32 +11,48 @@ module.exports = {
 
   async execute(message) {
     const embed = new EmbedBuilder()
-      .setTitle('Naruto Bot — Commands')
+      .setTitle('🍃 Naruto Bot — Commands')
       .setColor(COLORS.EMBED_COLOR)
+      .setFooter({ text: 'Prefix: t  (or T, with or without a space)' })
       .addFields(
         {
-          name: 'General',
-          value: '`n start` , `n profile` , `n daily` , `n ping` , `n balance` , `n ramen`',
+          name: '⚙️ General',
+          value: '`t start` · `t profile` · `t daily` · `t balance` · `t ping` · `t ramen`',
         },
         {
-          name: 'Collection',
-          value: '`n pull` , `n mycollection` , `n all` , `n cardinfo` , `n mycardinfo` , `n finv` , `n summon`',
+          name: '📜 Collection',
+          value:
+            '`t pull` · `t mycollection` `(mc)` · `t all` · `t cardinfo` `(ci)` · `t mycardinfo` `(mci)` · `t finv` · `t summon` · `t open`',
         },
         {
-          name: 'Team',
-          value: '`n team` , `n team add` , `n team remove`',
+          name: '🥷 Team',
+          value: '`t team` · `t team add <name>` · `t team remove <name>`',
         },
         {
-          name: 'Progression',
-          value: '`n mastery` , `n prestige` , `n craft` , `n level`',
+          name: '📈 Progression',
+          value: '`t mastery` · `t prestige` · `t craft` · `t level`',
         },
         {
-          name: 'Battle',
-          value: '`n arena` , `n battle`',
+          name: '⚔️ Battle',
+          value: '`t arena` · `t battle @user`',
         },
         {
-          name: 'Premium',
-          value: '`n multipull`',
+          name: '🏯 Trials',
+          value:
+            '`t trial1` — 📚 Academy  *(easiest)*\n' +
+            '`t trial2` — 🟦 Chunin\n' +
+            '`t trial3` — 🟧 Jonin\n' +
+            '`t trial4` — 🔴 ANBU  *(hardest · best rewards)*\n' +
+            '*Requires a Trial Ticket — buy from shop or earn from missions.*',
+        },
+        {
+          name: '🛒 Economy',
+          value:
+            '`t shop` · `t shop buy <amt> <item>` · `t inventory` `(inv)` · `t mission` · `t expedition` `(exp)`',
+        },
+        {
+          name: '💎 Premium',
+          value: '`t multipull` `(mp)`',
         },
       );
 

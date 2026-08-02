@@ -124,6 +124,8 @@ for (const col of [
   'shop_random_bought         INTEGER NOT NULL DEFAULT 0',
   'shop_exp_bought            INTEGER NOT NULL DEFAULT 0',
   'shop_chakra_bought         INTEGER NOT NULL DEFAULT 0',
+  // Shop daily limit — trial tickets
+  'shop_ticket_bought         INTEGER NOT NULL DEFAULT 0',
   // Trial tickets — one per difficulty
   'academy_trial_tickets      INTEGER NOT NULL DEFAULT 0',
   'chunin_trial_tickets       INTEGER NOT NULL DEFAULT 0',
@@ -179,7 +181,8 @@ const q = {
   addMissionScrolls:   db.prepare(`UPDATE users SET mission_scrolls   = mission_scrolls  + 1 WHERE discord_id = ?`),
   addRyo:           db.prepare(`UPDATE users SET ryo            = ryo            + ? WHERE discord_id = ?`),
   addRamen:         db.prepare(`UPDATE users SET ramen          = ramen          + ? WHERE discord_id = ?`),
-  addChakraEssence: db.prepare(`UPDATE users SET chakra_essence = chakra_essence + ? WHERE discord_id = ?`),
+  addChakraEssence:    db.prepare(`UPDATE users SET chakra_essence = chakra_essence + ? WHERE discord_id = ?`),
+  deductChakraEssence: db.prepare(`UPDATE users SET chakra_essence = MAX(0, chakra_essence - ?) WHERE discord_id = ?`),
   addExpScrolls:    db.prepare(`UPDATE users SET exp_scrolls    = exp_scrolls    + ? WHERE discord_id = ?`),
   setDailyReset:    db.prepare(`UPDATE users SET daily_reset_at = ? WHERE discord_id = ?`),
 
@@ -326,14 +329,16 @@ const q = {
   // ── Shop daily limits ───────────────────────
   resetShop: db.prepare(`
     UPDATE users SET shop_reset_at = ?, shop_ramen_bought = 0,
-    shop_random_bought = 0, shop_exp_bought = 0, shop_chakra_bought = 0
+    shop_random_bought = 0, shop_exp_bought = 0, shop_chakra_bought = 0,
+    shop_ticket_bought = 0
     WHERE discord_id = ?
   `),
   incrementShopCol: {
     shop_ramen_bought:  db.prepare(`UPDATE users SET shop_ramen_bought  = shop_ramen_bought  + ? WHERE discord_id = ?`),
     shop_random_bought: db.prepare(`UPDATE users SET shop_random_bought = shop_random_bought + ? WHERE discord_id = ?`),
     shop_exp_bought:    db.prepare(`UPDATE users SET shop_exp_bought    = shop_exp_bought    + ? WHERE discord_id = ?`),
-    shop_chakra_bought: db.prepare(`UPDATE users SET shop_chakra_bought = shop_chakra_bought + ? WHERE discord_id = ?`),
+    shop_chakra_bought:  db.prepare(`UPDATE users SET shop_chakra_bought  = shop_chakra_bought  + ? WHERE discord_id = ?`),
+    shop_ticket_bought:  db.prepare(`UPDATE users SET shop_ticket_bought  = shop_ticket_bought  + ? WHERE discord_id = ?`),
   },
   deductRyo: db.prepare(`UPDATE users SET ryo = ryo - ? WHERE discord_id = ?`),
   addRamen:  db.prepare(`UPDATE users SET ramen = ramen + ? WHERE discord_id = ?`),

@@ -10,7 +10,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
 } = require('discord.js');
-const { q }               = require('../database');
+const { q, trialTicketStatements } = require('../database');
 const { COLORS, COMBAT_EMOJIS, ARROW_EMOJI, E } = require('../config');
 const { checkRegistered } = require('../utils/guards');
 const { errorEmbed }      = require('../utils/embeds');
@@ -89,7 +89,23 @@ function buildMissionEmbed(rank, scenario, question, cfg) {
     .setFooter({ text: 'Answer within 30 seconds.' });
 }
 
-function buildSuccessEmbed(rank, ryo, gotScroll, cfg) {
+// Ticket roll table: Academy 30% · Chunin 27% · Jonin 23% · ANBU 20%
+const TICKET_ROLLS = [
+  { col: 'academy_trial_tickets', threshold: 30,  label: 'Academy Trial Ticket' },
+  { col: 'chunin_trial_tickets',  threshold: 57,  label: 'Chunin Trial Ticket'  },
+  { col: 'jonin_trial_tickets',   threshold: 80,  label: 'Jonin Trial Ticket'   },
+  { col: 'anbu_trial_tickets',    threshold: 100, label: 'ANBU Trial Ticket'    },
+];
+
+function rollTicketType() {
+  const r = Math.random() * 100;
+  for (const entry of TICKET_ROLLS) {
+    if (r < entry.threshold) return entry;
+  }
+  return TICKET_ROLLS[TICKET_ROLLS.length - 1];
+}
+
+function buildSuccessEmbed(rank, ryo, gotScroll, gotTicket, cfg) {
   const lines = [
     `Correct Answer!`,
     `You completed the mission successfully.`,
@@ -99,6 +115,9 @@ function buildSuccessEmbed(rank, ryo, gotScroll, cfg) {
   ];
   if (gotScroll) {
     lines.push(`${ARROW_EMOJI} Mission Scroll: **+1** ${E.scroll}`);
+  }
+  if (gotTicket) {
+    lines.push(`${ARROW_EMOJI} 🎫 **${gotTicket.label}: +1**`);
   }
   return new EmbedBuilder()
     .setColor(cfg.color)
@@ -203,9 +222,16 @@ module.exports = {
         const gotScroll = Math.random() < SCROLL_CHANCE;
         if (gotScroll) q.addMissionScrolls.run(userId);
 
+        // 1% chance to earn a random Trial Ticket
+        let gotTicket = null;
+        if (Math.random() < 0.01) {
+          gotTicket = rollTicketType();
+          trialTicketStatements[gotTicket.col].add.run(1, userId);
+        }
+
         const disabledRow = buildAnswerButtons(shuffledTexts, true, correctShuffledIdx, -1);
         await interaction.update({
-          embeds:     [buildSuccessEmbed(rank, cfg.ryo, gotScroll, cfg)],
+          embeds:     [buildSuccessEmbed(rank, cfg.ryo, gotScroll, gotTicket, cfg)],
           components: [disabledRow],
         });
       } else {

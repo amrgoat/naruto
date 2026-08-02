@@ -1,24 +1,29 @@
 // ─────────────────────────────────────────────
 //  inventory.js  —  N inventory | N inv
 //  Shows the player's consumable inventory.
-//  Add new sections below the existing ones
-//  as more item types are introduced.
 // ─────────────────────────────────────────────
 
 const { EmbedBuilder } = require('discord.js');
-const { COLORS, E, ARROW_EMOJI } = require('../config');
-const { checkRegistered }        = require('../utils/guards');
+const { COLORS, E }    = require('../config');
+const { checkRegistered } = require('../utils/guards');
 
-// All trackable items in display order.
-// Add new entries here as more item types are introduced.
-const INVENTORY_ITEMS = [
-  { key: 'exp_scrolls',     label: 'EXP Scroll'             },
-  { key: 'academy_scrolls', label: 'Academy Scroll'          },
-  { key: 'chunin_scrolls',  label: 'Chunin Mission Scroll'   },
-  { key: 'mission_scrolls', label: 'Mission Scroll'          },
-  { key: 'jonin_scrolls',   label: 'Jonin Mission Scroll'    },
-  { key: 'anbu_scrolls',    label: 'ANBU Classified Scroll'  },
-  { key: 'hokage_scrolls',  label: 'Hokage Secret Scroll'    },
+// ── Scrolls ────────────────────────────────────
+const SCROLL_ITEMS = [
+  { key: 'exp_scrolls',     label: '📜 EXP Scroll'             },
+  { key: 'academy_scrolls', label: '📜 Academy Scroll'          },
+  { key: 'chunin_scrolls',  label: '📜 Chunin Scroll'           },
+  { key: 'mission_scrolls', label: '📜 Mission Scroll'          },
+  { key: 'jonin_scrolls',   label: '📜 Jonin Scroll'            },
+  { key: 'anbu_scrolls',    label: '📜 ANBU Scroll'             },
+  { key: 'hokage_scrolls',  label: '📜 Hokage Scroll'           },
+];
+
+// ── Trial tickets ──────────────────────────────
+const TICKET_ITEMS = [
+  { key: 'academy_trial_tickets', label: '📚 Academy Trial Ticket' },
+  { key: 'chunin_trial_tickets',  label: '🟦 Chunin Trial Ticket'  },
+  { key: 'jonin_trial_tickets',   label: '🟧 Jonin Trial Ticket'   },
+  { key: 'anbu_trial_tickets',    label: '🔴 ANBU Trial Ticket'    },
 ];
 
 module.exports = {
@@ -32,7 +37,8 @@ module.exports = {
 
     const username = message.member?.displayName ?? message.author.username;
 
-    const lines = INVENTORY_ITEMS
+    // ── Scrolls section ────────────────────────
+    const scrollLines = SCROLL_ITEMS
       .map(item => {
         const count = user[item.key] ?? 0;
         if (!count) return null;
@@ -40,18 +46,30 @@ module.exports = {
       })
       .filter(Boolean);
 
-    const desc = lines.length
-      ? lines.join('\n')
-      : '*Your inventory is empty.*';
+    // ── Tickets section ────────────────────────
+    const ticketLines = TICKET_ITEMS
+      .map(item => {
+        const count = user[item.key] ?? 0;
+        if (!count) return null;
+        return `${item.label} ×**${count.toLocaleString()}**`;
+      })
+      .filter(Boolean);
 
-    return message.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setColor(COLORS.EMBED_COLOR)
-          .setTitle(`${username}'s Inventory`)
-          .setThumbnail(message.author.displayAvatarURL({ dynamic: true, size: 128 }))
-          .setDescription(desc),
-      ],
-    });
+    const embed = new EmbedBuilder()
+      .setColor(COLORS.EMBED_COLOR)
+      .setTitle(`${username}'s Inventory`)
+      .setThumbnail(message.author.displayAvatarURL({ dynamic: true, size: 128 }));
+
+    if (scrollLines.length) {
+      embed.addFields({ name: '📜 Scrolls', value: scrollLines.join('\n') });
+    }
+    if (ticketLines.length) {
+      embed.addFields({ name: '🎫 Trial Tickets', value: ticketLines.join('\n') });
+    }
+    if (!scrollLines.length && !ticketLines.length) {
+      embed.setDescription('*Your inventory is empty.*');
+    }
+
+    return message.reply({ embeds: [embed] });
   },
 };
