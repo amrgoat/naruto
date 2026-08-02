@@ -22,11 +22,18 @@ function loadConfig(difficulty) {
 }
 
 /**
- * Linear interpolation between two numeric values.
- * Always returns an integer (Math.round).
+ * Integer lerp — used for stats (hp, atk, spd, critRate).
  */
 function lerp(a, b, t) {
   return Math.round(a + t * (b - a));
+}
+
+/**
+ * Float lerp — used for reward values so fractional scroll
+ * probabilities (e.g. 0.06) are preserved during interpolation.
+ */
+function lerpFloat(a, b, t) {
+  return a + t * (b - a);
 }
 
 /**
@@ -58,9 +65,7 @@ function bracket(keys, floor) {
   let lower = keys[0], upper = keys[keys.length - 1];
   for (const k of keys) {
     if (k <= floor) lower = k;
-    if (k >= floor && k < upper) upper = k;
   }
-  // Tighten upper
   for (const k of keys) {
     if (k >= floor) { upper = k; break; }
   }
@@ -74,7 +79,6 @@ function bracket(keys, floor) {
  * If an exact floor entry exists in the config it takes precedence.
  */
 function getFloorStats(config, floor) {
-  // Exact match
   if (config.floors[floor]) return config.floors[floor];
 
   const keys = Object.keys(config.floors).map(Number).sort((a, b) => a - b);
@@ -92,7 +96,7 @@ function getFloorStats(config, floor) {
 /**
  * Build the enemy array for a floor.
  * Boss floors (floor % 5 === 0) have 1 enemy; normal floors have 4.
- * Each enemy: { name, maxHp, currentHp, atkMin, atkMax, spd, critRate }
+ * Each enemy: { name, level, maxHp, currentHp, atkMin, atkMax, spd, critRate }
  */
 function buildEnemies(config, floor) {
   const isBoss = floor % 5 === 0;
@@ -102,7 +106,8 @@ function buildEnemies(config, floor) {
     const name = config.bossNames?.[floor] ?? config.bossNames?.['default'] ?? 'Trial Boss';
     const s    = stats.boss;
     return [{
-      name, maxHp: s.hp, currentHp: s.hp,
+      name, level: floor,
+      maxHp: s.hp, currentHp: s.hp,
       atkMin: s.atkMin, atkMax: s.atkMax, spd: s.spd, critRate: s.critRate,
     }];
   }
@@ -111,6 +116,7 @@ function buildEnemies(config, floor) {
   const s     = stats.squad;
   return Array.from({ length: 4 }, (_, i) => ({
     name:      names[i % names.length],
+    level:     floor,
     maxHp:     s.hp,
     currentHp: s.hp,
     atkMin:    s.atkMin,
@@ -122,10 +128,11 @@ function buildEnemies(config, floor) {
 
 /**
  * Return the reward object for clearing a specific floor.
- * Interpolates between key reward floors; ramen defaults to 0.
+ * Uses float lerp so fractional scroll probabilities are preserved.
+ * Integer values (ryo, chakra, exp) are close enough to their
+ * intended values; the caller floors them at apply time.
  */
 function getFloorReward(config, floor) {
-  // Exact match
   if (config.rewards[floor]) return { ...config.rewards[floor] };
 
   const keys = Object.keys(config.rewards).map(Number).sort((a, b) => a - b);
@@ -137,7 +144,7 @@ function getFloorReward(config, floor) {
   const result = {};
   const allKeys = new Set([...Object.keys(lo), ...Object.keys(hi)]);
   for (const k of allKeys) {
-    result[k] = lerp(lo[k] ?? 0, hi[k] ?? 0, t);
+    result[k] = lerpFloat(lo[k] ?? 0, hi[k] ?? 0, t);
   }
   return result;
 }
