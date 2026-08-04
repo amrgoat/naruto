@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  ramen.js  —  N ramen
+//  ramen.js  —  n ramen
 //  Consumes 1 Ramen to restore all 12 pulls.
 // ─────────────────────────────────────────────
 

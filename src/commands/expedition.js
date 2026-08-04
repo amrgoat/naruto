@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────
-//  expedition.js  —  t expedition [area]
+//  expedition.js  —  n expedition [area]
 //
-//  t expedition           → claim rewards (or see time remaining)
-//  t expedition <area>    → start an expedition
+//  n expedition           → claim rewards (or see time remaining)
+//  n expedition <area>    → start an expedition
 //  Areas can be typed as full name or first-letter abbreviation
 //  e.g. "training grounds" → "tg", "forest of death" → "fod"
 // ─────────────────────────────────────────────
@@ -86,7 +86,7 @@ function buildAreaList(userLevel) {
 module.exports = {
   name: 'expedition',
   aliases: ['exp'],
-  description: 'Send your team on an expedition · t expedition [area]',
+  description: 'Send your team on an expedition · n expedition [area]',
 
   async execute(message, args) {
     const userId = message.author.id;
@@ -95,13 +95,13 @@ module.exports = {
 
     const userLevel = user.user_level ?? 1;
 
-    // ── t expedition (no args) → claim or status ─
+    // ── n expedition (no args) → claim or status ─
     if (!args.length) {
       const active = q.getExpedition.get(userId);
 
       if (!active) {
         return message.channel.send(
-          `No one is on expedition. Use \`t expedition <area>\` to send your team out.`
+          `No one is on expedition. Use \`n expedition <area>\` to send your team out.`
         );
       }
 
@@ -143,7 +143,7 @@ module.exports = {
       });
     }
 
-    // ── t expedition <area> → start ────────────
+    // ── n expedition <area> → start ────────────
     const areaInput = args.join(' ');
     const area      = resolveArea(areaInput);
 
@@ -180,7 +180,7 @@ module.exports = {
       return message.reply({
         embeds: [new EmbedBuilder()
           .setColor(COLORS.error)
-          .setDescription(`You need a team set before going on expedition.\nUse \`t team add <card>\` to build your team.`)],
+          .setDescription(`You need a team set before going on expedition.\nUse \`n team add <card>\` to build your team.`)],
       });
     }
 
@@ -195,7 +195,7 @@ module.exports = {
           .setDescription(
             `Your team is already on **${old?.name ?? existing.area_key}**.\n` +
             `They return in **${formatCountdown(rem)}**.\n` +
-            `Use \`t expedition\` to claim when done.`
+            `Use \`n expedition\` to claim when done.`
           )],
       });
     }
@@ -216,7 +216,7 @@ module.exports = {
         .setDescription(
           `Your team has set out for **${area.name}**!\n\n` +
           `⏱️ Returns in **${dur}**.\n` +
-          `Use \`t expedition\` to claim your rewards when done.`
+          `Use \`n expedition\` to claim your rewards when done.`
         )
         .addFields({
           name: 'Expected Rewards',

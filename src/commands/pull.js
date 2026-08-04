@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  pull.js  —  N pull
+//  pull.js  —  n pull
 //  Summon one ninja card from the scroll.
 //  · 12 pulls per period (resets 12 AM & 12 PM IST)
 //  · 3-second cooldown between pulls
@@ -70,7 +70,7 @@ module.exports = {
         embeds: [errorEmbed(
           `You've used all **12 pulls** for this period.\n` +
           `Next reset in **${formatCountdown(waitMs)}**.\n\n` +
-          `Use \`N ramen\` to restore your pulls instantly.`
+          `Use \`n ramen\` to restore your pulls instantly.`
         )],
       });
     }

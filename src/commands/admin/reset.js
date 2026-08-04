@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  admin/reset.js  —  N reset @user <cmd>
+//  admin/reset.js  —  n reset @user <cmd>
 //  Reset a command's cooldown/timer for a user.
 //  Owner only.
 // ─────────────────────────────────────────────
@@ -15,7 +15,7 @@ const TIMERS = {
     label:  'Daily Reward',
     emoji:  '🎁',
     reset:  (userId) => q.setDailyReset.run(0, userId),
-    detail: ()       => 'Can claim `N daily` immediately.',
+    detail: ()       => 'Can claim `n daily` immediately.',
   },
   arena: {
     label:  'Arena Attempts',
@@ -35,7 +35,7 @@ const TIMER_LIST = Object.keys(TIMERS).map(k => `\`${k}\``).join(', ');
 
 module.exports = {
   name: 'reset',
-  description: '[Admin] Reset a command timer for a user · N reset @user <daily|arena|pulls>',
+  description: '[Admin] Reset a command timer for a user · n reset @user <daily|arena|pulls>',
 
   async execute(message, args) {
     if (!isOwner(message.author.id)) return;
@@ -43,7 +43,7 @@ module.exports = {
     const target = message.mentions.users.first();
     if (!target) {
       return message.reply({
-        embeds: [errorEmbed(`**Usage:** \`N reset @user <timer>\`\n**Timers:** ${TIMER_LIST}`)],
+        embeds: [errorEmbed(`**Usage:** \`n reset @user <timer>\`\n**Timers:** ${TIMER_LIST}`)],
       });
     }
 

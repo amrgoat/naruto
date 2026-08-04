@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────
-//  open.js  —  N open <amount|all> <scroll>
+//  open.js  —  n open <amount|all> <scroll>
 //
 //  Opens one or more scrolls and awards rewards
-//  entirely driven by src/data/scroll_rewards.json.
+//  entirely driven by SCROLL_REWARDS in src/config.js.
 // ─────────────────────────────────────────────
 
 const { EmbedBuilder } = require('discord.js');
@@ -59,19 +59,19 @@ function buildRewardEmbed(count, scrollKey, combined) {
 
 module.exports = {
   name: 'open',
-  description: 'Open scrolls to claim rewards · N open <amount|all> <scroll>',
+  description: 'Open scrolls to claim rewards · n open <amount|all> <scroll>',
 
   async execute(message, args) {
     const user = checkRegistered(message);
     if (!user) return;
 
     // ── Argument parsing ────────────────────────
-    // Expected: N open <amount|all> <scroll>
+    // Expected: n open <amount|all> <scroll>
     if (args.length < 2) {
       return message.reply({
         embeds: [errorEmbed(
-          'Usage: `N open <amount|all> <scroll>`\n' +
-          'Example: `N open 5 mission` · `N open all hokage`\n\n' +
+          'Usage: `n open <amount|all> <scroll>`\n' +
+          'Example: `n open 5 mission` · `n open all hokage`\n\n' +
           '**Scroll types:** academy · chunin · mission · jonin · anbu · hokage'
         )],
       });

@@ -388,7 +388,7 @@ function giveExpToCard(cardId, expAmount, masteryData) {
 }
 
 // ── Scroll inventory statements ───────────────
-// Keyed by db_col name (matches scroll_rewards.json db_col values).
+// Keyed by db_col name (matches SCROLL_REWARDS db_col values in src/config.js).
 const SCROLL_COLS = [
   'academy_scrolls',
   'chunin_scrolls',

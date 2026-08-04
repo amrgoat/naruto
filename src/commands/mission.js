@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  mission.js  —  N mission
+//  mission.js  —  n mission
 //  Shinobi Mission system — Naruto trivia with
 //  four-button answers, cooldown, and rewards.
 // ─────────────────────────────────────────────
@@ -152,7 +152,7 @@ function buildTimeoutEmbed(rank, correctAnswer, cfg) {
 
 module.exports = {
   name: 'mission',
-  description: 'Complete a shinobi mission by answering Naruto trivia · N mission',
+  description: 'Complete a shinobi mission by answering Naruto trivia · n mission',
 
   async execute(message) {
     const userId = message.author.id;

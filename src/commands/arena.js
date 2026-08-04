@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────
-//  arena.js  —  N arena
+//  arena.js  —  n arena
 //  Fight AI-controlled bot teams.
 //  Choose: Easy | Normal | Hard | Extreme
-//  10 attempts per day · resets at 12:00 AM IST
+//  5 attempts per day · resets at 12:00 AM IST
 //  Both wins and losses consume an attempt.
 //  All team cards earn EXP after every battle.
 //
@@ -36,7 +36,7 @@ const { todayISTMidnightUTC, formatCountdown } = require('../utils/timeUtils');
 
 module.exports = {
   name: 'arena',
-  description: 'Battle AI teams for EXP and Ryo · N arena',
+  description: 'Battle AI teams for EXP and Ryo · n arena',
 
   async execute(message) {
     const userId = message.author.id;
@@ -81,7 +81,7 @@ module.exports = {
       return message.reply({
         embeds: [errorEmbed(
           `You need at least 1 card in your team to enter the Arena.\n` +
-          `Use \`N team add <name>\` to build your squad.`
+          `Use \`n team add <name>\` to build your squad.`
         )],
       });
     }
@@ -181,7 +181,7 @@ module.exports = {
           : `${E.loss} Defeat — ${diff.emoji} ${diff.label}`)
         .addFields(
           {
-            name:   '🤖 Enemy Team',
+            name:   `${E.robot} Enemy Team`,
             value:  enemySummary,
             inline: true,
           },

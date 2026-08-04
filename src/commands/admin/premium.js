@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  admin/premium.js  —  N premium add @user <time> | remove @user
+//  admin/premium.js  —  n premium add @user <time> | remove @user
 //  Grant or revoke premium for a user.
 //  Owner only.
 //
@@ -26,7 +26,7 @@ function parseDuration(str) {
 
 module.exports = {
   name: 'premium',
-  description: '[Admin] Grant or revoke premium · N premium add @user <time> | remove @user',
+  description: '[Admin] Grant or revoke premium · n premium add @user <time> | remove @user',
 
   async execute(message, args) {
     if (!isOwner(message.author.id)) return;
@@ -38,8 +38,8 @@ module.exports = {
       return message.reply({
         embeds: [errorEmbed(
           '**Usage:**\n' +
-          '`N premium add @user <7d | 30d | permanent>`\n' +
-          '`N premium remove @user`'
+          '`n premium add @user <7d | 30d | permanent>`\n' +
+          '`n premium remove @user`'
         )],
       });
     }

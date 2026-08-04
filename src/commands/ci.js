@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  ci.js  —  N ci <name>  (Card Info)
+//  ci.js  —  n ci <name>  (Card Info)
 //  · Description = lore line
 //  · Plain text stat labels (ATK HP SPD — no custom emojis)
 //  · Effect = passive at current mastery
@@ -83,11 +83,11 @@ function buildMasteryRow(m) {
 module.exports = {
   name: 'cardinfo',
   aliases: ['ci'],
-  description: 'Look up any character · N cardinfo <name>',
+  description: 'Look up any character · n cardinfo <name>',
 
   async execute(message, args) {
     if (!args.length) {
-      return message.reply({ embeds: [errorEmbed('Usage: `N ci <character name>`')] });
+      return message.reply({ embeds: [errorEmbed('Usage: `n ci <character name>`')] });
     }
 
     const query = args.join(' ').toLowerCase();
@@ -99,7 +99,7 @@ module.exports = {
     if (!char) {
       return message.reply({
         embeds: [errorEmbed(
-          `No character found matching \`${args.join(' ')}\`.\nUse \`N all\` to browse the full roster.`
+          `No character found matching \`${args.join(' ')}\`.\nUse \`n all\` to browse the full roster.`
         )],
       });
     }

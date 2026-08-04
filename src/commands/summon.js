@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  summon.js  —  N summon <character>
+//  summon.js  —  n summon <character>
 //  Spend 15 fragments of a character you don't
 //  own to permanently add them to your collection.
 // ─────────────────────────────────────────────
@@ -25,7 +25,7 @@ function findCharacter(query) {
 
 module.exports = {
   name: 'summon',
-  description: `Summon a card using ${SUMMON_COST} fragments · N summon <character>`,
+  description: `Summon a card using ${SUMMON_COST} fragments · n summon <character>`,
 
   async execute(message, args) {
     const userId = message.author.id;
@@ -34,9 +34,9 @@ module.exports = {
     if (!args.length) {
       return message.reply({
         embeds: [errorEmbed(
-          `**Usage:** \`N summon <character name>\`\n` +
-          `Example: \`N summon Naruto\`\n\n` +
-          `Check your fragments with \`N finv\`.`
+          `**Usage:** \`n summon <character name>\`\n` +
+          `Example: \`n summon Naruto\`\n\n` +
+          `Check your fragments with \`n finv\`.`
         )],
       });
     }
@@ -48,7 +48,7 @@ module.exports = {
       return message.reply({
         embeds: [errorEmbed(
           `No character found for **"${query}"**.\n` +
-          `Check spelling or use \`N all\` to browse all characters.`
+          `Check spelling or use \`n all\` to browse all characters.`
         )],
       });
     }
@@ -59,7 +59,7 @@ module.exports = {
       return message.reply({
         embeds: [errorEmbed(
           `You already own **${char.name}**!\n` +
-          `Duplicate pulls add fragments to your \`N finv\` instead.`
+          `Duplicate pulls add fragments to your \`n finv\` instead.`
         )],
       });
     }
@@ -102,7 +102,7 @@ module.exports = {
           `**${SUMMON_COST} ${E.fragment} fragments** spent.\n` +
           `Remaining fragments: **${remaining}**`
         )
-        .setFooter({ text: `Use N card ${char.name} to view your new card.` })],
+        .setFooter({ text: `Use n card ${char.name} to view your new card.` })],
     });
   },
 };

@@ -1,24 +1,19 @@
 // ─────────────────────────────────────────────
 //  trialEngine.js  —  Trial floor interpolation & enemy generation
 //
-//  Configs live in /towerconfig/<difficulty>.json.
+//  Configs live in src/config.js (TOWER_CONFIGS).
 //  Key floors are defined; any floor between them is smoothly
 //  interpolated. If a floor number is explicitly defined in the
 //  config, its values are used verbatim (no interpolation).
 // ─────────────────────────────────────────────
 
-const path = require('path');
-const fs   = require('fs');
+const { TOWER_CONFIGS } = require('../config');
 
-const CONFIG_DIR  = path.join(__dirname, '..', '..', 'towerconfig');
-const configCache = {};
-
-/** Load (and cache) a difficulty config by key. */
+/**
+ * Return the difficulty config for a key ('academy', 'chunin', etc.).
+ */
 function loadConfig(difficulty) {
-  if (configCache[difficulty]) return configCache[difficulty];
-  const file = path.join(CONFIG_DIR, `${difficulty}.json`);
-  configCache[difficulty] = JSON.parse(fs.readFileSync(file, 'utf8'));
-  return configCache[difficulty];
+  return TOWER_CONFIGS[difficulty];
 }
 
 /**

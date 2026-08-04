@@ -1,5 +1,6 @@
 // ─────────────────────────────────────────────
-//  mci.js  —  N mci <name>  (My Card Info)
+//  mci.js  —  
+ ci <name>  (My Card Info)
 //  Show one of your owned cards with all active
 //  passive bonuses applied (Choji HP, Rock Lee SPD).
 // ─────────────────────────────────────────────
@@ -13,14 +14,14 @@ const { buildMyCardInfoEmbed, errorEmbed } = require('../utils/embeds');
 module.exports = {
   name: 'mycardinfo',
   aliases: ['mci'],
-  description: 'View your card with full detail · N mycardinfo <name>',
+  description: 'View your card with full detail · n mycardinfo <name>',
 
   async execute(message, args) {
     const user = checkRegistered(message);
     if (!user) return;
 
     if (!args.length) {
-      return message.reply({ embeds: [errorEmbed('Usage: `N mci <character name>`')] });
+      return message.reply({ embeds: [errorEmbed('Usage: `n mci <character name>`')] });
     }
 
     const query  = args.join(' ').toLowerCase();
@@ -39,7 +40,7 @@ module.exports = {
       return message.reply({
         embeds: [errorEmbed(
           `You don't own a card matching \`${args.join(' ')}\`.\n` +
-          `Use \`N cards\` to browse your collection.`
+          `Use \`n cards\` to browse your collection.`
         )],
       });
     }

@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  profile.js  —  N profile
+//  profile.js  —  n profile
 //  Displays a player's ninja profile.
 // ─────────────────────────────────────────────
 
@@ -15,7 +15,7 @@ module.exports = {
   description: 'View your ninja profile.',
 
   async execute(message, args) {
-    // Support N profile @user
+    // Support n profile @user
     const target = message.mentions.users.first() ?? message.author;
     const userId = target.id;
 
@@ -23,7 +23,7 @@ module.exports = {
     if (!user) {
       if (target.id === message.author.id) {
         return message.reply({ embeds: [require('../utils/embeds').errorEmbed(
-          "You don't have an account yet.\nRun **N start** to begin your ninja journey."
+          "You don't have an account yet.\nRun **n start** to begin your ninja journey."
         )] });
       }
       return message.reply({ embeds: [require('../utils/embeds').errorEmbed(

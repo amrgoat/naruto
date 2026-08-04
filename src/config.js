@@ -1,9 +1,15 @@
 // ─────────────────────────────────────────────
 //  config.js  —  Global constants & game tuning
+//
+//  Single source of truth. Merged from:
+//    • src/config.js          (constants & tuning)
+//    • config/hpbar.json      (HP bar emojis)
+//    • towerconfig/*.json     (trial difficulty data)
+//    • src/data/scroll_rewards.json
 // ─────────────────────────────────────────────
 
 /** All command prefixes that the bot responds to */
-const PREFIXES = ['t', 't ', 'T ', 'T'];
+const PREFIXES = ['n', 'n ', 'N ', 'N'];
 
 // ── Shared UI Emojis (update here to change everywhere) ──────────────────
 const ARROW_EMOJI  = '<:arrow:1530116419381887089>';
@@ -34,6 +40,58 @@ const E = {
   ping:     '🏓',
   scroll:   '📜',
   leaf:     '🍃',
+
+  // Arena / Trial UI emojis
+  coin:     '🪙',
+  essence:  '✨',
+  ticket:   '🎫',
+  check:    '✅',
+  warn:     '⚠️',
+  walk:     '🚶',
+  arrow:    '➜',
+  skull:    '💀',
+  robot:    '🤖',
+  tower:    '🏯',
+  book:     '📚',
+  blue:     '🟦',
+  orange:   '🟧',
+  red:      '🔴',
+  clock:    '⏰',
+  door:     '🚪',
+  play:     '▶',
+  skip:     '⏭',
+  boss:     '⚡',
+};
+
+// ── Scroll type emojis (Trial rewards) ───────
+const SCROLL_EMOJIS = {
+  academy_scrolls: '📜',
+  chunin_scrolls:  '📘',
+  jonin_scrolls:   '📙',
+  anbu_scrolls:    '📕',
+};
+
+// ── HP Bar Emojis (from config/hpbar.json) ──
+const HP_BAR = {
+  NhpStart0:   '<:NhpStart0:1532425387622006915>',
+  NhpMid0:     '<:NhpMid0:1532425225621340201>',
+  NhpEnd0:     '<:NhpEnd0:1532424940257808394>',
+
+  NhpStart10g: '<:NhpStart10g:1532433164826312926>',
+  NhpMid10g:   '<:NhpMid10g:1532553038462717993>',
+  NhpEnd10g:   '<:NhpEnd10g:1532553348497276928>',
+  NhpMid5g:    '<:NhpMid5g:1532612329760489674>',
+  NhpEnd5g:    '<:NhpEnd5g:1532612330796617868>',
+
+  NhpStart10y: '<:NhpStart10y:1532608581311139941>',
+  NhpMid10y:   '<:NhpMid10y:1532608582779011112>',
+  NhpMid5y:    '<:NhpMid5y:1532608583730987090>',
+
+  NhpStart10r: '<:NhpStart10r:1532608581357015080>',
+  NhpStart5r:  '<:NhpStart5r:1532608581386633383>',
+  NhpMid10r:   '<:NhpMid10r:1532608581470392340>',
+  NhpMid5r:    '<:NhpMid5r:1532608580581068830>',
+  NhpStart1r:  '<:NhpStart1r:1532643708816588841>',
 };
 
 // ── Combat Emojis ─────────────────────────────
@@ -263,6 +321,210 @@ const COLORS = {
   ramen:    0xE74C3C,
 };
 
+// ── Scroll Rewards (from src/data/scroll_rewards.json) ──
+const SCROLL_REWARDS = {
+  academy: {
+    label: 'Academy Scroll',
+    db_col: 'academy_scrolls',
+    color: 11776947,
+    rewards: {
+      ryo: { label: 'Ryo', emoji: '<:ryo:1529490447381299230>', enabled: true, drop_chance: 1.0, min: 200, max: 600 },
+      essence: { label: 'Chakra Essence', emoji: '<:essence:1529490380905644143>', enabled: true, drop_chance: 1.0, min: 10, max: 30 },
+      ramen: { label: 'Ramen', emoji: '<:ramen:1529823076118691890>', enabled: false, drop_chance: 0.0, min: 1, max: 1 },
+      exp_scrolls: { label: 'EXP Scrolls', emoji: '📜', enabled: true, drop_chance: 0.15, min: 1, max: 1 },
+      fragments: { label: 'Fragments', emoji: '🃏', enabled: true, drop_chance: 0.60, min_drops: 1, max_drops: 1, rarity_pool: { D: 80, C: 20 } },
+    },
+  },
+  chunin: {
+    label: 'Chunin Mission Scroll',
+    db_col: 'chunin_scrolls',
+    color: 4704075,
+    rewards: {
+      ryo: { label: 'Ryo', emoji: '<:ryo:1529490447381299230>', enabled: true, drop_chance: 1.0, min: 500, max: 1200 },
+      essence: { label: 'Chakra Essence', emoji: '<:essence:1529490380905644143>', enabled: true, drop_chance: 1.0, min: 25, max: 60 },
+      ramen: { label: 'Ramen', emoji: '<:ramen:1529823076118691890>', enabled: false, drop_chance: 0.0, min: 1, max: 1 },
+      exp_scrolls: { label: 'EXP Scrolls', emoji: '📜', enabled: true, drop_chance: 0.25, min: 1, max: 1 },
+      fragments: { label: 'Fragments', emoji: '🃏', enabled: true, drop_chance: 0.70, min_drops: 1, max_drops: 1, rarity_pool: { C: 70, B: 30 } },
+    },
+  },
+  mission: {
+    label: 'Mission Scroll',
+    db_col: 'mission_scrolls',
+    color: 4172287,
+    rewards: {
+      ryo: { label: 'Ryo', emoji: '<:ryo:1529490447381299230>', enabled: true, drop_chance: 1.0, min: 1000, max: 2500 },
+      essence: { label: 'Chakra Essence', emoji: '<:essence:1529490380905644143>', enabled: true, drop_chance: 1.0, min: 50, max: 100 },
+      ramen: { label: 'Ramen', emoji: '<:ramen:1529823076118691890>', enabled: false, drop_chance: 0.0, min: 1, max: 1 },
+      exp_scrolls: { label: 'EXP Scrolls', emoji: '📜', enabled: true, drop_chance: 0.35, min: 1, max: 2 },
+      fragments: { label: 'Fragments', emoji: '🃏', enabled: true, drop_chance: 0.75, min_drops: 1, max_drops: 2, rarity_pool: { C: 40, B: 40, A: 20 } },
+    },
+  },
+  jonin: {
+    label: 'Jonin Mission Scroll',
+    db_col: 'jonin_scrolls',
+    color: 11030527,
+    rewards: {
+      ryo: { label: 'Ryo', emoji: '<:ryo:1529490447381299230>', enabled: true, drop_chance: 1.0, min: 2000, max: 4500 },
+      essence: { label: 'Chakra Essence', emoji: '<:essence:1529490380905644143>', enabled: true, drop_chance: 1.0, min: 80, max: 150 },
+      ramen: { label: 'Ramen', emoji: '<:ramen:1529823076118691890>', enabled: true, drop_chance: 0.10, min: 1, max: 1 },
+      exp_scrolls: { label: 'EXP Scrolls', emoji: '📜', enabled: true, drop_chance: 0.50, min: 1, max: 2 },
+      fragments: { label: 'Fragments', emoji: '🃏', enabled: true, drop_chance: 0.80, min_drops: 1, max_drops: 2, rarity_pool: { B: 45, A: 40, S: 15 } },
+    },
+  },
+  anbu: {
+    label: 'ANBU Classified Scroll',
+    db_col: 'anbu_scrolls',
+    color: 15158332,
+    rewards: {
+      ryo: { label: 'Ryo', emoji: '<:ryo:1529490447381299230>', enabled: true, drop_chance: 1.0, min: 4000, max: 8000 },
+      essence: { label: 'Chakra Essence', emoji: '<:essence:1529490380905644143>', enabled: true, drop_chance: 1.0, min: 150, max: 300 },
+      ramen: { label: 'Ramen', emoji: '<:ramen:1529823076118691890>', enabled: true, drop_chance: 0.30, min: 1, max: 1 },
+      exp_scrolls: { label: 'EXP Scrolls', emoji: '📜', enabled: true, drop_chance: 0.65, min: 1, max: 3 },
+      fragments: { label: 'Fragments', emoji: '🃏', enabled: true, drop_chance: 0.85, min_drops: 1, max_drops: 2, rarity_pool: { A: 60, S: 40 } },
+    },
+  },
+  hokage: {
+    label: 'Hokage Secret Scroll',
+    db_col: 'hokage_scrolls',
+    color: 16766720,
+    rewards: {
+      ryo: { label: 'Ryo', emoji: '<:ryo:1529490447381299230>', enabled: true, drop_chance: 1.0, min: 8000, max: 15000 },
+      essence: { label: 'Chakra Essence', emoji: '<:essence:1529490380905644143>', enabled: true, drop_chance: 1.0, min: 250, max: 500 },
+      ramen: { label: 'Ramen', emoji: '<:ramen:1529823076118691890>', enabled: true, drop_chance: 0.50, min: 1, max: 1 },
+      exp_scrolls: { label: 'EXP Scrolls', emoji: '📜', enabled: true, drop_chance: 0.80, min: 2, max: 3 },
+      fragments: { label: 'Fragments', emoji: '🃏', enabled: true, drop_chance: 0.90, min_drops: 1, max_drops: 3, rarity_pool: { A: 40, S: 60 } },
+    },
+  },
+};
+
+// ── Trial Tower Configs (from towerconfig/*.json) ──
+const TOWER_CONFIGS = {
+  academy: {
+    name: 'Academy Trial',
+    shortName: 'Academy',
+    emoji: '📚',
+    color: '#B3AA93',
+    ticketCol: 'academy_trial_tickets',
+    thumbnail: 'https://placehold.co/80x80/b3aa93/white?text=A',
+    squadEnemyNames: ['Academy Ninja', 'Leaf Genin', 'Chunin Trainee', 'Scroll Guardian'],
+    bossNames: {
+      5: 'Iruka Sensei', 10: 'Konohamaru', 15: 'Rock Lee', 20: 'Kiba Inuzuka',
+      25: 'Neji Hyuga', 30: 'Shikamaru Nara', 35: 'Hinata Hyuga', 40: 'Temari',
+      45: 'Gaara of the Sand', 50: 'Tsunade', 55: 'Jiraiya', 60: 'Kakashi Hatake',
+      65: 'Might Guy', 70: 'Yamato', 75: 'Orochimaru', 80: 'Itachi Uchiha',
+      85: 'Kisame Hoshigaki', 90: 'Pain', 95: 'Madara Uchiha', 100: 'Kaguya Otsutsuki',
+      default: 'Trial Boss',
+    },
+    floors: {
+      1:   { squad: { hp: 300,   atkMin: 20,   atkMax: 32,   spd: 55,  critRate: 8  }, boss: { hp: 900,    atkMin: 28,   atkMax: 42,   spd: 50,  critRate: 10 } },
+      25:  { squad: { hp: 1200,  atkMin: 90,   atkMax: 130,  spd: 85,  critRate: 10 }, boss: { hp: 4000,   atkMin: 125,  atkMax: 175,  spd: 80,  critRate: 12 } },
+      50:  { squad: { hp: 4500,  atkMin: 280,  atkMax: 380,  spd: 118, critRate: 12 }, boss: { hp: 15000,  atkMin: 390,  atkMax: 520,  spd: 112, critRate: 14 } },
+      75:  { squad: { hp: 16000, atkMin: 900,  atkMax: 1150, spd: 152, critRate: 15 }, boss: { hp: 54000,  atkMin: 1250, atkMax: 1600, spd: 145, critRate: 17 } },
+      100: { squad: { hp: 55000, atkMin: 2800, atkMax: 3500, spd: 188, critRate: 18 }, boss: { hp: 185000, atkMin: 3900, atkMax: 4800, spd: 178, critRate: 22 } },
+    },
+    rewards: {
+      1:   { ryo: 60,   chakra: 4,   exp: 0.05, academy_scrolls: 0.10, chunin_scrolls: 0.030, jonin_scrolls: 0.010, anbu_scrolls: 0.004 },
+      25:  { ryo: 220,  chakra: 14,  exp: 0.07, academy_scrolls: 0.14, chunin_scrolls: 0.060, jonin_scrolls: 0.025, anbu_scrolls: 0.008 },
+      50:  { ryo: 600,  chakra: 35,  exp: 0.09, ramen: 0.005, academy_scrolls: 0.20, chunin_scrolls: 0.100, jonin_scrolls: 0.045, anbu_scrolls: 0.015 },
+      75:  { ryo: 1200, chakra: 70,  exp: 0.11, ramen: 0.010, academy_scrolls: 0.25, chunin_scrolls: 0.145, jonin_scrolls: 0.075, anbu_scrolls: 0.025 },
+      100: { ryo: 2500, chakra: 120, exp: 0.14, ramen: 0.015, academy_scrolls: 0.30, chunin_scrolls: 0.190, jonin_scrolls: 0.115, anbu_scrolls: 0.040 },
+    },
+  },
+  chunin: {
+    name: 'Chunin Trial',
+    shortName: 'Chunin',
+    emoji: '🟦',
+    color: '#3FA9FF',
+    ticketCol: 'chunin_trial_tickets',
+    thumbnail: 'https://placehold.co/80x80/3fa9ff/white?text=C',
+    squadEnemyNames: ['Sand Chunin', 'Mist Swordsman', 'Rain Ninja', 'Rock Shinobi'],
+    bossNames: {
+      5: 'Haku', 10: 'Zabuza Momochi', 15: 'Dosu Kinuta', 20: 'Zaku Abumi',
+      25: 'Gaara of the Sand', 30: 'Temari', 35: 'Kankuro', 40: 'Asuma Sarutobi',
+      45: 'Kurenai Yuhi', 50: 'Kakashi Hatake', 55: 'Might Guy', 60: 'Jiraiya',
+      65: 'Tsunade', 70: 'Orochimaru', 75: 'Itachi Uchiha', 80: 'Kisame Hoshigaki',
+      85: 'Deidara', 90: 'Pain', 95: 'Obito Uchiha', 100: 'Madara Uchiha',
+      default: 'Trial Boss',
+    },
+    floors: {
+      1:   { squad: { hp: 600,   atkMin: 45,   atkMax: 65,   spd: 75,  critRate: 10 }, boss: { hp: 2000,   atkMin: 65,   atkMax: 90,   spd: 70,  critRate: 12 } },
+      25:  { squad: { hp: 2800,  atkMin: 200,  atkMax: 270,  spd: 110, critRate: 12 }, boss: { hp: 9500,   atkMin: 280,  atkMax: 370,  spd: 105, critRate: 14 } },
+      50:  { squad: { hp: 10000, atkMin: 620,  atkMax: 800,  spd: 145, critRate: 14 }, boss: { hp: 34000,  atkMin: 860,  atkMax: 1100, spd: 138, critRate: 16 } },
+      75:  { squad: { hp: 35000, atkMin: 2000, atkMax: 2500, spd: 182, critRate: 17 }, boss: { hp: 118000, atkMin: 2750, atkMax: 3400, spd: 174, critRate: 19 } },
+      100: { squad: { hp: 120000, atkMin: 6200, atkMax: 7800, spd: 220, critRate: 20 }, boss: { hp: 400000, atkMin: 8500, atkMax: 10500, spd: 210, critRate: 24 } },
+    },
+    rewards: {
+      1:   { ryo: 120,  chakra: 8,   exp: 0.06, academy_scrolls: 0.10, chunin_scrolls: 0.080, jonin_scrolls: 0.025, anbu_scrolls: 0.008 },
+      25:  { ryo: 450,  chakra: 28,  exp: 0.09, academy_scrolls: 0.12, chunin_scrolls: 0.130, jonin_scrolls: 0.055, anbu_scrolls: 0.016 },
+      50:  { ryo: 1200, chakra: 70,  exp: 0.11, ramen: 0.008, academy_scrolls: 0.15, chunin_scrolls: 0.180, jonin_scrolls: 0.090, anbu_scrolls: 0.030 },
+      75:  { ryo: 2500, chakra: 140, exp: 0.13, ramen: 0.015, academy_scrolls: 0.18, chunin_scrolls: 0.230, jonin_scrolls: 0.135, anbu_scrolls: 0.048 },
+      100: { ryo: 5000, chakra: 250, exp: 0.17, ramen: 0.022, academy_scrolls: 0.20, chunin_scrolls: 0.280, jonin_scrolls: 0.185, anbu_scrolls: 0.070 },
+    },
+  },
+  jonin: {
+    name: 'Jonin Trial',
+    shortName: 'Jonin',
+    emoji: '🟧',
+    color: '#F39C12',
+    ticketCol: 'jonin_trial_tickets',
+    thumbnail: 'https://placehold.co/80x80/f39c12/white?text=J',
+    squadEnemyNames: ['ANBU Operative', 'Sound Jounin', 'Cloud Jounin', 'Mist Jounin'],
+    bossNames: {
+      5: 'Anko Mitarashi', 10: 'Yamato', 15: 'Asuma Sarutobi', 20: 'Kurenai Yuhi',
+      25: 'Kakashi Hatake', 30: 'Might Guy', 35: 'Tsunade', 40: 'Jiraiya',
+      45: 'Orochimaru', 50: 'Itachi Uchiha', 55: 'Kisame Hoshigaki', 60: 'Deidara',
+      65: 'Sasori', 70: 'Konan', 75: 'Pain', 80: 'Obito Uchiha',
+      85: 'Kabuto (Sage Mode)', 90: 'Madara Uchiha', 95: 'Kaguya Otsutsuki', 100: 'Sage of Six Paths',
+      default: 'Trial Boss',
+    },
+    floors: {
+      1:   { squad: { hp: 1500,  atkMin: 110,  atkMax: 150,  spd: 110, critRate: 12 }, boss: { hp: 5000,   atkMin: 155,  atkMax: 210,  spd: 105, critRate: 14 } },
+      25:  { squad: { hp: 7000,  atkMin: 500,  atkMax: 650,  spd: 150, critRate: 14 }, boss: { hp: 24000,  atkMin: 700,  atkMax: 900,  spd: 143, critRate: 16 } },
+      50:  { squad: { hp: 26000, atkMin: 1600, atkMax: 2050, spd: 190, critRate: 17 }, boss: { hp: 88000,  atkMin: 2200, atkMax: 2800, spd: 182, critRate: 19 } },
+      75:  { squad: { hp: 90000, atkMin: 5000, atkMax: 6200, spd: 230, critRate: 20 }, boss: { hp: 300000, atkMin: 7000, atkMax: 8600, spd: 220, critRate: 22 } },
+      100: { squad: { hp: 300000, atkMin: 15000, atkMax: 18500, spd: 270, critRate: 24 }, boss: { hp: 1000000, atkMin: 21000, atkMax: 26000, spd: 258, critRate: 28 } },
+    },
+    rewards: {
+      1:   { ryo: 250,  chakra: 16,  exp: 0.07, academy_scrolls: 0.08, chunin_scrolls: 0.060, jonin_scrolls: 0.080, anbu_scrolls: 0.018 },
+      25:  { ryo: 900,  chakra: 55,  exp: 0.10, academy_scrolls: 0.08, chunin_scrolls: 0.090, jonin_scrolls: 0.140, anbu_scrolls: 0.035 },
+      50:  { ryo: 2500, chakra: 140, exp: 0.13, ramen: 0.010, academy_scrolls: 0.08, chunin_scrolls: 0.120, jonin_scrolls: 0.200, anbu_scrolls: 0.060 },
+      75:  { ryo: 5500, chakra: 280, exp: 0.16, ramen: 0.020, academy_scrolls: 0.08, chunin_scrolls: 0.150, jonin_scrolls: 0.260, anbu_scrolls: 0.092 },
+      100: { ryo: 11000, chakra: 500, exp: 0.20, ramen: 0.030, academy_scrolls: 0.08, chunin_scrolls: 0.180, jonin_scrolls: 0.320, anbu_scrolls: 0.130 },
+    },
+  },
+  anbu: {
+    name: 'ANBU Trial',
+    shortName: 'ANBU',
+    emoji: '🔴',
+    color: '#E74C3C',
+    ticketCol: 'anbu_trial_tickets',
+    thumbnail: 'https://placehold.co/80x80/e74c3c/white?text=S',
+    squadEnemyNames: ['Akatsuki Agent', 'Black Ops Elite', 'Root Operative', 'Shadow Hunter'],
+    bossNames: {
+      5: 'Itachi Uchiha', 10: 'Kisame Hoshigaki', 15: 'Deidara', 20: 'Sasori',
+      25: 'Hidan', 30: 'Kakuzu', 35: 'Konan', 40: 'Pain',
+      45: 'Obito Uchiha', 50: 'Kabuto (Sage Mode)', 55: 'Edo Itachi', 60: 'Edo Nagato',
+      65: 'Madara Uchiha', 70: 'Ten-Tails Jinchuriki', 75: 'Kaguya Otsutsuki', 80: 'Hamura Otsutsuki',
+      85: 'Hagoromo Otsutsuki', 90: 'Isshiki Otsutsuki', 95: 'Baryon Naruto', 100: 'Sage of Six Paths (True Form)',
+      default: 'Trial Boss',
+    },
+    floors: {
+      1:   { squad: { hp: 4000,  atkMin: 300,  atkMax: 400,  spd: 160, critRate: 16 }, boss: { hp: 14000,  atkMin: 420,  atkMax: 560,  spd: 152, critRate: 18 } },
+      25:  { squad: { hp: 18000, atkMin: 1300, atkMax: 1700, spd: 210, critRate: 18 }, boss: { hp: 62000,  atkMin: 1850, atkMax: 2350, spd: 200, critRate: 20 } },
+      50:  { squad: { hp: 70000, atkMin: 4200, atkMax: 5200, spd: 262, critRate: 22 }, boss: { hp: 235000, atkMin: 5800, atkMax: 7200, spd: 250, critRate: 24 } },
+      75:  { squad: { hp: 250000, atkMin: 13000, atkMax: 16000, spd: 315, critRate: 26 }, boss: { hp: 840000, atkMin: 18000, atkMax: 22000, spd: 300, critRate: 28 } },
+      100: { squad: { hp: 900000, atkMin: 40000, atkMax: 50000, spd: 370, critRate: 30 }, boss: { hp: 3000000, atkMin: 55000, atkMax: 68000, spd: 352, critRate: 34 } },
+    },
+    rewards: {
+      1:   { ryo: 500,  chakra: 35,  exp: 0.08, academy_scrolls: 0.05, chunin_scrolls: 0.040, jonin_scrolls: 0.060, anbu_scrolls: 0.080 },
+      25:  { ryo: 2000, chakra: 120, exp: 0.12, academy_scrolls: 0.05, chunin_scrolls: 0.050, jonin_scrolls: 0.100, anbu_scrolls: 0.160 },
+      50:  { ryo: 6000, chakra: 300, exp: 0.16, ramen: 0.015, academy_scrolls: 0.05, chunin_scrolls: 0.065, jonin_scrolls: 0.150, anbu_scrolls: 0.260 },
+      75:  { ryo: 14000, chakra: 650, exp: 0.21, ramen: 0.030, academy_scrolls: 0.05, chunin_scrolls: 0.080, jonin_scrolls: 0.200, anbu_scrolls: 0.380 },
+      100: { ryo: 30000, chakra: 1200, exp: 0.28, ramen: 0.050, academy_scrolls: 0.05, chunin_scrolls: 0.095, jonin_scrolls: 0.255, anbu_scrolls: 0.520 },
+    },
+  },
+};
+
 module.exports = {
   ARROW_EMOJI, LVLOP_EMOJI, WALLET_EMOJI,
   PREFIXES,
@@ -278,4 +540,8 @@ module.exports = {
   USER_EXP_PER_RARITY, USER_EXP_PER_LEVEL,
   SHOP_ITEMS,
   EXPEDITION_AREAS,
+  SCROLL_EMOJIS,
+  HP_BAR,
+  SCROLL_REWARDS,
+  TOWER_CONFIGS,
 };

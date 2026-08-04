@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  daily.js  —  N daily
+//  daily.js  —  n daily
 //  Claim daily rewards once per IST calendar day.
 //  Streak increments on consecutive IST days; breaks if you skip.
 //  Every 5th streak day → bonus rewards.
@@ -47,7 +47,7 @@ function streakStars(streak) {
 
 module.exports = {
   name: 'daily',
-  description: 'Claim your daily rewards · N daily',
+  description: 'Claim your daily rewards · n daily',
 
   async execute(message) {
     const userId = message.author.id;

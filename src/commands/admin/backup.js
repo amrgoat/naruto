@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  admin/backup.js  —  N backup
+//  admin/backup.js  —  n backup
 //  Manually trigger a database backup.
 //  Owner only.
 // ─────────────────────────────────────────────
@@ -9,7 +9,7 @@ const { sendBackup } = require('../../utils/backup');
 
 module.exports = {
   name: 'backup',
-  description: '[Admin] Send a manual DB backup · N backup',
+  description: '[Admin] Send a manual DB backup · n backup',
 
   async execute(message, _args, client) {
     if (!isOwner(message.author.id)) return;

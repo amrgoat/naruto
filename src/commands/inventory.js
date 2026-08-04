@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  inventory.js  —  N inventory | N inv
+//  inventory.js  —  n inventory | n inv
 //  Shows the player's consumable inventory.
 // ─────────────────────────────────────────────
 
@@ -29,7 +29,7 @@ const TICKET_ITEMS = [
 module.exports = {
   name:    'inventory',
   aliases: ['inv'],
-  description: 'Check your consumable inventory · N inventory | N inv',
+  description: 'Check your consumable inventory · n inventory | n inv',
 
   async execute(message) {
     const user     = checkRegistered(message);

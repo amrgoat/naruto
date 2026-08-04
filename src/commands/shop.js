@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  shop.js  —  t shop / t shop buy <amount> <item>
+//  shop.js  —  n shop / n shop buy <amount> <item>
 // ─────────────────────────────────────────────
 
 const { EmbedBuilder } = require('discord.js');
@@ -80,7 +80,7 @@ function buildShopEmbed() {
       },
       {
         name: 'Usage',
-        value: '`t shop buy <amount> <item>`\n*Examples: `t shop buy 3 ramen` · `t shop buy 1 ticket`*',
+        value: '`n shop buy <amount> <item>`\n*Examples: `n shop buy 3 ramen` · `n shop buy 1 ticket`*',
       }
     );
 }
@@ -138,25 +138,25 @@ function applyPurchase(userId, itemKey, amount) {
 
 module.exports = {
   name: 'shop',
-  description: 'Browse and buy items · t shop | t shop buy <amount> <item>',
+  description: 'Browse and buy items · n shop | n shop buy <amount> <item>',
 
   async execute(message, args) {
     const userId = message.author.id;
     const user   = checkRegistered(message);
     if (!user) return;
 
-    // ── t shop (no args) → show shop ──────────
+    // ── n shop (no args) → show shop ──────────
     if (!args.length || args[0].toLowerCase() !== 'buy') {
       return message.reply({ embeds: [buildShopEmbed()] });
     }
 
-    // ── t shop buy <amount> <item> ─────────────
+    // ── n shop buy <amount> <item> ─────────────
     const amount = parseInt(args[1], 10);
     if (isNaN(amount) || amount < 1) {
       return message.reply({
         embeds: [new EmbedBuilder()
           .setColor(COLORS.error)
-          .setDescription('Usage: `t shop buy <amount> <item>`')],
+          .setDescription('Usage: `n shop buy <amount> <item>`')],
       });
     }
 
@@ -165,7 +165,7 @@ module.exports = {
       return message.reply({
         embeds: [new EmbedBuilder()
           .setColor(COLORS.error)
-          .setDescription('Usage: `t shop buy <amount> <item>`')],
+          .setDescription('Usage: `n shop buy <amount> <item>`')],
       });
     }
 

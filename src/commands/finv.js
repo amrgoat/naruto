@@ -1,9 +1,9 @@
 // ─────────────────────────────────────────────
-//  finv.js  —  t finv [rarity | name]
+//  finv.js  —  n finv [rarity | name]
 //
-//  t finv          → full inventory, sorted by count (high → low)
-//  t finv C        → only C-rarity characters
-//  t finv sa       → all characters whose name contains "sa"
+//  n finv          → full inventory, sorted by count (high → low)
+//  n finv C        → only C-rarity characters
+//  n finv sa       → all characters whose name contains "sa"
 // ─────────────────────────────────────────────
 
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
@@ -80,7 +80,7 @@ async function paginate(message, entries, username, subtitle, avatarURL) {
 module.exports = {
   name: 'finv',
   aliases: ['fi'],
-  description: 'View fragment inventory · t finv [rarity|name]',
+  description: 'View fragment inventory · n finv [rarity|name]',
 
   async execute(message, args) {
     if (!checkRegistered(message)) return;
@@ -101,7 +101,7 @@ module.exports = {
           .setThumbnail(avatarURL)
           .setDescription(
             `Earn fragments by pulling characters you already own.\n` +
-            `Collect **15 fragments** of a character to summon them via \`t summon\`.`
+            `Collect **15 fragments** of a character to summon them via \`n summon\`.`
           )
           .setFooter({ text: `${totalFrags}/${FRAG_CAP}` })],
       });

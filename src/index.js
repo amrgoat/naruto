@@ -257,11 +257,11 @@ loadCommandDir(path.join(__dirname, 'commands', 'premium'), '[premium] ');
  * Parses a raw message content string into { command, args } or null.
  *
  * Supported forms:
- *   N pull, n pull, Ｎ pull, ｎ pull   (prefix + space + command)
- *   Npull, npull, nhelp, etc.          (no-space — all commands)
+ *   n pull, n pull (prefix + space + command)
+ *   npull, nhelp, etc.                (no-space — all commands)
  */
 function parseMessage(content) {
-  // Spaced prefixes — try these first so "t help" works
+  // Spaced prefixes — try these first so "n help" works
   const spacedPrefixes = PREFIXES.filter(p => p.endsWith(' '));
   for (const p of spacedPrefixes) {
     if (content.startsWith(p)) {

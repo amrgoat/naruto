@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  mycollection.js  —  N mc [rarity]
+//  mycollection.js  —  n mc [rarity]
 //  Browse your collection — highest rarity first.
 //  Optional: N mc S  →  show only S-rank cards.
 // ─────────────────────────────────────────────
@@ -42,7 +42,7 @@ function buildNavRow(page, total) {
 module.exports = {
   name: 'mycollection',
   aliases: ['mc'],
-  description: 'Browse your card collection. Usage: `N mc` or `N mc <rarity>`',
+  description: 'Browse your card collection. Usage: `n mc` or `n mc <rarity>`',
 
   async execute(message, args) {
     const userId = message.author.id;
@@ -60,7 +60,7 @@ module.exports = {
     const rawCards = q.getUserCards.all(userId);
     if (!rawCards.length) {
       return message.reply({
-        embeds: [errorEmbed(`You don't own any cards yet.\nUse \`N pull\` to summon your first ninja!`)],
+        embeds: [errorEmbed(`You don't own any cards yet.\nUse \`n pull\` to summon your first ninja!`)],
       });
     }
 

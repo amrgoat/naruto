@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  team.js  —  N team | N team add | N team remove
+//  team.js  —  n team | n team add | n team remove
 //  Manage your 4-card battle team.
 // ─────────────────────────────────────────────
 
@@ -50,12 +50,12 @@ function buildTeamEmbed(userId, username) {
     .setColor(COLORS.EMBED_COLOR)
     .setTitle(`${E.team} ${username}'s Team`)
     .setDescription(lines.join('\n\n') || '*No cards in team.*')
-    .setFooter({ text: `${teamCards.length} / ${MAX_TEAM} slots filled  ·  N team add <name>` });
+    .setFooter({ text: `${teamCards.length} / ${MAX_TEAM} slots filled  ·  n team add <name>` });
 }
 
 module.exports = {
   name: 'team',
-  description: 'View/manage your team · N team | N team add <name> | N team remove <name>',
+  description: 'View/manage your team · n team | n team add <name> | n team remove <name>',
 
   async execute(message, args) {
     const user = checkRegistered(message);
@@ -65,16 +65,16 @@ module.exports = {
     const name    = message.member?.displayName ?? message.author.username;
     const sub     = args[0]?.toLowerCase();
 
-    // ── N team ─────────────────────────────────
+    // ── n team ─────────────────────────────────
     if (!sub) {
       return message.reply({ embeds: [buildTeamEmbed(userId, name)] });
     }
 
     const cardQuery = args.slice(1).join(' ');
 
-    // ── N team add <name> ──────────────────────
+    // ── n team add <name> ──────────────────────
     if (sub === 'add') {
-      if (!cardQuery) return message.reply({ embeds: [errorEmbed('Usage: `N team add <character name>`')] });
+      if (!cardQuery) return message.reply({ embeds: [errorEmbed('Usage: `n team add <character name>`')] });
 
       const card = findCard(userId, cardQuery);
       if (!card) return message.reply({ embeds: [errorEmbed(`You don't own a card matching \`${cardQuery}\`.`)] });
@@ -103,7 +103,7 @@ module.exports = {
         return message.reply({
           embeds: [errorEmbed(
             `Your team is full (${MAX_TEAM}/${MAX_TEAM}).\n` +
-            `Remove a card first with \`N team remove <name>\`.`
+            `Remove a card first with \`n team remove <name>\`.`
           )],
         });
       }
@@ -126,9 +126,9 @@ module.exports = {
       });
     }
 
-    // ── N team remove <name> ───────────────────
+    // ── n team remove <name> ───────────────────
     if (sub === 'remove') {
-      if (!cardQuery) return message.reply({ embeds: [errorEmbed('Usage: `N team remove <character name>`')] });
+      if (!cardQuery) return message.reply({ embeds: [errorEmbed('Usage: `n team remove <character name>`')] });
 
       const teamCards = q.getTeam.all(userId);
       const lq = cardQuery.toLowerCase();
@@ -156,7 +156,7 @@ module.exports = {
 
     // Unknown subcommand
     return message.reply({
-      embeds: [errorEmbed('Usage: `N team` · `N team add <name>` · `N team remove <name>`')],
+      embeds: [errorEmbed('Usage: `n team` · `n team add <name>` · `n team remove <name>`')],
     });
   },
 };

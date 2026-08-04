@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  start.js  —  N start
+//  start.js  —  n start
 //  Creates a new player account.
 // ─────────────────────────────────────────────
 
@@ -25,7 +25,7 @@ module.exports = {
           .setTitle(`${E.leaf} Already Registered`)
           .setDescription(
             `You already have a ninja profile, **${username}**.\n` +
-            `Use \`N profile\` to view your stats.`
+            `Use \`n profile\` to view your stats.`
           )],
       });
     }

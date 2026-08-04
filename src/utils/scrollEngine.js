@@ -1,12 +1,15 @@
 // ─────────────────────────────────────────────
 //  scrollEngine.js  —  Scroll reward rolling, application, and formatting
 //
-//  Fully config-driven. Add new reward types to scroll_rewards.json and
-//  register their DB writer in REWARD_APPLIERS below — command logic stays untouched.
+//  Fully config-driven. Add new reward types to SCROLL_REWARDS in
+//  src/config.js and register their DB writer in REWARD_APPLIERS below —
+//  command logic stays untouched.
 // ─────────────────────────────────────────────
 
-const REWARDS_CONFIG  = require('../data/scroll_rewards.json');
+const { SCROLL_REWARDS } = require('../config');
 const { PULL_POOL, CHARACTERS } = require('../data/characters');
+
+const REWARDS_CONFIG = SCROLL_REWARDS;
 
 // ── Lookup helpers ────────────────────────────
 
@@ -165,8 +168,8 @@ function applyRewards(q, scrollStatements, userId, scrollKey, count, combined) {
 
 /**
  * Build the reward display lines for the embed description.
- * Reads labels/emojis from scroll_rewards.json so new reward types display
- * automatically without touching this file.
+ * Reads labels/emojis from SCROLL_REWARDS in src/config.js so new reward
+ * types display automatically without touching this file.
  *
  * @param {object} combined    — output of rollScrolls()
  * @param {string} scrollKey

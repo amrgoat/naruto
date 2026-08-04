@@ -7,7 +7,7 @@ A fully-featured Naruto-themed Discord bot built with **discord.js v14** and **b
 ```
 src/
 ├── index.js              — Entry point, multi-prefix parser, command router
-├── config.js             — Constants: emojis, rarities, mastery, arena, prestige
+├── config.js             — Single merged config: emojis, rarities, mastery, arena, prestige, HP bar, scroll rewards, trial towers
 ├── database.js           — SQLite schema + all prepared statements + giveExpToCard()
 ├── data/
 │   └── characters.js     — 19 Classic Naruto characters (C–S rarity) + PULL_POOL
@@ -35,8 +35,8 @@ src/
 
 ## Key Systems
 
-### Prefix Aliases
-`N `, `Ｎ `, `n `, `ｎ ` + `Npull` / `npull` / `Ｎpull` / `ｎpull`
+### Prefix
+`n ` + `npull` / `nhelp` etc. (all commands)
 
 ### Pull System
 - **12 pulls per period** — resets at **12:00 AM IST** and **12:00 PM IST**
@@ -67,7 +67,7 @@ src/
 
 ### Arena
 - AI opponents — difficulty: Easy / Normal / Hard / Extreme
-- **10 attempts per day** (resets at 12:00 AM IST)
+- **5 attempts per day** (resets at 12:00 AM IST)
 - Win or loss both consume 1 attempt
 - All team cards earn EXP; Ryo awarded to player
 
@@ -86,17 +86,17 @@ SQLite (`data.db`) — three tables:
 - `cards` — owned cards with level/exp/mastery/stars/fragments
 - `teams` — up to 4 cards per user (slot 1–4)
 
-### Trial System (`N trial1` – `N trial4`)
+### Trial System (`n trial1` – `n trial4`)
 - Four difficulties: Academy → Chunin → Jonin → ANBU
 - Each consumes one Trial Ticket (`academy/chunin/jonin/anbu_trial_tickets` DB columns)
 - 100-floor dungeon; every 5th floor is a boss (1 enemy); other floors have 4 enemies
 - One-message interactive embed — no new messages ever sent; same message edited throughout
-- Configs in `towerconfig/academy|chunin|jonin|anbu.json` (key floors defined; intermediate floors auto-interpolated)
+- Configs in `src/config.js` (TOWER_CONFIGS — key floors defined; intermediate floors auto-interpolated)
 - Checkpoint system: 100% rewards safe exit after a boss, 50% if you quit between bosses, 25% if you die
 - Skip Floors: auto-clears floors whose enemy HP ≤ 2nd-strongest card's avg ATK (all rewards granted)
 
 ## User Preferences
-- Prefix: `N` (and aliases listed above)
+- Prefix: `n`
 - All characters are Classic Naruto (no Shippuden forms)
 - Attack uses a damage range: `atkMin–atkMax` displayed as e.g. `55–80`
 - No Defense stat

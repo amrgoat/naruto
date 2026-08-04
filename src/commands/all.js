@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  all.js  —  N all
+//  all.js  —  n all
 //  Browse every character in the game roster,
 //  highest rarity first (S → A → B → C).
 //  No account required.

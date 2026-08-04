@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  level.js  —  N level <amount> <card>
+//  level.js  —  n level <amount> <card>
 //  Spend EXP Scrolls to give a card EXP.
 //  1 scroll = 500 EXP
 // ─────────────────────────────────────────────
@@ -22,7 +22,7 @@ function findCharacter(query) {
 
 module.exports = {
   name: 'level',
-  description: 'Use EXP Scrolls to level up a card · N level <amount> <card>',
+  description: 'Use EXP Scrolls to level up a card · n level <amount> <card>',
 
   async execute(message, args) {
     const userId = message.author.id;

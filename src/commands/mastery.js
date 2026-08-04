@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  mastery.js  —  N mastery <card>
+//  mastery.js  —  n mastery <card>
 //  Upgrade a card's Mastery tier to unlock higher level caps.
 //
 //  M1 (cap 100) → 15 frags → M2 (cap 200) → 25 frags → M3 (cap 250)
@@ -28,20 +28,20 @@ function findCard(userId, query) {
 
 module.exports = {
   name: 'mastery',
-  description: 'Upgrade a card\'s Mastery · N mastery <card name>',
+  description: 'Upgrade a card\'s Mastery · n mastery <card name>',
 
   async execute(message, args) {
     const user = checkRegistered(message);
     if (!user) return;
 
-    if (!args.length) return message.reply({ embeds: [errorEmbed('Usage: `N mastery <card name>`')] });
+    if (!args.length) return message.reply({ embeds: [errorEmbed('Usage: `n mastery <card name>`')] });
 
     const userId = message.author.id;
     const query  = args.join(' ');
     const card   = findCard(userId, query);
 
     if (!card) {
-      return message.reply({ embeds: [errorEmbed(`No card found matching \`${query}\`.\nUse \`N cards\` to see your collection.`)] });
+      return message.reply({ embeds: [errorEmbed(`No card found matching \`${query}\`.\nUse \`n cards\` to see your collection.`)] });
     }
 
     const char    = CHARACTERS[card.character_id];
@@ -55,7 +55,7 @@ module.exports = {
           .setTitle(`${E.mastery} Max Mastery`)
           .setDescription(
             `**${char.name}** has already reached **M3** — the highest Mastery tier.\n\n` +
-            `At Lv.250 M3 you can use \`N prestige ${char.name}\` to earn Stars.`
+            `At Lv.250 M3 you can use \`n prestige ${char.name}\` to earn Stars.`
           )
           .setImage(char.image)],
       });

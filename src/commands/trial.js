@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  trial.js  —  N trial1 / trial2 / trial3 / trial4
+//  trial.js  —  n trial1 / trial2 / trial3 / trial4
 //
 //  One-message interactive dungeon crawler.
 //  Everything happens inside a single Discord embed
@@ -12,7 +12,7 @@
 //    trial4 → ANBU     (clearable ~floor 30, highest rewards)
 //
 //  Each trial consumes one Trial Ticket on start.
-//  Configs live in /towerconfig/<difficulty>.json — nothing hardcoded.
+//  Configs live in src/config.js (TOWER_CONFIGS) — nothing hardcoded.
 // ─────────────────────────────────────────────
 
 const {
@@ -22,7 +22,7 @@ const {
 
 const { q, giveExpToCard, trialTicketStatements, scrollStatements } = require('../database');
 const { CHARACTERS }        = require('../data/characters');
-const { MASTERY, COLORS }   = require('../config');
+const { MASTERY, COLORS, E, SCROLL_EMOJIS } = require('../config');
 const { checkRegistered }   = require('../utils/guards');
 const { getEffectiveStats } = require('../utils/cardUtils');
 const { resolvePassiveBonuses } = require('../utils/passives');
@@ -53,13 +53,6 @@ const SCROLL_NAMES = {
   anbu_scrolls:    'ANBU Scroll',
 };
 
-const SCROLL_EMOJIS = {
-  academy_scrolls: '📜',
-  chunin_scrolls:  '📘',
-  jonin_scrolls:   '📙',
-  anbu_scrolls:    '📕',
-};
-
 
 // ─────────────────────────────────────────────
 //  Format a single combatant line
@@ -70,16 +63,16 @@ function fmtCombatant(c, isPlayer = false) {
     const meta = isPlayer
       ? ` | Lv ${c.level ?? '?'}${c.mastery ? ` | M${c.mastery}` : ''}${c.prestige ? ` | P${c.prestige}` : ''}`
       : ` | Lv ${c.level ?? '?'}`;
-    return `💀 ~~**${c.name}**${meta}~~`;
+    return `${E.loss} ~~**${c.name}**${meta}~~`;
   }
 
   const meta = isPlayer
     ? ` | Lv ${c.level ?? '?'}${c.mastery ? ` | M${c.mastery}` : ''}${c.prestige ? ` | P${c.prestige}` : ''}`
     : ` | Lv ${c.level ?? '?'}`;
 
-  const stats = `❤️ ${c.currentHp.toLocaleString()}/${c.maxHp.toLocaleString()} | ⚡ ${c.spd} | ⚔️ ${c.atkMin.toLocaleString()}–${c.atkMax.toLocaleString()}`;
+  const stats = `${E.health} ${c.currentHp.toLocaleString()}/${c.maxHp.toLocaleString()} | ${E.speed} ${c.spd} | ${E.attack} ${c.atkMin.toLocaleString()}–${c.atkMax.toLocaleString()}`;
   const bar   = buildHpBar(c.currentHp, c.maxHp);
-  return `➜ **${c.name}**${meta}\n${stats}\n${bar}`;
+  return `${E.arrow} **${c.name}**${meta}\n${stats}\n${bar}`;
 }
 
 // ─────────────────────────────────────────────
@@ -93,16 +86,16 @@ function buildStartEmbed(config, user) {
     .setDescription(
       `**100 floors** of escalating enemies await.\n` +
       `Every 5th floor is a boss battle.\n\n` +
-      `🎫 You have **${ticket}** ${config.shortName} Trial Ticket${ticket !== 1 ? 's' : ''}.\n\n` +
+      `${E.ticket} You have **${ticket}** ${config.shortName} Trial Ticket${ticket !== 1 ? 's' : ''}.\n\n` +
       `**Skip Floors** — Your 2nd strongest card auto-clears floors whose enemies' HP ≤ its ATK.\n` +
       `All skipped rewards are granted normally.`
     )
     .addFields({
-      name: '⚠️ Checkpoint Rules',
+      name: `${E.warn} Checkpoint Rules`,
       value:
-        '✅ After a boss (or on a 5n+1 floor) → **100%** rewards\n' +
-        '🚶 Leave mid-floor elsewhere → **50%** rewards\n' +
-        '💀 Die → **25%** rewards',
+        `${E.check} After a boss (or on a 5n+1 floor) → **100%** rewards\n` +
+        `${E.walk} Leave mid-floor elsewhere → **50%** rewards\n` +
+        `${E.loss} Die → **25%** rewards`,
     })
     .setFooter({ text: 'Starting consumes 1 Trial Ticket.' });
 }
@@ -117,11 +110,11 @@ function buildBattleEmbed(session) {
 
   let checkpointNote;
   if (atSafeExit || isPostBoss) {
-    checkpointNote = '✅ Safe Exit — Leave now for 100% rewards';
+    checkpointNote = `${E.check} Safe Exit — Leave now for 100% rewards`;
   } else if (lastBossFloor > 0) {
-    checkpointNote = `⚠️ Quit = 50% · Die = 25%  (last boss: floor ${lastBossFloor})`;
+    checkpointNote = `${E.warn} Quit = 50% · Die = 25%  (last boss: floor ${lastBossFloor})`;
   } else {
-    checkpointNote = '⚠️ No checkpoint yet — Quit = 50% · Die = 25%';
+    checkpointNote = `${E.warn} No checkpoint yet — Quit = 50% · Die = 25%`;
   }
 
   const enemyHeader  = isBoss ? '**===== Boss =====**' : '**===== Enemies =====**';
@@ -135,7 +128,7 @@ function buildBattleEmbed(session) {
     .setColor(config.color)
     .setTitle(
       `${config.emoji} ${config.name} — Floor ${currentFloor}/100` +
-      (isBoss ? '  ⚡ BOSS' : '')
+      (isBoss ? `  ${E.boss} BOSS` : '')
     )
     .setDescription(description)
     .setFooter({ text: checkpointNote });
@@ -161,7 +154,7 @@ function buildTeamButtons(session) {
   buttons.push(
     new ButtonBuilder()
       .setCustomId('trial_leave')
-      .setLabel('🚪 Leave')
+      .setLabel(`${E.door} Leave`)
       .setStyle(ButtonStyle.Danger)
   );
 
@@ -249,10 +242,10 @@ function applyRewards(userId, rewards, multiplier) {
 // ─────────────────────────────────────────────
 function buildRewardLines(final) {
   const lines = [];
-  if (final.ryo    > 0) lines.push(`🪙 **${final.ryo.toLocaleString()}** Ryo`);
-  if (final.chakra > 0) lines.push(`✨ **${final.chakra.toLocaleString()}** Chakra Essence`);
-  if (final.exp    > 0) lines.push(`📜 **${final.exp.toLocaleString()}** EXP Scrolls`);
-  if (final.ramen  > 0) lines.push(`🍜 **${final.ramen}** Ramen`);
+  if (final.ryo    > 0) lines.push(`${E.coin} **${final.ryo.toLocaleString()}** Ryo`);
+  if (final.chakra > 0) lines.push(`${E.essence} **${final.chakra.toLocaleString()}** Chakra Essence`);
+  if (final.exp    > 0) lines.push(`${E.scroll} **${final.exp.toLocaleString()}** EXP Scrolls`);
+  if (final.ramen  > 0) lines.push(`${E.ramen} **${final.ramen}** Ramen`);
   for (const col of SCROLL_COLS) {
     const n = final.scrolls?.[col] ?? 0;
     if (n > 0) lines.push(`${SCROLL_EMOJIS[col]} **${n}** ${SCROLL_NAMES[col]}${n > 1 ? 's' : ''}`);
@@ -274,19 +267,19 @@ async function endTrial(session, reason, collector) {
 
   if (reason === 'floor100') {
     multiplier = 1.0;
-    headline   = `🏆 **Floor 100 Cleared!** You conquered the entire Trial!`;
+    headline   = `${E.win} **Floor 100 Cleared!** You conquered the entire Trial!`;
     color      = COLORS.success;
   } else if (reason === 'safeExit' || (reason === 'leave' && (atSafeExit || isPostBoss))) {
     multiplier = 1.0;
-    headline   = `✅ **You escaped on floor ${currentFloor}** and received **100%** of your loot!`;
+    headline   = `${E.check} **You escaped on floor ${currentFloor}** and received **100%** of your loot!`;
     color      = COLORS.success;
   } else if (reason === 'leave') {
     multiplier = 0.5;
-    headline   = `🚶 **You retreated on floor ${currentFloor}** and received **50%** of your loot.`;
+    headline   = `${E.walk} **You retreated on floor ${currentFloor}** and received **50%** of your loot.`;
     color      = COLORS.warning;
   } else {
     multiplier = 0.25;
-    headline   = `💀 **Defeated on floor ${currentFloor}.** You recovered **25%** of your loot.`;
+    headline   = `${E.loss} **Defeated on floor ${currentFloor}.** You recovered **25%** of your loot.`;
     color      = COLORS.error;
   }
 
@@ -341,12 +334,12 @@ module.exports = {
       return message.reply({
         embeds: [new EmbedBuilder()
           .setColor(COLORS.info)
-          .setTitle('🏯 Trial Difficulties')
+          .setTitle(`${E.tower} Trial Difficulties`)
           .setDescription(
-            '`N trial1` — 📚 **Academy Trial**  *(clearable ~floor 60 · lowest rewards)*\n' +
-            '`N trial2` — 🟦 **Chunin Trial**   *(clearable ~floor 50)*\n' +
-            '`N trial3` — 🟧 **Jonin Trial**    *(clearable ~floor 40)*\n' +
-            '`N trial4` — 🔴 **ANBU Trial**     *(clearable ~floor 30 · highest rewards)*\n\n' +
+            `\`n trial1\` — ${E.book} **Academy Trial**  *(clearable ~floor 60 · lowest rewards)*\n` +
+            `\`n trial2\` — ${E.blue} **Chunin Trial**   *(clearable ~floor 50)*\n` +
+            `\`n trial3\` — ${E.orange} **Jonin Trial**    *(clearable ~floor 40)*\n` +
+            `\`n trial4\` — ${E.red} **ANBU Trial**     *(clearable ~floor 30 · highest rewards)*\n\n` +
             'Each run consumes one Trial Ticket of the matching difficulty.'
           )],
       });
@@ -358,7 +351,7 @@ module.exports = {
 
     // ── No concurrent sessions ────────────────
     if (activeSessions.has(userId)) {
-      return message.reply({ content: '⚠️ You already have an active Trial. Finish or leave it first.' });
+      return message.reply({ content: `${E.warn} You already have an active Trial. Finish or leave it first.` });
     }
 
     const difficulty = DIFFICULTY_KEYS[diffNum];
@@ -407,7 +400,7 @@ module.exports = {
       });
 
     if (!players.length) {
-      return message.reply({ content: '⚠️ You need at least 1 combat card in your team to enter a Trial.' });
+      return message.reply({ content: `${E.warn} You need at least 1 combat card in your team to enter a Trial.` });
     }
 
     // ── Send start embed ──────────────────────
@@ -415,11 +408,11 @@ module.exports = {
     const startRow   = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId('trial_start')
-        .setLabel('▶ Start Trial')
+        .setLabel(`${E.play} Start Trial`)
         .setStyle(ButtonStyle.Success),
       new ButtonBuilder()
         .setCustomId('trial_skip')
-        .setLabel('⏭ Skip Floors')
+        .setLabel(`${E.skip} Skip Floors`)
         .setStyle(ButtonStyle.Primary),
     );
 
@@ -594,7 +587,7 @@ module.exports = {
       const timeoutEmbed = new EmbedBuilder()
         .setColor(COLORS.error)
         .setTitle(`${config.emoji} ${config.name} — Timed Out`)
-        .setDescription('⏰ The trial session expired due to inactivity.\n**0%** of rewards granted — ticket already consumed.');
+        .setDescription(`${E.clock} The trial session expired due to inactivity.\n**0%** of rewards granted — ticket already consumed.`);
       await msg.edit({ embeds: [timeoutEmbed], components: [] }).catch(() => {});
     });
   },

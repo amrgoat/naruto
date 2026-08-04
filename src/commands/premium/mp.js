@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  premium/mp.js  —  N mp  (Mass Pull)
+//  premium/mp.js  —  n mp  (Mass Pull)
 //  Uses all remaining pull attempts at once.
 //  Premium (Jinchūriki) only.
 // ─────────────────────────────────────────────

@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  battle.js  —  N battle @user
+//  battle.js  —  n battle @user
 //  Friendly battle between two players.
 //  No EXP, Ryo, or ranking changes. For fun only.
 //  Passive bonuses (Choji HP, Rock Lee SPD) apply
@@ -22,7 +22,7 @@ const { errorEmbed }           = require('../utils/embeds');
 
 module.exports = {
   name: 'battle',
-  description: 'Challenge a friend · N battle @user',
+  description: 'Challenge a friend · n battle @user',
 
   async execute(message, args) {
     const challenger = checkRegistered(message);
@@ -31,7 +31,7 @@ module.exports = {
     // ── Mention check ──────────────────────────
     const target = message.mentions.users.first();
     if (!target) {
-      return message.reply({ embeds: [errorEmbed('Usage: `N battle @user`')] });
+      return message.reply({ embeds: [errorEmbed('Usage: `n battle @user`')] });
     }
     if (target.bot) {
       return message.reply({ embeds: [errorEmbed("You can't challenge a bot.")] });
@@ -44,14 +44,14 @@ module.exports = {
     const targetUser = q.getUser.get(target.id);
     if (!targetUser) {
       return message.reply({
-        embeds: [errorEmbed(`**${target.username}** hasn't started yet. They need to run \`N start\`.`)],
+        embeds: [errorEmbed(`**${target.username}** hasn't started yet. They need to run \`n start\`.`)],
       });
     }
 
     // ── Both need teams ────────────────────────
     const challengerTeam = q.getTeam.all(message.author.id);
     if (!challengerTeam.length) {
-      return message.reply({ embeds: [errorEmbed("You need cards in your team. Use `N team add <name>`.")] });
+      return message.reply({ embeds: [errorEmbed("You need cards in your team. Use `n team add <name>`.")] });
     }
 
     // ── Send challenge ─────────────────────────

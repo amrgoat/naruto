@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  craft.js  —  N craft <amount> <card>
+//  craft.js  —  n craft <amount> <card>
 //  Craft fragments for a card you own using
 //  Chakra Essence. Requires owning Kabuto.
 //
@@ -28,7 +28,7 @@ function findCharacter(query) {
 
 module.exports = {
   name: 'craft',
-  description: 'Craft card fragments · N craft <amount> <card>',
+  description: 'Craft card fragments · n craft <amount> <card>',
 
   async execute(message, args) {
     const userId = message.author.id;

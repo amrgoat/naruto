@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  prestige.js  —  N prestige <card>
+//  prestige.js  —  n prestige <card>
 //  Earn a Star for a card (max 5 stars).
 //  Requires: Level 250 + M3.
 //  Resets card to Level 1, Mastery 1.
@@ -33,14 +33,14 @@ module.exports = {
     const user = checkRegistered(message);
     if (!user) return;
 
-    if (!args.length) return message.reply({ embeds: [errorEmbed('Usage: `N prestige <card name>`')] });
+    if (!args.length) return message.reply({ embeds: [errorEmbed('Usage: `n prestige <card name>`')] });
 
     const userId = message.author.id;
     const query  = args.join(' ');
     const card   = findCard(userId, query);
 
     if (!card) {
-      return message.reply({ embeds: [errorEmbed(`No card found matching \`${query}\`.\nUse \`N cards\` to see your collection.`)] });
+      return message.reply({ embeds: [errorEmbed(`No card found matching \`${query}\`.\nUse \`n cards\` to see your collection.`)] });
     }
 
     const char = CHARACTERS[card.character_id];
@@ -51,7 +51,7 @@ module.exports = {
         embeds: [errorEmbed(
           `**${char.name}** must be **M3** to Prestige.\n` +
           `Current Mastery: **M${card.mastery}**\n\n` +
-          `Use \`N mastery ${char.name}\` to advance.`
+          `Use \`n mastery ${char.name}\` to advance.`
         )],
       });
     }

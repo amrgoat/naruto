@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────
-//  bal.js  —  N bal
+//  bal.js  —  n bal
 //  Shows the user's full wallet / item balances.
 // ─────────────────────────────────────────────
 
@@ -12,7 +12,7 @@ const { checkRegistered } = require('../utils/guards');
 module.exports = {
   name: 'balance',
   aliases: ['bal'],
-  description: 'Check your wallet and item balances · N balance',
+  description: 'Check your wallet and item balances · n balance',
 
   async execute(message) {
     const user = checkRegistered(message);

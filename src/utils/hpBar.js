@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────
 //  hpBar.js  —  reusable HP bar renderer
 //
-//  All emoji names and IDs live in config/hpbar.json.
+//  All emoji names and IDs live in src/config.js (HP_BAR).
 //  Nothing is hardcoded here.
 //
 //  Usage:
@@ -9,8 +9,7 @@
 //    const bar = buildHpBar(currentHp, maxHp);
 // ─────────────────────────────────────────────
 
-const path = require('path');
-const HP   = require(path.join(process.cwd(), 'config/hpbar.json'));
+const { HP_BAR: HP } = require('../config');
 
 /**
  * Builds a 10-emoji HP bar string.
@@ -102,9 +101,8 @@ function buildHpBar(current, max) {
       // NhpMid5y covers every half in yellow; no Start5y / End5y needed
       bar.push(HP.NhpMid5y);
     } else {
-      // Red halves: use NhpStart5r for every half position in red
-      // (per design — NhpStart5r is the visual half-fill marker for red)
-      bar.push(HP.NhpStart5r);
+      // Red halves: position-specific — Start5r (at 5 %) or Mid5r (15 %, 25 %)
+      bar.push(HP[`Nhp${pos}5r`]);
     }
   }
 

@@ -1,12 +1,12 @@
 // ─────────────────────────────────────────────
-//  admin/give.js  —  N give @user <amount> <item>
+//  admin/give.js  —  n give @user <amount> <item>
 //  Give any item or character fragments to a player. Owner only.
 //
 //  Examples:
-//    N give @user 500 ryo
-//    N give @user 3 academy_ticket
-//    N give @user 5 hokage_scroll
-//    N give @user 10 Naruto           → 10 Naruto fragments
+//    n give @user 500 ryo
+//    n give @user 3 academy_ticket
+//    n give @user 5 hokage_scroll
+//    n give @user 10 Naruto           → 10 Naruto fragments
 // ─────────────────────────────────────────────
 
 const { EmbedBuilder } = require('discord.js');
@@ -55,7 +55,7 @@ function giveableList() {
 
 module.exports = {
   name: 'give',
-  description: '[Admin] Give any item or fragments to a user · N give @user <amount> <item>',
+  description: '[Admin] Give any item or fragments to a user · n give @user <amount> <item>',
 
   async execute(message, args) {
     if (!isOwner(message.author.id)) return;
@@ -64,7 +64,7 @@ module.exports = {
     if (!target) {
       return message.reply({
         embeds: [errorEmbed(
-          '**Usage:** `N give @user <amount> <item>`\n' +
+          '**Usage:** `n give @user <amount> <item>`\n' +
           `**Items:** ${giveableList()}\n` +
           'Or use a character name to give fragments.'
         )],
@@ -79,7 +79,7 @@ module.exports = {
     if (!rawAmount || !itemQuery) {
       return message.reply({
         embeds: [errorEmbed(
-          '**Usage:** `N give @user <amount> <item>`\n' +
+          '**Usage:** `n give @user <amount> <item>`\n' +
           `**Items:** ${giveableList()}\n` +
           'Or use a character name to give fragments.'
         )],
