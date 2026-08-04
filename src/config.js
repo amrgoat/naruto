@@ -40,6 +40,7 @@ const E = {
   ping:     '🏓',
   scroll:   '📜',
   leaf:     '🍃',
+  xp:       '<:xp:1534165684118884494>',
 
   // Arena / Trial UI emojis
   coin:     '🪙',

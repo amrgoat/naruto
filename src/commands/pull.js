@@ -10,7 +10,7 @@
 const { q, giveExpToUser } = require('../database');
 const { CHARACTERS, PULL_POOL } = require('../data/characters');
 const {
-  RARITIES, PULL_POOL_RARITIES, PULL_COOLDOWN_MS, ESSENCE_PER_DUP, USER_EXP_PER_RARITY,
+  RARITIES, PULL_POOL_RARITIES, PULL_COOLDOWN_MS, ESSENCE_PER_DUP, USER_EXP_PER_RARITY, E,
 } = require('../config');
 const { checkRegistered }       = require('../utils/guards');
 const { buildPullEmbed, errorEmbed } = require('../utils/embeds');
@@ -116,14 +116,12 @@ module.exports = {
     const ft         = embed.data.footer?.text ?? '';
     embed.setFooter({ text: `${ft}  ·  ${resetLabel}` });
 
-    // ── XP message BEFORE embed ─────────────────
-    if (updatedUser) {
-      const lvl = updatedUser.user_level ?? 1;
-      const exp = updatedUser.user_exp   ?? 0;
-      await message.channel.send(`+${xpGained}xp , Level: ${lvl} [${exp}/1000]`);
-    }
+    // ── Send embed + XP message together ────────
+    const xpContent = updatedUser
+      ? `${E.xp} **${xpGained} XP Gained!** \`Level : ${updatedUser.user_level ?? 1} | ${updatedUser.user_exp ?? 0}/1000\``
+      : undefined;
 
-    await message.reply({ embeds: [embed] });
+    await message.reply({ content: xpContent, embeds: [embed] });
 
     // ── Duplicate follow-up message ─────────────
     if (isDuplicate) {

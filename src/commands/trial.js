@@ -22,7 +22,7 @@ const {
 
 const { q, giveExpToCard, trialTicketStatements, scrollStatements } = require('../database');
 const { CHARACTERS }        = require('../data/characters');
-const { MASTERY, COLORS, E, SCROLL_EMOJIS } = require('../config');
+const { MASTERY, COLORS, E, COMBAT_EMOJIS, SCROLL_EMOJIS } = require('../config');
 const { checkRegistered }   = require('../utils/guards');
 const { getEffectiveStats } = require('../utils/cardUtils');
 const { resolvePassiveBonuses } = require('../utils/passives');
@@ -70,7 +70,7 @@ function fmtCombatant(c, isPlayer = false) {
     ? ` | Lv ${c.level ?? '?'}${c.mastery ? ` | M${c.mastery}` : ''}${c.prestige ? ` | P${c.prestige}` : ''}`
     : ` | Lv ${c.level ?? '?'}`;
 
-  const stats = `${E.health} ${c.currentHp.toLocaleString()}/${c.maxHp.toLocaleString()} | ${E.speed} ${c.spd} | ${E.attack} ${c.atkMin.toLocaleString()}–${c.atkMax.toLocaleString()}`;
+  const stats = `${COMBAT_EMOJIS.health} ${c.currentHp.toLocaleString()}/${c.maxHp.toLocaleString()} | ${COMBAT_EMOJIS.speed} ${c.spd} | ${COMBAT_EMOJIS.attack} ${c.atkMin.toLocaleString()}–${c.atkMax.toLocaleString()}`;
   const bar   = buildHpBar(c.currentHp, c.maxHp);
   return `${E.arrow} **${c.name}**${meta}\n${stats}\n${bar}`;
 }
