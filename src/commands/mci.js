@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────
-//  mci.js  —  
- ci <name>  (My Card Info)
+//  mci.js  —  mci / mycardinfo
+//  n mci <name>  (My Card Info)
 //  Show one of your owned cards with all active
 //  passive bonuses applied (Choji HP, Rock Lee SPD).
 // ─────────────────────────────────────────────
